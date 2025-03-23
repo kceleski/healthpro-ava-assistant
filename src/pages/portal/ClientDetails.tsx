@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import PortalLayout from '@/components/portal/PortalLayout';
@@ -18,7 +17,7 @@ import {
   User, Phone, Mail, MapPin, Calendar, Clock, FileText, 
   FileCheck, Buildings, MessageSquare, Activity, Heart, 
   BarChart, Clipboard, CheckCircle, Home, Send, Edit, 
-  PlusCircle, Trash, Download
+  PlusCircle, Trash, Download, Building
 } from 'lucide-react';
 
 const ClientDetails = () => {
@@ -54,7 +53,7 @@ const ClientDetails = () => {
     notes: [
       { date: 'Jul 15, 2023', text: 'Initial consultation. Mary is looking for memory care with a homey atmosphere.', author: 'John Placement' },
       { date: 'Jul 20, 2023', text: 'Toured Desert Bloom Senior Living. Mary liked the garden areas and activities program.', author: 'John Placement' },
-      { date: 'Jul 27, 2023', text: 'Follow-up call with Mary's son David. Discussing financial options and insurance coverage.', author: 'Ava Assistant' },
+      { date: 'Jul 27, 2023', text: "Follow-up call with Mary's son David. Discussing financial options and insurance coverage.", author: 'Ava Assistant' },
       { date: 'Aug 3, 2023', text: 'Mary has narrowed choices to Desert Bloom and Sunrise of Scottsdale. Scheduling second visits.', author: 'John Placement' },
     ],
     progressSteps: [
@@ -740,30 +739,3 @@ const ClientDetails = () => {
                 className="min-h-[120px]"
                 defaultValue="Hello Mary, I'm following up about your tour of Desert Bloom Senior Living. Would you like to schedule a second visit? Let me know what times work best for you."
               />
-            </div>
-            
-            <div className="flex gap-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="send-email" defaultChecked />
-                <label htmlFor="send-email" className="text-sm">Send Email</label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="send-sms" defaultChecked />
-                <label htmlFor="send-sms" className="text-sm">Send SMS</label>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setSendMessageOpen(false)}>Cancel</Button>
-            <Button onClick={() => setSendMessageOpen(false)}>
-              <Send className="h-4 w-4 mr-2" />
-              Send Message
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </PortalLayout>
-  );
-};
-
-export default ClientDetails;
