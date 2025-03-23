@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import PortalLayout from '@/components/portal/PortalLayout';
@@ -739,3 +740,30 @@ const ClientDetails = () => {
                 className="min-h-[120px]"
                 defaultValue="Hello Mary, I'm following up about your tour of Desert Bloom Senior Living. Would you like to schedule a second visit? Let me know what times work best for you."
               />
+            </div>
+            
+            <div className="flex gap-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox id="send-email" defaultChecked />
+                <label htmlFor="send-email" className="text-sm">Send Email</label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="send-sms" defaultChecked />
+                <label htmlFor="send-sms" className="text-sm">Send SMS</label>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setSendMessageOpen(false)}>Cancel</Button>
+            <Button onClick={() => setSendMessageOpen(false)}>
+              <Send className="h-4 w-4 mr-2" />
+              Send Message
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </PortalLayout>
+  );
+};
+
+export default ClientDetails;
