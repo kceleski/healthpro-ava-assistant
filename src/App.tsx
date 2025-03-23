@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/portal/Dashboard";
+import Facilities from "./pages/portal/Facilities";
+import ClientDetails from "./pages/portal/ClientDetails";
+import AvaPortal from "./pages/portal/AvaPortal";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +21,10 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/portal/dashboard" element={<Dashboard />} />
+          <Route path="/portal/facilities" element={<Facilities />} />
+          <Route path="/portal/client/:id" element={<ClientDetails />} />
+          <Route path="/portal/ava" element={<AvaPortal />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
