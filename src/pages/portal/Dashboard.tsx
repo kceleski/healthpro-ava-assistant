@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 import { ResponsiveContainer, BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart2, ArrowUpRight, Users, Building, Calendar, Clock, Activity, ArrowUp, ArrowDown } from 'lucide-react';
+import { BarChart2, ArrowUpRight, Users, Building, Calendar, Clock, Activity, ArrowUp, ArrowDown, BellIcon, DollarSignIcon } from 'lucide-react';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Sample data for charts
 const clientData = [
@@ -102,7 +103,7 @@ const Dashboard = () => {
               July 2023
             </Button>
             <Button size="icon" variant="outline">
-              <Bell className="h-4 w-4" />
+              <BellIcon className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -162,7 +163,7 @@ const Dashboard = () => {
                   <p className="text-xs text-green-500 mt-1">↑ 15% from last year</p>
                 </div>
                 <div className="bg-amber-100 p-2 rounded-full">
-                  <DollarSign className="h-5 w-5 text-amber-600" />
+                  <DollarSignIcon className="h-5 w-5 text-amber-600" />
                 </div>
               </div>
             </CardContent>
@@ -319,7 +320,6 @@ const Dashboard = () => {
                 <CardDescription>Manage and view all clients</CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Add client list component here */}
                 <p>Client list content goes here.</p>
               </CardContent>
             </Card>
@@ -332,7 +332,6 @@ const Dashboard = () => {
                 <CardDescription>View placement statistics</CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Add placement details component here */}
                 <p>Placement details content goes here.</p>
               </CardContent>
             </Card>
@@ -345,7 +344,6 @@ const Dashboard = () => {
                 <CardDescription>Track revenue and expenses</CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Add financial overview component here */}
                 <p>Financial overview content goes here.</p>
               </CardContent>
             </Card>

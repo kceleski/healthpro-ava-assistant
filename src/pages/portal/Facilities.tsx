@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PortalLayout from '@/components/portal/PortalLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +14,7 @@ import { Slider } from "@/components/ui/slider";
 import {
   Building, Search, MapPin, Users, Star, Phone, Mail, ArrowUpDown, 
   Filter, Plus, Check, Heart, Map, ChevronRight, Info, Bed, Ban, 
-  Clock, DollarSign, Leaf, Utensils, Dumbbell, Wifi, Parking
+  Clock, DollarSign, Leaf, Utensils, Dumbbell, Wifi, Car
 } from 'lucide-react';
 
 const Facilities = () => {
@@ -26,7 +25,6 @@ const Facilities = () => {
   const [amenities, setAmenities] = useState<string[]>([]);
   const [availability, setAvailability] = useState('any');
 
-  // Toggle an amenity in the filter list
   const toggleAmenity = (amenity: string) => {
     if (amenities.includes(amenity)) {
       setAmenities(amenities.filter(a => a !== amenity));
@@ -34,8 +32,7 @@ const Facilities = () => {
       setAmenities([...amenities, amenity]);
     }
   };
-  
-  // Sample facility data
+
   const facilities = [
     {
       id: 1,
@@ -194,8 +191,7 @@ const Facilities = () => {
       ]
     }
   ];
-  
-  // Get amenity icon
+
   const getAmenityIcon = (amenity: string) => {
     const amenityIcons: Record<string, React.ReactNode> = {
       "24/7 Staffing": <Clock className="h-4 w-4" />,
@@ -208,38 +204,32 @@ const Facilities = () => {
       "Garden": <Leaf className="h-4 w-4" />,
       "Swimming Pool": <Leaf className="h-4 w-4" />,
       "Fitness Center": <Dumbbell className="h-4 w-4" />,
-      "Transportation": <Parking className="h-4 w-4" />,
+      "Transportation": <Car className="h-4 w-4" />,
       "Wifi": <Wifi className="h-4 w-4" />,
-      "Parking": <Parking className="h-4 w-4" />
+      "Parking": <Car className="h-4 w-4" />
     };
     
     return amenityIcons[amenity] || <Check className="h-4 w-4" />;
   };
-  
-  // Filter facilities based on search and filters
+
   const filteredFacilities = facilities.filter(facility => {
-    // Search query filter
     if (searchQuery && !facility.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
         !facility.location.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
     
-    // Facility type filter
     if (facilityTypeFilter !== 'all' && !facility.careLevels.includes(facilityTypeFilter)) {
       return false;
     }
     
-    // Price range filter
     if (facility.pricing.min > priceRange[1] || facility.pricing.max < priceRange[0]) {
       return false;
     }
     
-    // Amenities filter
     if (amenities.length > 0 && !amenities.every(a => facility.amenities.includes(a))) {
       return false;
     }
     
-    // Availability filter
     if (availability === 'available' && facility.beds.available === 0) {
       return false;
     }
@@ -334,7 +324,7 @@ const Facilities = () => {
                         <p className="text-xs text-muted-foreground">per month</p>
                       </div>
                       <div className="flex items-center">
-                        <Badge variant={facility.beds.available > 0 ? "success" : "destructive"} className="mr-2">
+                        <Badge variant={facility.beds.available > 0 ? "default" : "destructive"} className="mr-2">
                           {facility.beds.available > 0 ? `${facility.beds.available} Available` : "Full"}
                         </Badge>
                         <Button variant="ghost" size="icon">
@@ -387,7 +377,7 @@ const Facilities = () => {
                         </TableCell>
                         <TableCell>${facility.pricing.min.toLocaleString()} - ${facility.pricing.max.toLocaleString()}</TableCell>
                         <TableCell>
-                          <Badge variant={facility.beds.available > 0 ? "success" : "destructive"}>
+                          <Badge variant={facility.beds.available > 0 ? "default" : "destructive"}>
                             {facility.beds.available > 0 ? `${facility.beds.available} Available` : "Full"}
                           </Badge>
                         </TableCell>
@@ -421,7 +411,6 @@ const Facilities = () => {
         </Tabs>
       </div>
       
-      {/* Filter Dialog */}
       <Dialog open={filterDialogOpen} onOpenChange={setFilterDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
