@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import PortalLayout from '@/components/portal/PortalLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -103,30 +104,8 @@ const ClientDetails = () => {
   };
   
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-30 w-full border-b bg-white">
-        <div className="container flex h-16 items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-semibold">Senior Care Portal</h1>
-          </div>
-          <nav className="flex items-center gap-6">
-            <div className="flex items-center gap-4">
-              <button className="p-2 rounded-full hover:bg-slate-100">
-                <span className="sr-only">Notifications</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
-                  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
-                </svg>
-              </button>
-              <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center">
-                <span className="font-medium text-sm">JP</span>
-              </div>
-            </div>
-          </nav>
-        </div>
-      </header>
-      <div className="container py-6">
-        <div className="grid gap-6">
+    <PortalLayout>
+      <div className="grid gap-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16">
@@ -594,61 +573,3 @@ const ClientDetails = () => {
                               <div className="flex items-center gap-2 mt-1">
                                 <p className="text-xs text-muted-foreground">{document.date}</p>
                                 <Badge variant="outline" className="text-xs">{document.type}</Badge>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button size="sm" variant="ghost">
-                              <Download className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost">
-                              <Trash className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="facilities" className="mt-6">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                    <div>
-                      <CardTitle>Facilities Considered</CardTitle>
-                      <CardDescription>Facilities the client has viewed or is interested in</CardDescription>
-                    </div>
-                    <Button>
-                      <Building className="h-4 w-4 mr-2" />
-                      Add Facility
-                    </Button>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {client.recommendedFacilities.map((facility) => (
-                        <Card key={facility.id}>
-                          <CardContent className="p-4">
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                              <div className="flex items-start gap-4">
-                                <div className="bg-slate-100 p-2 rounded-md">
-                                  <Building className="h-6 w-6 text-slate-600" />
-                                </div>
-                                <div>
-                                  <h3 className="font-medium">{facility.name}</h3>
-                                  <p className="text-sm text-muted-foreground">{facility.type}</p>
-                                  <Badge className="mt-1 bg-green-100 text-green-800 hover:bg-green-100">
-                                    {facility.match}% match
-                                  </Badge>
-                                </div>
-                              </div>
-                              <div className="flex flex-wrap items-center gap-2">
-                                <Button size="sm">Schedule Tour</Button>
-                                <Button size="sm" variant="outline">Contact</Button>
-                                <Button size="sm" variant="outline">View Details</Button>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
