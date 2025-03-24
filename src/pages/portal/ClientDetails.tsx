@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import PortalLayout from '@/components/portal/PortalLayout';
@@ -529,7 +530,7 @@ const ClientDetails = () => {
                                   </div>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2">
+                              <div className="flex flex-wrap items-center gap-2">
                                 <Button size="sm" variant="outline">
                                   <Edit className="h-4 w-4 mr-2" />
                                   Edit
@@ -573,3 +574,190 @@ const ClientDetails = () => {
                               <div className="flex items-center gap-2 mt-1">
                                 <p className="text-xs text-muted-foreground">{document.date}</p>
                                 <Badge variant="outline" className="text-xs">{document.type}</Badge>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button size="sm" variant="ghost">
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="ghost">
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="facilities" className="mt-6">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                    <div>
+                      <CardTitle>Facilities Considered</CardTitle>
+                      <CardDescription>Facilities the client has viewed or is interested in</CardDescription>
+                    </div>
+                    <Button>
+                      <Building className="h-4 w-4 mr-2" />
+                      Add Facility
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {client.recommendedFacilities.map((facility) => (
+                        <Card key={facility.id}>
+                          <CardContent className="p-4">
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                              <div className="flex items-start gap-4">
+                                <div className="bg-slate-100 p-2 rounded-md">
+                                  <Building className="h-6 w-6 text-slate-600" />
+                                </div>
+                                <div>
+                                  <h3 className="font-medium">{facility.name}</h3>
+                                  <p className="text-sm text-muted-foreground">{facility.type}</p>
+                                  <Badge className="mt-1 bg-green-100 text-green-800 hover:bg-green-100">
+                                    {facility.match}% match
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Button size="sm">Schedule Tour</Button>
+                                <Button size="sm" variant="outline">Contact</Button>
+                                <Button size="sm" variant="outline">View Details</Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="applications" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Applications</CardTitle>
+                    <CardDescription>Track application status for facilities</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8">
+                      <div className="mx-auto bg-slate-100 h-12 w-12 rounded-full flex items-center justify-center mb-3">
+                        <Clipboard className="h-6 w-6 text-slate-500" />
+                      </div>
+                      <h3 className="font-medium">No Applications Started</h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Start an application to a facility for this client
+                      </p>
+                      <Button className="mt-4">
+                        <FileCheck className="h-4 w-4 mr-2" />
+                        Start New Application
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="timeline" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Client Timeline</CardTitle>
+                    <CardDescription>History of interactions and events</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="relative pl-6 border-l border-slate-200 space-y-6">
+                      {[...client.notes, ...client.appointments.map(a => ({
+                        date: a.date,
+                        text: `Appointment scheduled: ${a.title}`,
+                        author: 'System'
+                      }))].sort((a, b) => 
+                          new Date(b.date).getTime() - new Date(a.date).getTime()
+                        ).map((event, index) => (
+                        <div key={index} className="relative">
+                          <div className="absolute -left-[28px] p-1 bg-white rounded-full border border-slate-200">
+                            <div className="h-3 w-3 rounded-full bg-primary"></div>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">{event.date}</p>
+                            <p className="mt-1">{event.text}</p>
+                            <p className="text-sm text-muted-foreground mt-1">{event.author}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+      </div>
+      
+      {/* Message Dialog */}
+      <Dialog open={sendMessageOpen} onOpenChange={setSendMessageOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Send Message to {client.name}</DialogTitle>
+            <DialogDescription>This message will be sent via email and text message</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Message Type</label>
+              <Select defaultValue="custom" onValueChange={setMessageType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select message type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="custom">Custom Message</SelectItem>
+                  <SelectItem value="appointment">Appointment Reminder</SelectItem>
+                  <SelectItem value="followup">Tour Follow-up</SelectItem>
+                  <SelectItem value="documents">Documents Request</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Message</label>
+              <Textarea 
+                placeholder="Type your message here..." 
+                className="min-h-[120px]"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex gap-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="send-email" 
+                  checked={sendEmail}
+                  onCheckedChange={(checked) => setSendEmail(!!checked)}
+                />
+                <label htmlFor="send-email" className="text-sm">Send Email</label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="send-sms" 
+                  checked={sendSMS}
+                  onCheckedChange={(checked) => setSendSMS(!!checked)}
+                />
+                <label htmlFor="send-sms" className="text-sm">Send SMS</label>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setSendMessageOpen(false)}>Cancel</Button>
+            <Button onClick={handleSendMessage}>
+              <Send className="h-4 w-4 mr-2" />
+              Send Message
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </PortalLayout>
+  );
+};
+
+export default ClientDetails;
