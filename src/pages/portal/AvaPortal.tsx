@@ -14,12 +14,13 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Progress } from "@/components/ui/progress";
 import NotesTemplate from '@/components/portal/NotesTemplate';
 import { 
   MessageSquare, Search, Send, Map, Building, Calendar, FileText, Settings, 
   Clock, Database, User, Bell, Home, Filter, List, Grid3X3, Sparkles, 
   InfoIcon, CreditCard, Upload, Download, BarChart3, RefreshCw, Mic, 
-  Landmark, Lightbulb, X, Wand2, CircleHelp
+  Landmark, Lightbulb, X, Wand2, CircleHelp, Copy, Edit, Trash
 } from 'lucide-react';
 
 const AvaPortal = () => {
