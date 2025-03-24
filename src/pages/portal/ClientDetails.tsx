@@ -15,9 +15,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import {
   User, Phone, Mail, MapPin, Calendar, Clock, FileText, 
-  FileCheck, Buildings, MessageSquare, Activity, Heart, 
+  FileCheck, Building, MessageSquare, Activity, Heart, 
   BarChart, Clipboard, CheckCircle, Home, Send, Edit, 
-  PlusCircle, Trash, Download, Building
+  PlusCircle, Trash, Download
 } from 'lucide-react';
 
 const ClientDetails = () => {
@@ -290,7 +290,7 @@ const ClientDetails = () => {
               </CardContent>
               <CardFooter>
                 <Button className="w-full">
-                  <Buildings className="h-4 w-4 mr-2" />
+                  <Building className="h-4 w-4 mr-2" />
                   View All Matches
                 </Button>
               </CardFooter>
@@ -426,7 +426,7 @@ const ClientDetails = () => {
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <Button variant="outline" className="flex flex-col items-center justify-center h-24 space-y-2">
-                        <Buildings className="h-6 w-6" />
+                        <Building className="h-6 w-6" />
                         <span>Schedule Tour</span>
                       </Button>
                       
@@ -599,7 +599,7 @@ const ClientDetails = () => {
                       <CardDescription>Facilities the client has viewed or is interested in</CardDescription>
                     </div>
                     <Button>
-                      <Buildings className="h-4 w-4 mr-2" />
+                      <Building className="h-4 w-4 mr-2" />
                       Add Facility
                     </Button>
                   </CardHeader>
