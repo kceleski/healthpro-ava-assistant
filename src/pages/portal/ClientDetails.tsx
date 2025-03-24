@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import PortalLayout from '@/components/portal/PortalLayout';
@@ -24,6 +23,10 @@ import {
 const ClientDetails = () => {
   const { id } = useParams();
   const [sendMessageOpen, setSendMessageOpen] = useState(false);
+  const [messageType, setMessageType] = useState("custom");
+  const [messageText, setMessageText] = useState("Hello Mary, I'm following up about your tour of Desert Bloom Senior Living. Would you like to schedule a second visit? Let me know what times work best for you.");
+  const [sendEmail, setSendEmail] = useState(true);
+  const [sendSMS, setSendSMS] = useState(true);
   
   // Dummy client data
   const client = {
@@ -82,8 +85,23 @@ const ClientDetails = () => {
     ]
   };
   
+  // Calculate active step and progress percentage
   const activeStep = client.progressSteps.findIndex(step => !step.completed);
   const progressPercentage = ((activeStep) / client.progressSteps.length) * 100;
+  
+  // Handle message sending
+  const handleSendMessage = () => {
+    // In a real app, you would send the message here
+    console.log("Sending message:", {
+      type: messageType,
+      text: messageText,
+      email: sendEmail,
+      sms: sendSMS
+    });
+    
+    // Close the dialog after sending
+    setSendMessageOpen(false);
+  };
   
   return (
     <PortalLayout>
@@ -613,157 +631,3 @@ const ClientDetails = () => {
                         </Card>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="applications" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Applications</CardTitle>
-                    <CardDescription>Manage facility applications</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col items-center justify-center py-10">
-                    <div className="text-center max-w-sm">
-                      <Home className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-medium mb-2">No applications started</h3>
-                      <p className="text-sm text-muted-foreground mb-6">
-                        When the client is ready to apply to a facility, you can start the application process here.
-                      </p>
-                      <Button>
-                        <FileCheck className="h-4 w-4 mr-2" />
-                        Start New Application
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="timeline" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Client Timeline</CardTitle>
-                    <CardDescription>Complete history of client activities</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="relative pl-6 border-l border-slate-200 space-y-8">
-                      <div className="relative">
-                        <div className="absolute -left-[25px] bg-blue-100 p-1 rounded-full">
-                          <MessageSquare className="h-4 w-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Initial consultation completed</p>
-                          <p className="text-sm">Discussed client needs and preferences</p>
-                          <p className="text-xs text-muted-foreground mt-1">Jul 15, 2023 - 10:30 AM</p>
-                        </div>
-                      </div>
-                      
-                      <div className="relative">
-                        <div className="absolute -left-[25px] bg-purple-100 p-1 rounded-full">
-                          <Buildings className="h-4 w-4 text-purple-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Facility tour completed</p>
-                          <p className="text-sm">Toured Desert Bloom Senior Living</p>
-                          <p className="text-xs text-muted-foreground mt-1">Jul 20, 2023 - 2:30 PM</p>
-                        </div>
-                      </div>
-                      
-                      <div className="relative">
-                        <div className="absolute -left-[25px] bg-green-100 p-1 rounded-full">
-                          <FileText className="h-4 w-4 text-green-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Document uploaded</p>
-                          <p className="text-sm">Medical Assessment.pdf added to client profile</p>
-                          <p className="text-xs text-muted-foreground mt-1">Jul 18, 2023 - 3:45 PM</p>
-                        </div>
-                      </div>
-                      
-                      <div className="relative">
-                        <div className="absolute -left-[25px] bg-amber-100 p-1 rounded-full">
-                          <Phone className="h-4 w-4 text-amber-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Follow-up call</p>
-                          <p className="text-sm">Call with Mary's son David about financial options</p>
-                          <p className="text-xs text-muted-foreground mt-1">Jul 27, 2023 - 11:15 AM</p>
-                        </div>
-                      </div>
-                      
-                      <div className="relative">
-                        <div className="absolute -left-[25px] bg-red-100 p-1 rounded-full">
-                          <Calendar className="h-4 w-4 text-red-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Appointment scheduled</p>
-                          <p className="text-sm">Second tour at Desert Bloom Senior Living</p>
-                          <p className="text-xs text-muted-foreground mt-1">Aug 3, 2023 - 9:00 AM</p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </div>
-      </div>
-      
-      {/* Message Dialog */}
-      <Dialog open={sendMessageOpen} onOpenChange={setSendMessageOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Send Message to {client.name}</DialogTitle>
-            <DialogDescription>This message will be sent via email and text message</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Message Type</label>
-              <Select defaultValue="custom">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select message type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="custom">Custom Message</SelectItem>
-                  <SelectItem value="appointment">Appointment Reminder</SelectItem>
-                  <SelectItem value="followup">Tour Follow-up</SelectItem>
-                  <SelectItem value="documents">Documents Request</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Message</label>
-              <Textarea 
-                placeholder="Type your message here..." 
-                className="min-h-[120px]"
-                defaultValue="Hello Mary, I'm following up about your tour of Desert Bloom Senior Living. Would you like to schedule a second visit? Let me know what times work best for you."
-              />
-            </div>
-            
-            <div className="flex gap-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="send-email" defaultChecked />
-                <label htmlFor="send-email" className="text-sm">Send Email</label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="send-sms" defaultChecked />
-                <label htmlFor="send-sms" className="text-sm">Send SMS</label>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setSendMessageOpen(false)}>Cancel</Button>
-            <Button onClick={() => setSendMessageOpen(false)}>
-              <Send className="h-4 w-4 mr-2" />
-              Send Message
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </PortalLayout>
-  );
-};
-
-export default ClientDetails;
