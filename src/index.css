@@ -87,6 +87,49 @@
   }
 }
 
+/* StorePoint Map Styling */
+#storepoint-container {
+  height: 650px;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+  margin: 20px auto;
+}
+
+.storepoint-map .marker {
+  transform: scale(1.2);
+}
+
+.gm-style-iw {
+  max-width: 350px !important;
+  padding: 16px !important;
+}
+
+.storepoint-list-item {
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s ease;
+}
+
+.storepoint-list-item:hover {
+  background: #f7f7f7;
+}
+
+.storepoint-custom-control {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-top: 8px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.storepoint-custom-control:hover {
+  background: #f5f5f5;
+}
+
 /* Custom styles */
 .ava-shine {
   position: relative;
