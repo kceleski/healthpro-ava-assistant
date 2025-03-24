@@ -1,12 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, LogIn, LogOut } from 'lucide-react';
+import { mockLogin, mockLogout } from "@/components/auth/RequireAuth";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -14,8 +17,31 @@ const Navbar = () => {
     };
     
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    // Check authentication
+    const checkAuth = () => {
+      setIsAuthenticated(localStorage.getItem('authenticated') === 'true');
+    };
+    
+    checkAuth();
+    window.addEventListener('storage', checkAuth);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('storage', checkAuth);
+    };
   }, []);
+  
+  const handleLogin = () => {
+    mockLogin();
+    setIsAuthenticated(true);
+  };
+  
+  const handleLogout = () => {
+    mockLogout();
+    setIsAuthenticated(false);
+    navigate('/');
+  };
   
   return (
     <header className={`sticky top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-subtle' : 'bg-transparent'}`}>
@@ -61,9 +87,27 @@ const Navbar = () => {
           </nav>
           
           <div className="hidden md:flex items-center space-x-4">
-            <RouterLink to="/portal/dashboard">
-              <Button variant="outline" size="sm">Client Portal</Button>
-            </RouterLink>
+            {isAuthenticated ? (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleLogout}
+                className="flex items-center gap-1"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </Button>
+            ) : (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleLogin}
+                className="flex items-center gap-1"
+              >
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </Button>
+            )}
             <RouterLink to="/portal/dashboard">
               <Button size="sm">Get Started</Button>
             </RouterLink>
@@ -105,9 +149,25 @@ const Navbar = () => {
             Contact
           </a>
           <div className="pt-4 flex flex-col space-y-2">
-            <RouterLink to="/portal/dashboard">
-              <Button variant="outline" className="w-full">Client Portal</Button>
-            </RouterLink>
+            {isAuthenticated ? (
+              <Button 
+                variant="outline" 
+                className="w-full flex items-center justify-center gap-1"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </Button>
+            ) : (
+              <Button 
+                variant="outline" 
+                className="w-full flex items-center justify-center gap-1"
+                onClick={handleLogin}
+              >
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </Button>
+            )}
             <RouterLink to="/portal/dashboard">
               <Button className="w-full">Get Started</Button>
             </RouterLink>

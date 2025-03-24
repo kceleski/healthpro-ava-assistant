@@ -11,6 +11,7 @@ import Facilities from "./pages/portal/Facilities";
 import ClientDetails from "./pages/portal/ClientDetails";
 import AvaPortal from "./pages/portal/AvaPortal";
 import FacilityMapPage from "./pages/FacilityMapPage";
+import RequireAuth from "./components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,11 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/facilities-map" element={<FacilityMapPage />} />
+          <Route path="/facilities-map" element={
+            <RequireAuth>
+              <FacilityMapPage />
+            </RequireAuth>
+          } />
           <Route path="/portal/dashboard" element={<Dashboard />} />
           <Route path="/portal/facilities" element={<Facilities />} />
           <Route path="/portal/client/:id" element={<ClientDetails />} />

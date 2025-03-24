@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MessageSquare } from 'lucide-react';
 import AvaQuestionnaire, { QuestionnaireData } from './AvaQuestionnaire';
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 declare global {
   interface Window {
@@ -17,6 +18,7 @@ const StorepointMap = () => {
   const [mapInteractive, setMapInteractive] = useState(false);
   const [userPreferences, setUserPreferences] = useState<QuestionnaireData | null>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   
   // Handle form completion
   const handleQuestionnaireComplete = (data: QuestionnaireData) => {
@@ -49,6 +51,12 @@ const StorepointMap = () => {
         // Configure map display
         window.SP.options.maxLocations = 25; // Show 25 locations at a time
         window.SP.options.defaultView = 'map'; // Start with map view
+        
+        // Mobile-specific adjustments
+        if (isMobile) {
+          window.SP.options.markerSize = 'small'; // Smaller markers on mobile
+          window.SP.options.infoWindowWidth = 280; // Smaller info windows
+        }
         
         // Disable map interactions until questionnaire is completed
         if (!mapInteractive) {
@@ -85,7 +93,7 @@ const StorepointMap = () => {
         storepointScript.remove();
       }
     };
-  }, [mapInteractive, userPreferences]);
+  }, [mapInteractive, userPreferences, isMobile]);
 
   // Function to highlight matching facilities
   const highlightMatchingFacilities = (preferences: QuestionnaireData) => {
@@ -141,10 +149,10 @@ const StorepointMap = () => {
 
   return (
     <div className="relative">
-      <div id="storepoint-container" data-map-id="1645a775a8a422" className="storepoint-map"></div>
+      <div id="storepoint-container" data-map-id="1645a775a8a422" className="storepoint-map min-h-[60vh] md:min-h-[70vh]"></div>
       
       {userPreferences && (
-        <div className="absolute top-4 left-4 z-10 bg-white/90 p-3 rounded-lg shadow-lg text-sm">
+        <div className={`absolute ${isMobile ? 'bottom-4 left-4 right-4' : 'top-4 left-4'} z-10 bg-white/90 p-3 rounded-lg shadow-lg text-sm`}>
           <div className="font-medium mb-1">Your Preferences:</div>
           <div className="flex gap-2 flex-wrap">
             <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs">
@@ -172,7 +180,7 @@ const StorepointMap = () => {
         </div>
       )}
       
-      <div className="absolute bottom-4 right-4 z-10">
+      <div className={`absolute ${isMobile ? 'bottom-20 right-4' : 'bottom-4 right-4'} z-10`}>
         <Button className="shadow-lg">
           <MessageSquare className="h-4 w-4 mr-2" />
           Ask Ava about facilities
