@@ -1,639 +1,522 @@
 
 import React, { useState } from 'react';
 import PortalLayout from '@/components/portal/PortalLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { 
-  Search, Filter, MapPin, Building, Star, Phone, Mail, 
-  Users, Bed, DollarSign, Check, X, ArrowUpDown, ChevronDown, Clock
+import { Slider } from "@/components/ui/slider";
+import {
+  Building, Search, MapPin, Users, Star, Phone, Mail, ArrowUpDown, 
+  Filter, Plus, Check, Heart, Map, ChevronRight, Info, Bed, Ban, 
+  Clock, DollarSign, Leaf, Utensils, Dumbbell, Wifi, Parking
 } from 'lucide-react';
 
 const Facilities = () => {
-  const [viewMode, setViewMode] = useState('grid');
-  const [filterOpen, setFilterOpen] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [facilityTypeFilter, setFacilityTypeFilter] = useState('all');
+  const [priceRange, setPriceRange] = useState([2000, 8000]);
+  const [amenities, setAmenities] = useState<string[]>([]);
+  const [availability, setAvailability] = useState('any');
+
+  // Toggle an amenity in the filter list
+  const toggleAmenity = (amenity: string) => {
+    if (amenities.includes(amenity)) {
+      setAmenities(amenities.filter(a => a !== amenity));
+    } else {
+      setAmenities([...amenities, amenity]);
+    }
+  };
   
-  // Dummy data for Arizona facilities
-  const arizonaFacilities = [
+  // Sample facility data
+  const facilities = [
     {
       id: 1,
-      name: 'Desert Bloom Senior Living',
-      address: '123 Palm Avenue, Phoenix, AZ 85001',
-      type: 'Assisted Living',
-      availableBeds: 3,
+      name: "Desert Bloom Senior Living",
+      type: "Memory Care & Assisted Living",
+      location: "Phoenix, AZ",
+      address: "2215 W Bethany Home Rd, Phoenix, AZ 85015",
+      phone: "(602) 555-1234",
+      email: "info@desertbloom.com",
+      website: "www.desertbloom.com",
       rating: 4.8,
-      pricing: '$3,500 - $5,200/month',
-      amenities: ['24/7 Staff', 'Memory Care', 'Transportation', 'Pool', 'Fitness Center'],
-      imageSrc: 'https://source.unsplash.com/random/300x200/?senior-living,1',
-      acceptsMedicaid: true,
-      acceptsMedicare: false,
-      minDistance: 0,
-      maxDistance: 5,
-      contactPhone: '(602) 555-1234',
-      contactEmail: 'info@desertbloomsl.com',
+      reviews: 42,
+      beds: {
+        total: 120,
+        available: 3
+      },
+      pricing: {
+        min: 3500,
+        max: 5500,
+        privateRoom: 4500,
+        sharedRoom: 3500,
+        memoryCareSupplement: 1000,
+        level1Care: 500,
+        level2Care: 1000,
+        level3Care: 1500
+      },
+      amenities: ["24/7 Staffing", "Medication Management", "Physical Therapy", "Garden", "Dining", "Activities", "Housekeeping", "Transportation", "Wifi", "Laundry"],
+      careLevels: ["Independent Living", "Assisted Living", "Memory Care"],
+      images: ["facility1.jpg"],
+      description: "Desert Bloom Senior Living offers a comfortable and supportive environment for seniors, with specialized programs for memory care needs. Our beautiful facility features serene garden spaces and a dedicated staff.",
+      partnership: {
+        status: "Premium Partner",
+        since: "2018",
+        placementsFee: "85%"
+      },
+      notes: [
+        { date: "2023-05-15", text: "Updated room availability, now have 3 private rooms open." },
+        { date: "2023-03-22", text: "New memory care wing opened, adding 20 additional beds." }
+      ]
     },
     {
       id: 2,
-      name: 'Sunrise of Scottsdale',
-      address: '456 Camelback Road, Scottsdale, AZ 85251',
-      type: 'Memory Care',
-      availableBeds: 2,
-      rating: 4.6,
-      pricing: '$4,800 - $6,500/month',
-      amenities: ['Memory Care Specialists', 'Secured Areas', 'Art Therapy', 'Garden', 'Private Dining'],
-      imageSrc: 'https://source.unsplash.com/random/300x200/?senior-living,2',
-      acceptsMedicaid: false,
-      acceptsMedicare: true,
-      minDistance: 5,
-      maxDistance: 10,
-      contactPhone: '(480) 555-5678',
-      contactEmail: 'care@sunrisescottsdale.com',
+      name: "Sunrise of Scottsdale",
+      type: "Assisted Living & Memory Care",
+      location: "Scottsdale, AZ",
+      address: "7370 E Gold Dust Ave, Scottsdale, AZ 85258",
+      phone: "(480) 555-2345",
+      email: "info@sunrisescottsdale.com",
+      website: "www.sunriseseniorliving.com/scottsdale",
+      rating: 4.5,
+      reviews: 38,
+      beds: {
+        total: 85,
+        available: 2
+      },
+      pricing: {
+        min: 4200,
+        max: 6200,
+        privateRoom: 5200,
+        sharedRoom: 4200,
+        memoryCareSupplement: 1200,
+        level1Care: 600,
+        level2Care: 1200,
+        level3Care: 1800
+      },
+      amenities: ["24/7 Staffing", "Restaurant-style Dining", "Wellness Programs", "Beauty Salon", "Housekeeping", "Transportation", "Activities", "Garden", "Library", "Wifi"],
+      careLevels: ["Assisted Living", "Memory Care"],
+      images: ["facility2.jpg"],
+      description: "Sunrise of Scottsdale provides personalized care in an upscale environment. Their Reminiscence neighborhood is specially designed for residents with memory impairments.",
+      partnership: {
+        status: "Standard Partner",
+        since: "2020",
+        placementsFee: "75%"
+      },
+      notes: [
+        { date: "2023-06-10", text: "New director hired, very responsive to placement inquiries." },
+        { date: "2023-04-05", text: "Renovations completed on main common areas." }
+      ]
     },
     {
       id: 3,
-      name: 'Mesa Gardens',
-      address: '789 Cactus Lane, Mesa, AZ 85213',
-      type: 'Independent Living',
-      availableBeds: 5,
-      rating: 4.9,
-      pricing: '$2,800 - $4,200/month',
-      amenities: ['Community Events', 'Golf Course', 'Fitness Center', 'Library', 'Hobby Rooms'],
-      imageSrc: 'https://source.unsplash.com/random/300x200/?senior-living,3',
-      acceptsMedicaid: false,
-      acceptsMedicare: false,
-      minDistance: 10,
-      maxDistance: 15,
-      contactPhone: '(480) 555-9012',
-      contactEmail: 'residents@mesagardens.com',
+      name: "Arizona Sunset Care",
+      type: "Memory Care",
+      location: "Mesa, AZ",
+      address: "1510 S Dobson Rd, Mesa, AZ 85202",
+      phone: "(480) 555-3456",
+      email: "info@azsunsetcare.com",
+      website: "www.azsunsetcare.com",
+      rating: 4.3,
+      reviews: 25,
+      beds: {
+        total: 64,
+        available: 1
+      },
+      pricing: {
+        min: 3800,
+        max: 5200,
+        privateRoom: 5200,
+        sharedRoom: 3800,
+        memoryCareSupplement: 0,
+        level1Care: 400,
+        level2Care: 800,
+        level3Care: 1200
+      },
+      amenities: ["Specialized Memory Programs", "Secure Environment", "Therapy Services", "Home-cooked Meals", "Housekeeping", "Laundry", "Activities", "Transportation", "Garden"],
+      careLevels: ["Memory Care"],
+      images: ["facility3.jpg"],
+      description: "A smaller, more intimate community focused exclusively on memory care. Their high staff-to-resident ratio ensures personalized attention and care.",
+      partnership: {
+        status: "Premium Partner",
+        since: "2019",
+        placementsFee: "85%"
+      },
+      notes: [
+        { date: "2023-06-20", text: "Only one private room available, likely to fill quickly." },
+        { date: "2023-05-12", text: "New memory engagement program launched with positive feedback." }
+      ]
     },
     {
       id: 4,
-      name: 'Arizona Sunset Care',
-      address: '321 Desert Drive, Tempe, AZ 85281',
-      type: 'Nursing Home',
-      availableBeds: 1,
+      name: "Mesa Gardens Retirement",
+      type: "Independent Living",
+      location: "Mesa, AZ",
+      address: "525 E Brown Rd, Mesa, AZ 85203",
+      phone: "(480) 555-4567",
+      email: "info@mesagardens.com",
+      website: "www.mesagardens.com",
       rating: 4.7,
-      pricing: '$5,200 - $7,800/month',
-      amenities: ['24/7 Nursing', 'Physical Therapy', 'Occupational Therapy', 'Special Diets', 'Pain Management'],
-      imageSrc: 'https://source.unsplash.com/random/300x200/?senior-living,4',
-      acceptsMedicaid: true,
-      acceptsMedicare: true,
-      minDistance: 0,
-      maxDistance: 5,
-      contactPhone: '(480) 555-3456',
-      contactEmail: 'care@arizonasunset.com',
-    },
-    {
-      id: 5,
-      name: 'Grand Canyon Village',
-      address: '555 Mountain View Ave, Flagstaff, AZ 86001',
-      type: 'Assisted Living',
-      availableBeds: 4,
-      rating: 4.5,
-      pricing: '$3,800 - $5,500/month',
-      amenities: ['Mountain Views', 'Transportation', 'Wellness Programs', 'Pet Friendly', 'Religious Services'],
-      imageSrc: 'https://source.unsplash.com/random/300x200/?senior-living,5',
-      acceptsMedicaid: true,
-      acceptsMedicare: false,
-      minDistance: 20,
-      maxDistance: 30,
-      contactPhone: '(928) 555-7890',
-      contactEmail: 'info@gcvillage.com',
-    },
-    {
-      id: 6,
-      name: 'Tucson Retirement Oasis',
-      address: '888 Saguaro Street, Tucson, AZ 85701',
-      type: 'Independent Living',
-      availableBeds: 7,
-      rating: 4.4,
-      pricing: '$2,500 - $4,000/month',
-      amenities: ['Swimming Pool', 'Desert Gardens', 'Art Studio', 'Movie Theater', 'Community Kitchen'],
-      imageSrc: 'https://source.unsplash.com/random/300x200/?senior-living,6',
-      acceptsMedicaid: false,
-      acceptsMedicare: false,
-      minDistance: 30,
-      maxDistance: 40,
-      contactPhone: '(520) 555-2345',
-      contactEmail: 'living@tucsonoasis.com',
-    },
+      reviews: 56,
+      beds: {
+        total: 150,
+        available: 8
+      },
+      pricing: {
+        min: 2800,
+        max: 4000,
+        privateRoom: 3500,
+        sharedRoom: 2800,
+        memoryCareSupplement: 0,
+        level1Care: 0,
+        level2Care: 0,
+        level3Care: 0
+      },
+      amenities: ["Swimming Pool", "Fitness Center", "Restaurant-style Dining", "Social Activities", "Transportation", "Housekeeping", "Library", "Garden", "Wifi", "Parking"],
+      careLevels: ["Independent Living"],
+      images: ["facility4.jpg"],
+      description: "Mesa Gardens offers active seniors a vibrant community with numerous amenities. Residents enjoy independent living with optional services as needed.",
+      partnership: {
+        status: "Standard Partner",
+        since: "2021",
+        placementsFee: "70%"
+      },
+      notes: [
+        { date: "2023-07-01", text: "New one-bedroom apartments now available after renovation." },
+        { date: "2023-05-15", text: "Added new transportation service for medical appointments." }
+      ]
+    }
   ];
   
-  const facilityTypes = [
-    { id: 'assisted', label: 'Assisted Living' },
-    { id: 'memory', label: 'Memory Care' },
-    { id: 'nursing', label: 'Nursing Home' },
-    { id: 'independent', label: 'Independent Living' },
-  ];
+  // Get amenity icon
+  const getAmenityIcon = (amenity: string) => {
+    const amenityIcons: Record<string, React.ReactNode> = {
+      "24/7 Staffing": <Clock className="h-4 w-4" />,
+      "Medication Management": <Check className="h-4 w-4" />,
+      "Restaurant-style Dining": <Utensils className="h-4 w-4" />,
+      "Dining": <Utensils className="h-4 w-4" />,
+      "Home-cooked Meals": <Utensils className="h-4 w-4" />,
+      "Physical Therapy": <Dumbbell className="h-4 w-4" />,
+      "Wellness Programs": <Leaf className="h-4 w-4" />,
+      "Garden": <Leaf className="h-4 w-4" />,
+      "Swimming Pool": <Leaf className="h-4 w-4" />,
+      "Fitness Center": <Dumbbell className="h-4 w-4" />,
+      "Transportation": <Parking className="h-4 w-4" />,
+      "Wifi": <Wifi className="h-4 w-4" />,
+      "Parking": <Parking className="h-4 w-4" />
+    };
+    
+    return amenityIcons[amenity] || <Check className="h-4 w-4" />;
+  };
   
+  // Filter facilities based on search and filters
+  const filteredFacilities = facilities.filter(facility => {
+    // Search query filter
+    if (searchQuery && !facility.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+        !facility.location.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    
+    // Facility type filter
+    if (facilityTypeFilter !== 'all' && !facility.careLevels.includes(facilityTypeFilter)) {
+      return false;
+    }
+    
+    // Price range filter
+    if (facility.pricing.min > priceRange[1] || facility.pricing.max < priceRange[0]) {
+      return false;
+    }
+    
+    // Amenities filter
+    if (amenities.length > 0 && !amenities.every(a => facility.amenities.includes(a))) {
+      return false;
+    }
+    
+    // Availability filter
+    if (availability === 'available' && facility.beds.available === 0) {
+      return false;
+    }
+    
+    return true;
+  });
+
   return (
     <PortalLayout>
-      <div className="grid gap-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Arizona Facilities</h1>
-          <div className="flex items-center gap-3">
-            <Button size="sm" variant="outline" onClick={() => setFilterOpen(!filterOpen)}>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h1 className="text-2xl font-bold">Facilities Database</h1>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => setFilterDialogOpen(true)}>
               <Filter className="h-4 w-4 mr-2" />
               Filters
             </Button>
-            <div className="border rounded-md flex overflow-hidden">
-              <Button 
-                size="sm" 
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                className="rounded-none"
-                onClick={() => setViewMode('grid')}
-              >
-                Grid
-              </Button>
-              <Button 
-                size="sm" 
-                variant={viewMode === 'list' ? 'default' : 'ghost'}
-                className="rounded-none"
-                onClick={() => setViewMode('list')}
-              >
-                List
-              </Button>
-              <Button 
-                size="sm" 
-                variant={viewMode === 'map' ? 'default' : 'ghost'}
-                className="rounded-none"
-                onClick={() => setViewMode('map')}
-              >
-                Map
-              </Button>
-            </div>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Facility
+            </Button>
           </div>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {filterOpen && (
-            <Card className="md:col-span-1 h-fit">
-              <CardHeader>
-                <CardTitle>Filters</CardTitle>
-                <CardDescription>Refine your facility search</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Facility Type</label>
-                  <div className="space-y-2">
-                    {facilityTypes.map((type) => (
-                      <div key={type.id} className="flex items-center space-x-2">
-                        <Checkbox id={type.id} />
-                        <label htmlFor={type.id} className="text-sm">{type.label}</label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Price Range</label>
-                  <div className="py-4">
-                    <Slider defaultValue={[2500, 6000]} min={1500} max={8000} step={100} />
-                    <div className="flex justify-between mt-2">
-                      <span className="text-xs text-muted-foreground">$1,500</span>
-                      <span className="text-xs text-muted-foreground">$8,000+</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Distance (miles)</label>
-                  <div className="py-4">
-                    <Slider defaultValue={[20]} min={0} max={50} step={5} />
-                    <div className="flex justify-between mt-2">
-                      <span className="text-xs text-muted-foreground">0 mi</span>
-                      <span className="text-xs text-muted-foreground">50 mi</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Payment Accepted</label>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="medicaid" />
-                      <label htmlFor="medicaid" className="text-sm">Medicaid</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="medicare" />
-                      <label htmlFor="medicare" className="text-sm">Medicare</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="private" />
-                      <label htmlFor="private" className="text-sm">Private Pay</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="longterm" />
-                      <label htmlFor="longterm" className="text-sm">Long-term Care Insurance</label>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Amenities</label>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="pool" />
-                      <label htmlFor="pool" className="text-sm">Swimming Pool</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="fitness" />
-                      <label htmlFor="fitness" className="text-sm">Fitness Center</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="transport" />
-                      <label htmlFor="transport" className="text-sm">Transportation</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="pets" />
-                      <label htmlFor="pets" className="text-sm">Pet Friendly</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="memory" />
-                      <label htmlFor="memory" className="text-sm">Memory Care</label>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline" className="w-full">Reset Filters</Button>
-              </CardFooter>
-            </Card>
-          )}
+        
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Search facilities by name or location" 
+            className="pl-9"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        
+        <Tabs defaultValue="grid">
+          <div className="flex justify-between items-center">
+            <TabsList>
+              <TabsTrigger value="grid">Grid View</TabsTrigger>
+              <TabsTrigger value="table">Table View</TabsTrigger>
+              <TabsTrigger value="map">Map View</TabsTrigger>
+            </TabsList>
+            <span className="text-sm text-muted-foreground">
+              Showing {filteredFacilities.length} of {facilities.length} facilities
+            </span>
+          </div>
           
-          <div className={`${filterOpen ? 'md:col-span-3' : 'md:col-span-4'}`}>
-            <Card className="mb-6">
-              <CardContent className="p-4">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <Input 
-                      placeholder="Search facilities by name, location, or amenities..." 
-                      className="w-full" 
-                      prefix={<Search className="h-4 w-4 text-muted-foreground" />}
-                    />
+          <TabsContent value="grid" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredFacilities.map((facility) => (
+                <Card key={facility.id} className="overflow-hidden">
+                  <div className="bg-slate-100 h-40 flex items-center justify-center">
+                    <Building className="h-16 w-16 text-slate-400" />
                   </div>
-                  <div className="flex gap-2">
-                    <Button>
-                      <Search className="h-4 w-4 mr-2" />
-                      Search
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-semibold text-lg">{facility.name}</h3>
+                        <div className="flex items-center text-sm text-muted-foreground mt-1">
+                          <MapPin className="h-3.5 w-3.5 mr-1" />
+                          <span>{facility.location}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded-full">
+                        <Star className="h-3.5 w-3.5 mr-1 fill-primary" />
+                        <span className="text-xs font-medium">{facility.rating}</span>
+                      </div>
+                    </div>
+                    
+                    <Badge className="mt-3">{facility.type}</Badge>
+                    
+                    <div className="mt-4">
+                      <p className="text-sm text-muted-foreground line-clamp-3">{facility.description}</p>
+                    </div>
+                    
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {facility.amenities.slice(0, 5).map((amenity, idx) => (
+                        <div key={idx} className="flex items-center text-xs bg-slate-100 px-2 py-1 rounded-full">
+                          {getAmenityIcon(amenity)}
+                          <span className="ml-1">{amenity}</span>
+                        </div>
+                      ))}
+                      {facility.amenities.length > 5 && (
+                        <div className="text-xs bg-slate-100 px-2 py-1 rounded-full">
+                          +{facility.amenities.length - 5} more
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                      <div>
+                        <p className="text-sm font-medium">${facility.pricing.min.toLocaleString()} - ${facility.pricing.max.toLocaleString()}</p>
+                        <p className="text-xs text-muted-foreground">per month</p>
+                      </div>
+                      <div className="flex items-center">
+                        <Badge variant={facility.beds.available > 0 ? "success" : "destructive"} className="mr-2">
+                          {facility.beds.available > 0 ? `${facility.beds.available} Available` : "Full"}
+                        </Badge>
+                        <Button variant="ghost" size="icon">
+                          <Heart className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="bg-slate-50 px-6 py-3 flex justify-between">
+                    <div className="flex items-center">
+                      <Badge variant="outline">{facility.partnership.status}</Badge>
+                    </div>
+                    <Button size="sm">
+                      View Details
+                      <ChevronRight className="h-3.5 w-3.5 ml-1" />
                     </Button>
-                    <Button variant="outline">
-                      Ask Ava <ChevronDown className="h-4 w-4 ml-2" />
-                    </Button>
-                  </div>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="table" className="mt-6">
+            <Card>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[300px]">Name</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead>Rating</TableHead>
+                      <TableHead>Price Range</TableHead>
+                      <TableHead>Availability</TableHead>
+                      <TableHead>Partner Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredFacilities.map((facility) => (
+                      <TableRow key={facility.id}>
+                        <TableCell className="font-medium">{facility.name}</TableCell>
+                        <TableCell>{facility.type}</TableCell>
+                        <TableCell>{facility.location}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            <Star className="h-3.5 w-3.5 mr-1 fill-amber-400 text-amber-400" />
+                            <span>{facility.rating}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>${facility.pricing.min.toLocaleString()} - ${facility.pricing.max.toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Badge variant={facility.beds.available > 0 ? "success" : "destructive"}>
+                            {facility.beds.available > 0 ? `${facility.beds.available} Available` : "Full"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{facility.partnership.status}</Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="sm">View</Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="map" className="mt-6">
+            <Card>
+              <CardContent className="p-6 flex items-center justify-center">
+                <div className="text-center">
+                  <Map className="h-16 w-16 text-muted-foreground mx-auto" />
+                  <h3 className="text-lg font-medium mt-4">Map View Coming Soon</h3>
+                  <p className="text-muted-foreground mt-2">
+                    We're working on an interactive map view of all facilities.
+                  </p>
                 </div>
               </CardContent>
             </Card>
-
-            <Tabs defaultValue="all">
-              <div className="flex items-center justify-between mb-4">
-                <TabsList>
-                  <TabsTrigger value="all">All Facilities</TabsTrigger>
-                  <TabsTrigger value="recommended">Recommended</TabsTrigger>
-                  <TabsTrigger value="available">Available Now</TabsTrigger>
-                  <TabsTrigger value="favorites">Favorites</TabsTrigger>
-                </TabsList>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Sort by:</span>
-                  <Button variant="ghost" size="sm" className="gap-1">
-                    Rating <ArrowUpDown className="h-3 w-3" />
-                  </Button>
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      {/* Filter Dialog */}
+      <Dialog open={filterDialogOpen} onOpenChange={setFilterDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Filter Facilities</DialogTitle>
+            <DialogDescription>
+              Narrow down facilities based on your criteria.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label>Facility Type</Label>
+              <Select 
+                value={facilityTypeFilter} 
+                onValueChange={setFacilityTypeFilter}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select facility type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="Independent Living">Independent Living</SelectItem>
+                  <SelectItem value="Assisted Living">Assisted Living</SelectItem>
+                  <SelectItem value="Memory Care">Memory Care</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Price Range (monthly)</Label>
+              <div className="px-2">
+                <Slider 
+                  value={priceRange}
+                  min={2000}
+                  max={10000}
+                  step={100}
+                  onValueChange={setPriceRange}
+                />
+                <div className="flex justify-between mt-2 text-sm">
+                  <span>${priceRange[0].toLocaleString()}</span>
+                  <span>${priceRange[1].toLocaleString()}</span>
                 </div>
               </div>
-              
-              <TabsContent value="all" className="m-0">
-                {viewMode === 'grid' ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {arizonaFacilities.map((facility) => (
-                      <Card key={facility.id} className="overflow-hidden">
-                        <div className="relative h-40">
-                          <img 
-                            src={facility.imageSrc} 
-                            alt={facility.name}
-                            className="absolute inset-0 h-full w-full object-cover"
-                          />
-                          <div className="absolute top-2 right-2">
-                            <Badge className="bg-white text-primary hover:bg-white">
-                              {facility.availableBeds} beds available
-                            </Badge>
-                          </div>
-                        </div>
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <h3 className="font-medium">{facility.name}</h3>
-                              <div className="flex items-center text-sm text-muted-foreground mt-1">
-                                <MapPin className="h-3 w-3 mr-1" />
-                                {facility.address}
-                              </div>
-                            </div>
-                            <div className="flex items-center bg-amber-50 px-2 py-1 rounded-md">
-                              <Star className="h-3 w-3 text-amber-500 mr-1" />
-                              <span className="text-sm font-medium text-amber-700">{facility.rating}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-3">
-                            <Badge variant="outline">{facility.type}</Badge>
-                            <div className="flex items-center mt-2">
-                              <DollarSign className="h-4 w-4 text-green-600 mr-1" />
-                              <span className="text-sm">{facility.pricing}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-3 flex flex-wrap gap-1">
-                            {facility.amenities.slice(0, 3).map((amenity, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {amenity}
-                              </Badge>
-                            ))}
-                            {facility.amenities.length > 3 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{facility.amenities.length - 3} more
-                              </Badge>
-                            )}
-                          </div>
-                        </CardContent>
-                        <CardFooter className="flex justify-between p-4 pt-0">
-                          <div className="flex gap-1">
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button size="sm" variant="outline">View Details</Button>
-                              </DialogTrigger>
-                              <DialogContent className="max-w-3xl">
-                                <DialogHeader>
-                                  <DialogTitle>{facility.name}</DialogTitle>
-                                  <DialogDescription>{facility.address}</DialogDescription>
-                                </DialogHeader>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                  <div>
-                                    <img 
-                                      src={facility.imageSrc} 
-                                      alt={facility.name}
-                                      className="w-full h-64 object-cover rounded-md"
-                                    />
-                                    <div className="mt-4 space-y-3">
-                                      <div className="flex items-center">
-                                        <Building className="h-5 w-5 text-muted-foreground mr-2" />
-                                        <span>{facility.type}</span>
-                                      </div>
-                                      <div className="flex items-center">
-                                        <Star className="h-5 w-5 text-amber-500 mr-2" />
-                                        <span>{facility.rating} out of 5</span>
-                                      </div>
-                                      <div className="flex items-center">
-                                        <DollarSign className="h-5 w-5 text-green-600 mr-2" />
-                                        <span>{facility.pricing}</span>
-                                      </div>
-                                      <div className="flex items-center">
-                                        <Bed className="h-5 w-5 text-blue-600 mr-2" />
-                                        <span>{facility.availableBeds} beds available</span>
-                                      </div>
-                                      <div className="flex items-center">
-                                        <MapPin className="h-5 w-5 text-red-600 mr-2" />
-                                        <span>{facility.minDistance}-{facility.maxDistance} miles from Phoenix</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="space-y-4">
-                                    <div>
-                                      <h3 className="font-medium mb-2">Amenities</h3>
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {facility.amenities.map((amenity, index) => (
-                                          <div key={index} className="flex items-center">
-                                            <Check className="h-4 w-4 text-green-600 mr-2" />
-                                            <span className="text-sm">{amenity}</span>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                    <div>
-                                      <h3 className="font-medium mb-2">Payment Options</h3>
-                                      <div className="grid grid-cols-2 gap-2">
-                                        <div className="flex items-center">
-                                          {facility.acceptsMedicaid ? (
-                                            <Check className="h-4 w-4 text-green-600 mr-2" />
-                                          ) : (
-                                            <X className="h-4 w-4 text-red-600 mr-2" />
-                                          )}
-                                          <span className="text-sm">Medicaid</span>
-                                        </div>
-                                        <div className="flex items-center">
-                                          {facility.acceptsMedicare ? (
-                                            <Check className="h-4 w-4 text-green-600 mr-2" />
-                                          ) : (
-                                            <X className="h-4 w-4 text-red-600 mr-2" />
-                                          )}
-                                          <span className="text-sm">Medicare</span>
-                                        </div>
-                                        <div className="flex items-center">
-                                          <Check className="h-4 w-4 text-green-600 mr-2" />
-                                          <span className="text-sm">Private Pay</span>
-                                        </div>
-                                        <div className="flex items-center">
-                                          <Check className="h-4 w-4 text-green-600 mr-2" />
-                                          <span className="text-sm">Insurance</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div>
-                                      <h3 className="font-medium mb-2">Contact Information</h3>
-                                      <div className="space-y-2">
-                                        <div className="flex items-center">
-                                          <Phone className="h-4 w-4 text-blue-600 mr-2" />
-                                          <span className="text-sm">{facility.contactPhone}</span>
-                                        </div>
-                                        <div className="flex items-center">
-                                          <Mail className="h-4 w-4 text-blue-600 mr-2" />
-                                          <span className="text-sm">{facility.contactEmail}</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="flex gap-2 pt-4">
-                                      <Button className="flex-1">Contact Facility</Button>
-                                      <Button variant="outline" className="flex-1">Schedule Tour</Button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                            <Button size="sm" variant="outline">
-                              <Phone className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          <Button size="sm">Add Client</Button>
-                        </CardFooter>
-                      </Card>
-                    ))}
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Availability</Label>
+              <Select value={availability} onValueChange={setAvailability}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select availability" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">Any Availability</SelectItem>
+                  <SelectItem value="available">Has Available Beds</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Amenities</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {["24/7 Staffing", "Dining", "Transportation", "Fitness Center", "Garden", "Wifi", "Medication Management", "Wellness Programs"].map((amenity) => (
+                  <div key={amenity} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={`amenity-${amenity}`} 
+                      checked={amenities.includes(amenity)}
+                      onCheckedChange={() => toggleAmenity(amenity)}
+                    />
+                    <label
+                      htmlFor={`amenity-${amenity}`}
+                      className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {amenity}
+                    </label>
                   </div>
-                ) : viewMode === 'list' ? (
-                  <div className="space-y-4">
-                    {arizonaFacilities.map((facility) => (
-                      <Card key={facility.id}>
-                        <div className="flex flex-col md:flex-row">
-                          <div className="relative md:w-48 h-40 md:h-auto">
-                            <img 
-                              src={facility.imageSrc} 
-                              alt={facility.name}
-                              className="absolute inset-0 h-full w-full object-cover"
-                            />
-                          </div>
-                          <div className="flex-1 p-4">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <h3 className="font-medium">{facility.name}</h3>
-                                <div className="flex items-center text-sm text-muted-foreground mt-1">
-                                  <MapPin className="h-3 w-3 mr-1" />
-                                  {facility.address}
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div className="flex items-center bg-amber-50 px-2 py-1 rounded-md">
-                                  <Star className="h-3 w-3 text-amber-500 mr-1" />
-                                  <span className="text-sm font-medium text-amber-700">{facility.rating}</span>
-                                </div>
-                                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                                  {facility.availableBeds} beds
-                                </Badge>
-                              </div>
-                            </div>
-                            
-                            <div className="mt-3 flex items-center gap-4">
-                              <Badge variant="outline">{facility.type}</Badge>
-                              <div className="flex items-center">
-                                <DollarSign className="h-4 w-4 text-green-600 mr-1" />
-                                <span className="text-sm">{facility.pricing}</span>
-                              </div>
-                            </div>
-                            
-                            <div className="mt-3 flex flex-wrap gap-1">
-                              {facility.amenities.map((amenity, index) => (
-                                <Badge key={index} variant="secondary" className="text-xs">
-                                  {amenity}
-                                </Badge>
-                              ))}
-                            </div>
-                            
-                            <div className="mt-4 flex justify-between items-center">
-                              <div className="flex gap-1">
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                    <Button size="sm" variant="outline">View Details</Button>
-                                  </DialogTrigger>
-                                  <DialogContent className="max-w-3xl">
-                                    {/* Same dialog content as in the grid view */}
-                                  </DialogContent>
-                                </Dialog>
-                                <Button size="sm" variant="outline">
-                                  <Phone className="h-4 w-4" />
-                                </Button>
-                              </div>
-                              <Button size="sm">Add Client</Button>
-                            </div>
-                          </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <Card className="overflow-hidden">
-                    <div className="relative h-[600px]">
-                      <img 
-                        src="/lovable-uploads/79c83ee5-aaa8-4443-9d81-23afc44f40cd.png" 
-                        alt="Arizona Facilities Map" 
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent"></div>
-                      
-                      {/* Facility Map Pins (positioned absolutely) */}
-                      <div className="absolute top-1/4 left-1/3 bg-primary text-white rounded-full p-1 cursor-pointer">
-                        <MapPin className="h-5 w-5" />
-                      </div>
-                      <div className="absolute top-1/3 left-1/2 bg-primary text-white rounded-full p-1 cursor-pointer">
-                        <MapPin className="h-5 w-5" />
-                      </div>
-                      <div className="absolute top-1/2 left-1/4 bg-primary text-white rounded-full p-1 cursor-pointer">
-                        <MapPin className="h-5 w-5" />
-                      </div>
-                      <div className="absolute bottom-1/3 right-1/3 bg-primary text-white rounded-full p-1 cursor-pointer">
-                        <MapPin className="h-5 w-5" />
-                      </div>
-                      
-                      {/* Map Controls */}
-                      <div className="absolute top-4 right-4 bg-white rounded-md shadow-md p-2">
-                        <div className="flex flex-col gap-2">
-                          <Button size="icon" variant="ghost">+</Button>
-                          <Button size="icon" variant="ghost">−</Button>
-                        </div>
-                      </div>
-                      
-                      {/* Facility Card Preview */}
-                      <div className="absolute bottom-4 left-4 max-w-md">
-                        <Card>
-                          <div className="flex gap-4 p-4">
-                            <div className="w-20 h-20 rounded-md overflow-hidden">
-                              <img 
-                                src={arizonaFacilities[0].imageSrc} 
-                                alt={arizonaFacilities[0].name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-medium text-sm">{arizonaFacilities[0].name}</h3>
-                              <div className="flex items-center text-xs text-muted-foreground mt-1">
-                                <MapPin className="h-3 w-3 mr-1" />
-                                {arizonaFacilities[0].address}
-                              </div>
-                              <div className="flex items-center mt-1">
-                                <Star className="h-3 w-3 text-amber-500 mr-1" />
-                                <span className="text-xs">{arizonaFacilities[0].rating}</span>
-                              </div>
-                              <div className="mt-2">
-                                <Button size="sm">View Details</Button>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      </div>
-                    </div>
-                  </Card>
-                )}
-              </TabsContent>
-              
-              <TabsContent value="recommended" className="m-0">
-                <div className="p-4 text-center">
-                  <p>Ava's recommendations for your current clients will appear here.</p>
-                  <Button variant="outline" className="mt-4">Select a client</Button>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="available" className="m-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {arizonaFacilities
-                    .filter(f => f.availableBeds > 2)
-                    .map((facility) => (
-                      <Card key={facility.id} className="overflow-hidden">
-                        {/* Same card content as in grid view */}
-                      </Card>
-                    ))}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="favorites" className="m-0">
-                <div className="p-4 text-center">
-                  <p>Your favorite facilities will appear here.</p>
-                  <Button variant="outline" className="mt-4">Browse facilities</Button>
-                </div>
-              </TabsContent>
-            </Tabs>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setFacilityTypeFilter('all');
+              setPriceRange([2000, 8000]);
+              setAmenities([]);
+              setAvailability('any');
+            }}>
+              Reset
+            </Button>
+            <Button type="submit" onClick={() => setFilterDialogOpen(false)}>
+              Apply Filters
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PortalLayout>
   );
 };

@@ -1,67 +1,99 @@
-
 import React from 'react';
 import PortalLayout from '@/components/portal/PortalLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart, LineChart, PieChart } from "@/components/ui/chart";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Clock, Users, Building, DollarSign, ChevronRight, Calendar, MessageSquare, Bell } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
+import { ResponsiveContainer, BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { BarChart2, ArrowUpRight, Users, Building, Calendar, Clock, Activity, ArrowUp, ArrowDown } from 'lucide-react';
+
+// Sample data for charts
+const clientData = [
+  { month: "Jan", new: 5, active: 35 },
+  { month: "Feb", new: 7, active: 42 },
+  { month: "Mar", new: 10, active: 52 },
+  { month: "Apr", new: 8, active: 60 },
+  { month: "May", new: 12, active: 72 },
+  { month: "Jun", new: 15, active: 87 },
+];
+
+// Dummy data for visualization
+const placementData = {
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+  datasets: [
+    {
+      label: 'Placements',
+      data: [4, 6, 8, 5, 10, 12],
+      backgroundColor: '#2563eb',
+    },
+  ],
+};
+
+const revenueData = {
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+  datasets: [
+    {
+      label: 'Revenue',
+      data: [12000, 19000, 15000, 18000, 22000, 25000],
+      borderColor: '#16a34a',
+      backgroundColor: 'rgba(22, 163, 74, 0.1)',
+      tension: 0.4,
+    },
+  ],
+};
+
+const facilityTypeData = [
+  { name: 'Assisted Living', value: 42 },
+  { name: 'Memory Care', value: 28 },
+  { name: 'Nursing Home', value: 15 },
+  { name: 'Independent Living', value: 35 },
+];
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
+
+const recentActivityData = [
+  {
+    id: 1,
+    description: "New client Mary Johnson placed at Desert Bloom",
+    time: "5 mins ago",
+    type: "placement",
+  },
+  {
+    id: 2,
+    description: "Robert Smith scheduled for facility tour",
+    time: "30 mins ago",
+    type: "appointment",
+  },
+  {
+    id: 3,
+    description: "Payment received from Mesa Gardens",
+    time: "1 hour ago",
+    type: "payment",
+  },
+];
+
+const upcomingAppointmentsData = [
+  {
+    id: 1,
+    name: "Mary Johnson",
+    time: "Today, 2:30 PM",
+    location: "Phoenix, AZ",
+    type: "Initial Consultation",
+  },
+  {
+    id: 2,
+    name: "Robert Smith",
+    time: "Tomorrow, 11:00 AM",
+    location: "Scottsdale, AZ",
+    type: "Facility Tour",
+  },
+];
 
 const Dashboard = () => {
-  // Dummy data for visualization
-  const placementData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Placements',
-        data: [4, 6, 8, 5, 10, 12],
-        backgroundColor: '#2563eb',
-      },
-    ],
-  };
-
-  const revenueData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Revenue',
-        data: [12000, 19000, 15000, 18000, 22000, 25000],
-        borderColor: '#16a34a',
-        backgroundColor: 'rgba(22, 163, 74, 0.1)',
-        tension: 0.4,
-      },
-    ],
-  };
-
-  const facilityTypeData = {
-    labels: ['Assisted Living', 'Memory Care', 'Nursing Home', 'Independent Living'],
-    datasets: [
-      {
-        label: 'Facilities by Type',
-        data: [42, 28, 15, 35],
-        backgroundColor: ['#2563eb', '#16a34a', '#9333ea', '#f59e0b'],
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  const upcomingClients = [
-    { id: 1, name: 'Mary Johnson', location: 'Phoenix, AZ', date: 'Today, 2:30 PM', type: 'Initial Consultation', avatar: null },
-    { id: 2, name: 'Robert Smith', location: 'Scottsdale, AZ', date: 'Tomorrow, 11:00 AM', type: 'Facility Tour', avatar: null },
-    { id: 3, name: 'Susan Brown', location: 'Mesa, AZ', date: 'Jul 20, 3:15 PM', type: 'Paperwork Review', avatar: null },
-  ];
-
-  const activeFacilities = [
-    { id: 1, name: 'Desert Bloom Senior Living', location: 'Phoenix, AZ', type: 'Assisted Living', availableBeds: 3 },
-    { id: 2, name: 'Sunrise of Scottsdale', location: 'Scottsdale, AZ', type: 'Memory Care', availableBeds: 2 },
-    { id: 3, name: 'Mesa Gardens', location: 'Mesa, AZ', type: 'Independent Living', availableBeds: 5 },
-    { id: 4, name: 'Arizona Sunset Care', location: 'Tempe, AZ', type: 'Nursing Home', availableBeds: 1 },
-  ];
-
   return (
     <PortalLayout>
-      <div className="grid gap-6">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <div className="flex items-center gap-3">
@@ -74,7 +106,7 @@ const Dashboard = () => {
             </Button>
           </div>
         </div>
-
+        
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
             <CardContent className="p-6">
@@ -136,189 +168,189 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="col-span-2">
-            <CardHeader>
-              <CardTitle>Performance Overview</CardTitle>
-              <CardDescription>View your placement and revenue performance</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="placements">
-                <TabsList className="mb-4">
-                  <TabsTrigger value="placements">Placements</TabsTrigger>
-                  <TabsTrigger value="revenue">Revenue</TabsTrigger>
-                </TabsList>
-                <TabsContent value="placements">
-                  <div className="h-80">
-                    <BarChart data={placementData} />
-                  </div>
-                </TabsContent>
-                <TabsContent value="revenue">
-                  <div className="h-80">
-                    <LineChart data={revenueData} />
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+        
+        <Tabs defaultValue="overview">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="clients">Clients</TabsTrigger>
+            <TabsTrigger value="placements">Placements</TabsTrigger>
+            <TabsTrigger value="financials">Financials</TabsTrigger>
+          </TabsList>
           
-          <Card>
-            <CardHeader>
-              <CardTitle>Facility Distribution</CardTitle>
-              <CardDescription>Breakdown by facility type</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-72">
-                <PieChart data={facilityTypeData} />
-              </div>
-              <div className="mt-4 grid gap-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-blue-600 mr-2"></div>
-                    <span className="text-sm">Assisted Living</span>
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card className="col-span-1">
+                <CardHeader>
+                  <CardTitle>Client Growth</CardTitle>
+                  <CardDescription>New and active clients over time</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={clientData}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="new" fill="#8884d8" name="New Clients" />
+                        <Bar dataKey="active" fill="#82ca9d" name="Active Clients" />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
-                  <span className="font-medium">42</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-green-600 mr-2"></div>
-                    <span className="text-sm">Memory Care</span>
+                </CardContent>
+              </Card>
+              
+              <Card className="col-span-1">
+                <CardHeader>
+                  <CardTitle>Placements by Month</CardTitle>
+                  <CardDescription>Number of placements made each month</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={clientData}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="new" stroke="#8884d8" name="New Clients" />
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
-                  <span className="font-medium">28</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-purple-600 mr-2"></div>
-                    <span className="text-sm">Nursing Home</span>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="col-span-1">
+                <CardHeader>
+                  <CardTitle>Placement Types</CardTitle>
+                  <CardDescription>Distribution by facility type</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={facilityTypeData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {facilityTypeData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
-                  <span className="font-medium">15</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-amber-500 mr-2"></div>
-                    <span className="text-sm">Independent Living</span>
-                  </div>
-                  <span className="font-medium">35</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
+                </CardContent>
+              </Card>
+              
+              <Card className="col-span-2">
+                <CardHeader>
+                  <CardTitle>Activity Feed</CardTitle>
+                  <CardDescription>Recent activities and updates</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ScrollArea className="h-[300px] pr-4">
+                    <div className="divide-y divide-border">
+                      {recentActivityData.map((activity) => (
+                        <div key={activity.id} className="py-2">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm">{activity.description}</p>
+                            <p className="text-xs text-muted-foreground">{activity.time}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <Card>
+              <CardHeader>
                 <CardTitle>Upcoming Appointments</CardTitle>
                 <CardDescription>Your schedule for the next few days</CardDescription>
-              </div>
-              <Button variant="ghost" size="sm" className="gap-1">
-                View All <ChevronRight className="h-4 w-4" />
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {upcomingClients.map((client) => (
-                  <div key={client.id} className="flex items-start gap-4 p-3 rounded-lg hover:bg-slate-50">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={client.avatar || ''} alt={client.name} />
-                      <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium">{client.name}</p>
-                        <p className="text-xs text-muted-foreground">{client.location}</p>
-                      </div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Clock className="h-3 w-3 text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">{client.date}</p>
-                      </div>
-                      <p className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full inline-block mt-2">{client.type}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Time</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead>Type</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {upcomingAppointmentsData.map((appointment) => (
+                      <TableRow key={appointment.id}>
+                        <TableCell>{appointment.name}</TableCell>
+                        <TableCell>{appointment.time}</TableCell>
+                        <TableCell>{appointment.location}</TableCell>
+                        <TableCell>{appointment.type}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
           
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Arizona Facilities with Availability</CardTitle>
-                <CardDescription>Facilities with open beds in your region</CardDescription>
-              </div>
-              <Button variant="ghost" size="sm" className="gap-1">
-                View All <ChevronRight className="h-4 w-4" />
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {activeFacilities.map((facility) => (
-                  <div key={facility.id} className="flex items-start gap-4 p-3 rounded-lg hover:bg-slate-50">
-                    <div className="bg-slate-100 h-10 w-10 rounded-md flex items-center justify-center">
-                      <Building className="h-5 w-5 text-slate-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium">{facility.name}</p>
-                        <p className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">{facility.availableBeds} beds</p>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">{facility.location}</p>
-                      <p className="text-xs bg-slate-100 text-slate-800 px-2 py-0.5 rounded-full inline-block mt-2">{facility.type}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Ava Interactions</CardTitle>
-            <CardDescription>Latest conversations and actions by Ava</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-slate-50">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src="/lovable-uploads/a76d8094-6656-45e2-bb65-c21bedb59617.png" alt="Ava" />
-                  <AvatarFallback>A</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-medium">Email drafted for Robert Smith</p>
-                  <p className="text-sm text-muted-foreground">Follow-up after Sunrise of Scottsdale tour</p>
-                  <p className="text-xs text-muted-foreground mt-1">Today, 11:23 AM</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-slate-50">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src="/lovable-uploads/a76d8094-6656-45e2-bb65-c21bedb59617.png" alt="Ava" />
-                  <AvatarFallback>A</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-medium">Client application completed</p>
-                  <p className="text-sm text-muted-foreground">Mary Johnson's application to Desert Bloom Senior Living</p>
-                  <p className="text-xs text-muted-foreground mt-1">Yesterday, 4:15 PM</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-slate-50">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src="/lovable-uploads/a76d8094-6656-45e2-bb65-c21bedb59617.png" alt="Ava" />
-                  <AvatarFallback>A</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-medium">Appointment scheduled</p>
-                  <p className="text-sm text-muted-foreground">Virtual tour of Mesa Gardens with Susan Brown</p>
-                  <p className="text-xs text-muted-foreground mt-1">Jul 18, 10:30 AM</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          <TabsContent value="clients">
+            <Card>
+              <CardHeader>
+                <CardTitle>Client List</CardTitle>
+                <CardDescription>Manage and view all clients</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {/* Add client list component here */}
+                <p>Client list content goes here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="placements">
+            <Card>
+              <CardHeader>
+                <CardTitle>Placement Details</CardTitle>
+                <CardDescription>View placement statistics</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {/* Add placement details component here */}
+                <p>Placement details content goes here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="financials">
+            <Card>
+              <CardHeader>
+                <CardTitle>Financial Overview</CardTitle>
+                <CardDescription>Track revenue and expenses</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {/* Add financial overview component here */}
+                <p>Financial overview content goes here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </PortalLayout>
   );
