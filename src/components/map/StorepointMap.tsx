@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { MessageSquare } from 'lucide-react';
-import AvaQuestionnaire, { QuestionnaireData } from './AvaQuestionnaire';
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -14,28 +13,23 @@ declare global {
 }
 
 const StorepointMap = () => {
-  const [showQuestionnaire, setShowQuestionnaire] = useState(true);
-  const [mapInteractive, setMapInteractive] = useState(false);
-  const [userPreferences, setUserPreferences] = useState<QuestionnaireData | null>(null);
+  const [mapInteractive, setMapInteractive] = useState(true);
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
-  // Handle form completion
-  const handleQuestionnaireComplete = (data: QuestionnaireData) => {
-    setUserPreferences(data);
-    setShowQuestionnaire(false);
-    setMapInteractive(true);
-    
-    toast({
-      title: "Preferences saved",
-      description: "I'll highlight facilities that match your needs.",
-    });
-    
-    // We'll apply the highlighting in the next useEffect
-    console.log("User preferences:", data);
-  };
-
   useEffect(() => {
+    // Try to get assessment data from localStorage
+    const assessmentDataString = localStorage.getItem('assessmentData');
+    let assessmentData = null;
+    
+    if (assessmentDataString) {
+      try {
+        assessmentData = JSON.parse(assessmentDataString);
+      } catch (error) {
+        console.error("Error parsing assessment data:", error);
+      }
+    }
+
     // Add StorePoint script
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -49,7 +43,7 @@ const StorepointMap = () => {
         clearInterval(checkSP);
         
         // Configure map display
-        window.SP.options.maxLocations = 10; // Show 25 locations at a time
+        window.SP.options.maxLocations = 10; // Show locations at a time
         window.SP.options.defaultView = 'map'; // Start with map view
         
         // Mobile-specific adjustments
@@ -58,7 +52,6 @@ const StorepointMap = () => {
           window.SP.options.infoWindowWidth = 280; // Smaller info windows
         }
         
-        // Disable map interactions until questionnaire is completed
         if (!mapInteractive) {
           const mapContainer = document.querySelector('#storepoint-container');
           if (mapContainer) {
@@ -70,9 +63,9 @@ const StorepointMap = () => {
             mapContainer.classList.remove('pointer-events-none', 'opacity-70');
           }
           
-          // Apply highlighting based on user preferences if available
-          if (userPreferences) {
-            highlightMatchingFacilities(userPreferences);
+          // Apply highlighting based on user preferences from assessment if available
+          if (assessmentData && assessmentData.careType) {
+            highlightMatchingFacilities(assessmentData.careType);
           }
         }
         
@@ -80,6 +73,11 @@ const StorepointMap = () => {
         window.SP.on('markerClick', function(location: any) {
           console.log('Location selected:', location.name);
           window.selectedLocation = location;
+          
+          toast({
+            title: location.name,
+            description: `${location.address}, ${location.city}, ${location.state}`,
+          });
         });
       }
     }, 100);
@@ -93,10 +91,10 @@ const StorepointMap = () => {
         storepointScript.remove();
       }
     };
-  }, [mapInteractive, userPreferences, isMobile]);
+  }, [mapInteractive, isMobile, toast]);
 
   // Function to highlight matching facilities
-  const highlightMatchingFacilities = (preferences: QuestionnaireData) => {
+  const highlightMatchingFacilities = (careType: string) => {
     if (!window.SP || !window.SP.locations) return;
     
     setTimeout(() => {
@@ -116,16 +114,16 @@ const StorepointMap = () => {
         let isMatch = false;
         
         // Match by care type
-        if (preferences.careType === 'memory' && 
+        if (careType === 'memory' && 
             (facilityName.includes('memory') || facilityDescription.includes('memory care'))) {
           isMatch = true;
-        } else if (preferences.careType === 'assisted' && 
+        } else if (careType === 'assisted' && 
                   (facilityName.includes('assisted') || facilityDescription.includes('assisted living'))) {
           isMatch = true;
-        } else if (preferences.careType === 'independent' && 
+        } else if (careType === 'independent' && 
                   (facilityName.includes('independent') || facilityDescription.includes('independent living'))) {
           isMatch = true;
-        } else if (preferences.careType === 'nursing' && 
+        } else if (careType === 'nursing' && 
                   (facilityName.includes('nursing') || facilityDescription.includes('nursing home'))) {
           isMatch = true;
         }
@@ -139,46 +137,12 @@ const StorepointMap = () => {
           marker.style.opacity = '0.6';
         }
       });
-      
-      toast({
-        title: "Map updated",
-        description: "Matching facilities have been highlighted on the map.",
-      });
     }, 2000);
   };
 
   return (
-    <div className="relative">
-      <div id="storepoint-container" data-map-id="1645a775a8a422" className="storepoint-map min-h-[60vh] md:min-h-[70vh]"></div>
-      
-      {userPreferences && (
-        <div className={`absolute ${isMobile ? 'bottom-4 left-4 right-4' : 'top-4 left-4'} z-10 bg-white/90 p-3 rounded-lg shadow-lg text-sm`}>
-          <div className="font-medium mb-1">Your Preferences:</div>
-          <div className="flex gap-2 flex-wrap">
-            <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs">
-              {userPreferences.careType === 'assisted' ? 'Assisted Living' : 
-               userPreferences.careType === 'memory' ? 'Memory Care' :
-               userPreferences.careType === 'independent' ? 'Independent Living' : 'Nursing Home'}
-            </span>
-            <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs">
-              {userPreferences.budget === 'low' ? '$2k-$4k' :
-               userPreferences.budget === 'medium' ? '$4k-$6k' : '$6k+'}
-            </span>
-            <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs">
-              {userPreferences.location === 'urban' ? 'Urban' :
-               userPreferences.location === 'suburban' ? 'Suburban' : 'Rural'}
-            </span>
-          </div>
-          <Button 
-            variant="link" 
-            size="sm" 
-            className="p-0 mt-1 h-auto text-xs"
-            onClick={() => setShowQuestionnaire(true)}
-          >
-            Change preferences
-          </Button>
-        </div>
-      )}
+    <div className="relative w-full h-full">
+      <div id="storepoint-container" data-map-id="1645a775a8a422" className="storepoint-map h-full min-h-[600px]"></div>
       
       <div className={`absolute ${isMobile ? 'bottom-20 right-4' : 'bottom-4 right-4'} z-10`}>
         <Button className="shadow-lg">
@@ -186,12 +150,6 @@ const StorepointMap = () => {
           Ask Ava about facilities
         </Button>
       </div>
-      
-      {/* Questionnaire Dialog */}
-      <AvaQuestionnaire 
-        open={showQuestionnaire} 
-        onComplete={handleQuestionnaireComplete} 
-      />
     </div>
   );
 };

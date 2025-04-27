@@ -1,111 +1,239 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import StorepointMap from '@/components/map/StorepointMap';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Building, Search } from 'lucide-react';
-import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { MessageSquare, Filter, MapPin, Save, RefreshCw, X } from 'lucide-react';
 
 const FacilityMapPage = () => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [assessmentData, setAssessmentData] = useState<any>(null);
+  
+  // Fetch assessment data from localStorage on component mount
+  useEffect(() => {
+    const storedData = localStorage.getItem('assessmentData');
+    
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        setAssessmentData(parsedData);
+      } catch (error) {
+        console.error("Error parsing assessment data:", error);
+      }
+    } else {
+      // If no assessment data, redirect to assessment page
+      toast({
+        title: "No Assessment Data",
+        description: "Please complete an assessment first.",
+        variant: "destructive",
+      });
+      navigate('/assessment');
+    }
+  }, [navigate, toast]);
+  
+  // Function to start a new search
+  const handleNewSearch = () => {
+    // Navigate to assessment page
+    navigate('/assessment');
+  };
+  
+  // Function to save search results
+  const handleSaveResults = () => {
+    toast({
+      title: "Results Saved",
+      description: "Your search results have been saved.",
+    });
+  };
   
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       
       <main className="container mx-auto px-4 py-6 md:py-12">
-        <div className="max-w-3xl mx-auto text-center mb-6 md:mb-10">
-          <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4 text-hpa-dark">
-            Find Senior Care Facilities
-          </h1>
-          <p className="text-base md:text-xl text-gray-600">
-            Browse our nationwide database of quality senior care facilities
-          </p>
-        </div>
-        
-        <Card className="mb-6 md:mb-8">
-          <CardContent className="p-4 md:p-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    className="pl-10" 
-                    placeholder="Search by city, state, or zip code..." 
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col md:flex-row gap-2">
-                <Button className="whitespace-nowrap w-full md:w-auto">
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
-                <Button variant="outline" className="whitespace-nowrap w-full md:w-auto">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  Use My Location
-                </Button>
-              </div>
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2 md:mb-0 text-hpa-dark">
+              Matching Facilities
+            </h1>
+            
+            <div className="flex flex-wrap items-center gap-2">
+              <Button 
+                variant="outline" 
+                size={isMobile ? "sm" : "default"}
+                onClick={handleNewSearch}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                New Search
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size={isMobile ? "sm" : "default"}
+                onClick={handleSaveResults}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save Results
+              </Button>
+              
+              <Button 
+                size={isMobile ? "sm" : "default"}
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Chat with Ava
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-        
-        {/* Map Container */}
-        <StorepointMap />
-        
-        <div className="mt-8 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-2 p-4 md:p-6">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <Building className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-base md:text-lg">Find the Perfect Match</CardTitle>
-                <CardDescription>Based on your loved one's needs</CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 md:px-6 md:pb-6">
-              <p className="text-sm md:text-base text-muted-foreground">
-                Our database includes assisted living, memory care, nursing homes, and independent living communities nationwide.
-              </p>
-            </CardContent>
-          </Card>
+          </div>
           
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-2 p-4 md:p-6">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <MapPin className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-base md:text-lg">Tour With Confidence</CardTitle>
-                <CardDescription>Schedule guided tours at top facilities</CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 md:px-6 md:pb-6">
-              <p className="text-sm md:text-base text-muted-foreground">
-                Our healthcare placement specialists can arrange and accompany you on tours to help evaluate each option.
-              </p>
-            </CardContent>
-          </Card>
+          {/* Search Criteria Summary */}
+          {assessmentData && (
+            <Card className="mb-6">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-lg font-medium mb-2">Search Criteria</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-sm font-medium">Care Type:</p>
+                        <p className="text-sm">
+                          {assessmentData.careType === 'independent' ? 'Independent Living' :
+                           assessmentData.careType === 'assisted' ? 'Assisted Living' :
+                           assessmentData.careType === 'memory' ? 'Memory Care' : 'Nursing Home'}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <p className="text-sm font-medium">Location:</p>
+                        <p className="text-sm">
+                          {assessmentData.preferredLocation || 'Not specified'} 
+                          <span className="text-xs text-muted-foreground ml-1">
+                            (within {assessmentData.locationRadius} miles)
+                          </span>
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <p className="text-sm font-medium">Budget:</p>
+                        <p className="text-sm">{assessmentData.monthlyBudget || 'Not specified'}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => {}}>
+                    <Filter className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
           
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-2 p-4 md:p-6">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <Search className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-base md:text-lg">Get Expert Guidance</CardTitle>
-                <CardDescription>Free personalized assistance</CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 md:px-6 md:pb-6">
-              <p className="text-sm md:text-base text-muted-foreground">
-                Not sure where to start? Our Ava AI assistant and human specialists can help narrow down your options based on your specific needs.
-              </p>
-            </CardContent>
-          </Card>
+          {/* Facility Map and List Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+            {/* Facility List (Left Column) */}
+            <div className="lg:col-span-3">
+              <Card className="h-full">
+                <CardContent className="p-0">
+                  <div className="p-4 border-b">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-lg font-medium">Matching Facilities</h2>
+                      <span className="text-sm font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">
+                        28 Results
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="overflow-auto max-h-[600px]">
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((id) => (
+                      <div 
+                        key={id} 
+                        className="p-4 border-b hover:bg-slate-50 cursor-pointer transition-colors"
+                        onClick={() => {
+                          // Here you would trigger showing the marker on the map
+                          console.log(`Facility ${id} selected`);
+                        }}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-medium">Sunrise Senior Living #{id}</h3>
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                            Available
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center text-sm text-muted-foreground mb-2">
+                          <MapPin className="h-3.5 w-3.5 mr-1" />
+                          <span>Phoenix, AZ • 3.2 miles away</span>
+                        </div>
+                        
+                        <div className="text-sm mb-2">
+                          <span className="font-medium">$3,500 - $5,800</span>
+                          <span className="text-muted-foreground text-xs ml-1">per month</span>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full">
+                            Memory Care
+                          </span>
+                          <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full">
+                            Assisted Living
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Interactive Map (Right Column) */}
+            <div className="lg:col-span-4">
+              <Card className="h-full">
+                <CardContent className="p-0 h-full">
+                  <div className="h-[600px]">
+                    <StorepointMap />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          
+          {/* Facility Detail Popup (shows when a marker is clicked) */}
+          <div className="hidden">
+            <Card className="fixed bottom-24 right-8 w-80 z-30 shadow-lg">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-medium">Sunrise Senior Living</h3>
+                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                <div className="text-sm space-y-2">
+                  <p className="flex items-center text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5 mr-1" />
+                    <span>1234 Main St, Phoenix, AZ</span>
+                  </p>
+                  <p><span className="font-medium">Price:</span> $3,500 - $5,800 /month</p>
+                  <p><span className="font-medium">Care Types:</span> Memory Care, Assisted Living</p>
+                  <p><span className="font-medium">Availability:</span> 3 rooms available</p>
+                </div>
+                
+                <div className="mt-3 flex justify-between">
+                  <Button variant="outline" size="sm" className="w-[48%]">
+                    Call
+                  </Button>
+                  <Button size="sm" className="w-[48%]">
+                    Details
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
       
