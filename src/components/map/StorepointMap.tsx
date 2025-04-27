@@ -49,7 +49,7 @@ const StorepointMap = () => {
         clearInterval(checkSP);
         
         // Configure map display
-        window.SP.options.maxLocations = 25; // Show 25 locations at a time
+        window.SP.options.maxLocations = 10; // Show 25 locations at a time
         window.SP.options.defaultView = 'map'; // Start with map view
         
         // Mobile-specific adjustments
