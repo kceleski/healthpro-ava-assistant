@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -8,24 +7,28 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MessageSquare, Filter, MapPin, Save, RefreshCw, X } from 'lucide-react';
+import { MessageSquare, Filter, MapPin, Save, RefreshCw, X, Loader2 } from 'lucide-react';
 
 const FacilityMapPage = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [assessmentData, setAssessmentData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Fetch assessment data from localStorage on component mount
   useEffect(() => {
+    setIsLoading(true);
     const storedData = localStorage.getItem('assessmentData');
     
     if (storedData) {
       try {
         const parsedData = JSON.parse(storedData);
         setAssessmentData(parsedData);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error parsing assessment data:", error);
+        setIsLoading(false);
       }
     } else {
       // If no assessment data, redirect to assessment page
@@ -92,7 +95,14 @@ const FacilityMapPage = () => {
           </div>
           
           {/* Search Criteria Summary */}
-          {assessmentData && (
+          {isLoading ? (
+            <Card className="mb-6">
+              <CardContent className="p-4 md:p-6 flex items-center justify-center h-24">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">Loading search criteria...</span>
+              </CardContent>
+            </Card>
+          ) : assessmentData && (
             <Card className="mb-6">
               <CardContent className="p-4 md:p-6">
                 <div className="flex justify-between items-start">
@@ -148,44 +158,50 @@ const FacilityMapPage = () => {
                     </div>
                   </div>
                   
-                  <div className="overflow-auto max-h-[600px]">
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((id) => (
-                      <div 
-                        key={id} 
-                        className="p-4 border-b hover:bg-slate-50 cursor-pointer transition-colors"
-                        onClick={() => {
-                          // Here you would trigger showing the marker on the map
-                          console.log(`Facility ${id} selected`);
-                        }}
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-medium">Sunrise Senior Living #{id}</h3>
-                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                            Available
-                          </span>
+                  {isLoading ? (
+                    <div className="flex items-center justify-center h-64">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                      <span className="ml-2 text-muted-foreground">Loading facilities...</span>
+                    </div>
+                  ) : (
+                    <div className="overflow-auto max-h-[600px]">
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((id) => (
+                        <div 
+                          key={id} 
+                          className="p-4 border-b hover:bg-slate-50 cursor-pointer transition-colors"
+                          onClick={() => {
+                            console.log(`Facility ${id} selected`);
+                          }}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className="font-medium">Sunrise Senior Living #{id}</h3>
+                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                              Available
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center text-sm text-muted-foreground mb-2">
+                            <MapPin className="h-3.5 w-3.5 mr-1" />
+                            <span>Phoenix, AZ • 3.2 miles away</span>
+                          </div>
+                          
+                          <div className="text-sm mb-2">
+                            <span className="font-medium">$3,500 - $5,800</span>
+                            <span className="text-muted-foreground text-xs ml-1">per month</span>
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full">
+                              Memory Care
+                            </span>
+                            <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full">
+                              Assisted Living
+                            </span>
+                          </div>
                         </div>
-                        
-                        <div className="flex items-center text-sm text-muted-foreground mb-2">
-                          <MapPin className="h-3.5 w-3.5 mr-1" />
-                          <span>Phoenix, AZ • 3.2 miles away</span>
-                        </div>
-                        
-                        <div className="text-sm mb-2">
-                          <span className="font-medium">$3,500 - $5,800</span>
-                          <span className="text-muted-foreground text-xs ml-1">per month</span>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full">
-                            Memory Care
-                          </span>
-                          <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full">
-                            Assisted Living
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MessageSquare } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Skeleton } from "@/components/ui/skeleton";
 
 declare global {
   interface Window {
@@ -14,10 +15,18 @@ declare global {
 
 const StorepointMap = () => {
   const [mapInteractive, setMapInteractive] = useState(true);
+  const [isMapLoading, setIsMapLoading] = useState(true);
+  const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
   useEffect(() => {
+    // Remove any existing StorePoint scripts to prevent duplication
+    const existingScript = document.querySelector('script[src*="storepoint.co"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+
     // Try to get assessment data from localStorage
     const assessmentDataString = localStorage.getItem('assessmentData');
     let assessmentData = null;
@@ -30,17 +39,30 @@ const StorepointMap = () => {
       }
     }
 
-    // Add StorePoint script
+    // Add StorePoint script with async attribute
     const script = document.createElement('script');
     script.type = 'text/javascript';
     script.async = true;
+    script.defer = true; // Add defer to improve loading performance
     script.src = 'https://cdn.storepoint.co/api/v1/js/1645a775a8a422.js';
+    script.onload = () => setMapScriptLoaded(true);
     document.body.appendChild(script);
+
+    // Set a timeout to check if the map loaded within a reasonable time
+    const mapTimeout = setTimeout(() => {
+      if (isMapLoading) {
+        toast({
+          title: "Map is taking longer than expected",
+          description: "Please wait a moment while it continues to load.",
+        });
+      }
+    }, 5000);
 
     // Wait for StorePoint to fully load
     const checkSP = setInterval(function() {
       if (typeof window.SP !== 'undefined') {
         clearInterval(checkSP);
+        setIsMapLoading(false);
         
         // Configure map display
         window.SP.options.maxLocations = 10; // Show locations at a time
@@ -85,13 +107,14 @@ const StorepointMap = () => {
     // Cleanup function
     return () => {
       clearInterval(checkSP);
+      clearTimeout(mapTimeout);
       // Remove the script when component unmounts
       const storepointScript = document.querySelector('script[src="https://cdn.storepoint.co/api/v1/js/1645a775a8a422.js"]');
       if (storepointScript) {
         storepointScript.remove();
       }
     };
-  }, [mapInteractive, isMobile, toast]);
+  }, [mapInteractive, isMobile, toast, isMapLoading]);
 
   // Function to highlight matching facilities
   const highlightMatchingFacilities = (careType: string) => {
@@ -142,6 +165,17 @@ const StorepointMap = () => {
 
   return (
     <div className="relative w-full h-full">
+      {isMapLoading && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 z-10 rounded-lg">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 w-[200px]" />
+            <Skeleton className="h-32 w-[300px] mt-4" />
+          </div>
+          <p className="mt-4 text-muted-foreground">Loading facility map...</p>
+        </div>
+      )}
+      
       <div id="storepoint-container" data-map-id="1645a775a8a422" className="storepoint-map h-full min-h-[600px]"></div>
       
       <div className={`absolute ${isMobile ? 'bottom-20 right-4' : 'bottom-4 right-4'} z-10`}>
