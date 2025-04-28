@@ -16,7 +16,6 @@ const FacilityMapPage = () => {
   const [assessmentData, setAssessmentData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Fetch assessment data from localStorage on component mount
   useEffect(() => {
     setIsLoading(true);
     const storedData = localStorage.getItem('assessmentData');
@@ -31,7 +30,6 @@ const FacilityMapPage = () => {
         setIsLoading(false);
       }
     } else {
-      // If no assessment data, redirect to assessment page
       toast({
         title: "No Assessment Data",
         description: "Please complete an assessment first.",
@@ -41,18 +39,20 @@ const FacilityMapPage = () => {
     }
   }, [navigate, toast]);
   
-  // Function to start a new search
   const handleNewSearch = () => {
-    // Navigate to assessment page
     navigate('/assessment');
   };
   
-  // Function to save search results
   const handleSaveResults = () => {
     toast({
       title: "Results Saved",
-      description: "Your search results have been saved.",
+      description: "Your search results have been saved to your dashboard.",
     });
+    navigate('/portal/dashboard');
+  };
+
+  const handleOpenChat = () => {
+    console.log("Opening Ava chat");
   };
   
   return (
@@ -87,6 +87,7 @@ const FacilityMapPage = () => {
               
               <Button 
                 size={isMobile ? "sm" : "default"}
+                onClick={handleOpenChat}
               >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Chat with Ava
@@ -94,7 +95,6 @@ const FacilityMapPage = () => {
             </div>
           </div>
           
-          {/* Search Criteria Summary */}
           {isLoading ? (
             <Card className="mb-6">
               <CardContent className="p-4 md:p-6 flex items-center justify-center h-24">
@@ -143,9 +143,7 @@ const FacilityMapPage = () => {
             </Card>
           )}
           
-          {/* Facility Map and List Section */}
           <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
-            {/* Facility List (Left Column) */}
             <div className="lg:col-span-3">
               <Card className="h-full">
                 <CardContent className="p-0">
@@ -206,7 +204,6 @@ const FacilityMapPage = () => {
               </Card>
             </div>
             
-            {/* Interactive Map (Right Column) */}
             <div className="lg:col-span-4">
               <Card className="h-full">
                 <CardContent className="p-0 h-full">
@@ -218,7 +215,6 @@ const FacilityMapPage = () => {
             </div>
           </div>
           
-          {/* Facility Detail Popup (shows when a marker is clicked) */}
           <div className="hidden">
             <Card className="fixed bottom-24 right-8 w-80 z-30 shadow-lg">
               <CardContent className="p-4">

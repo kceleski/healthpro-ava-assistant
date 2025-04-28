@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
@@ -40,12 +39,16 @@ const Hero = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-              <Button className="bg-hpa-blue hover:bg-blue-600 text-white px-8 py-6 text-lg font-medium">
-                Get Started <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button variant="outline" className="border-hpa-blue text-hpa-blue hover:bg-blue-50 px-8 py-6 text-lg font-medium">
-                Watch Demo
-              </Button>
+              <Link to="/assessment">
+                <Button className="bg-hpa-blue hover:bg-blue-600 text-white px-8 py-6 text-lg font-medium w-full sm:w-auto">
+                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/portal/dashboard">
+                <Button variant="outline" className="border-hpa-blue text-hpa-blue hover:bg-blue-50 px-8 py-6 text-lg font-medium w-full sm:w-auto">
+                  Portal Access
+                </Button>
+              </Link>
             </div>
           </div>
           
