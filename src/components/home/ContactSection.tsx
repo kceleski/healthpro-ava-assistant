@@ -1,9 +1,54 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from "@/hooks/use-toast";
+import { Link } from 'react-router-dom';
 
 const ContactSection = () => {
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (!formData.name || !formData.email || !formData.message) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Show success message
+    toast({
+      title: "Message Sent",
+      description: "We'll get back to you as soon as possible.",
+    });
+
+    // Clear form
+    setFormData({
+      name: '',
+      email: '',
+      subject: '',
+      message: ''
+    });
+  };
+
   return (
     <section id="contact" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,29 +65,37 @@ const ContactSection = () => {
           <div className="glass-card p-8 rounded-xl shadow-elevation opacity-0 animate-fade-in animation-delay-300">
             <h3 className="text-2xl font-semibold mb-6 text-hpa-dark">Send Us a Message</h3>
             
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Name
+                    Name*
                   </label>
                   <input
                     type="text"
                     id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-hpa-blue/40"
                     placeholder="Your name"
+                    required
                   />
                 </div>
                 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
+                    Email*
                   </label>
                   <input
                     type="email"
                     id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-hpa-blue/40"
                     placeholder="Your email"
+                    required
                   />
                 </div>
               </div>
@@ -54,6 +107,9 @@ const ContactSection = () => {
                 <input
                   type="text"
                   id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-hpa-blue/40"
                   placeholder="Message subject"
                 />
@@ -61,17 +117,21 @@ const ContactSection = () => {
               
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                  Message
+                  Message*
                 </label>
                 <textarea
                   id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
                   rows={5}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-hpa-blue/40"
                   placeholder="Your message"
+                  required
                 ></textarea>
               </div>
               
-              <Button className="bg-hpa-blue hover:bg-blue-600 text-white px-6 py-2 w-full sm:w-auto">
+              <Button type="submit" className="bg-hpa-blue hover:bg-blue-600 text-white px-6 py-2 w-full sm:w-auto">
                 Send Message
               </Button>
             </form>
@@ -83,9 +143,11 @@ const ContactSection = () => {
               <p className="text-gray-600 mb-6">
                 See Ava in action with a personalized demo tailored to your specific needs and workflows.
               </p>
-              <Button className="bg-hpa-blue hover:bg-blue-600 text-white px-6 py-2 w-full">
-                Book a Demo
-              </Button>
+              <Link to="/#contact">
+                <Button className="bg-hpa-blue hover:bg-blue-600 text-white px-6 py-2 w-full">
+                  Book a Demo
+                </Button>
+              </Link>
             </div>
             
             <div className="glass-card p-8 rounded-xl shadow-elevation">
