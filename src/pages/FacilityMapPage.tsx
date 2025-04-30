@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -7,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MessageSquare, Filter, MapPin, Save, RefreshCw, X, Loader2 } from 'lucide-react';
+import { MessageSquare, Filter, MapPin, Save, RefreshCw, Loader2 } from 'lucide-react';
 
 const FacilityMapPage = () => {
   const isMobile = useIsMobile();
@@ -15,6 +16,7 @@ const FacilityMapPage = () => {
   const { toast } = useToast();
   const [assessmentData, setAssessmentData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [totalResults, setTotalResults] = useState(0);
   
   useEffect(() => {
     setIsLoading(true);
@@ -25,6 +27,10 @@ const FacilityMapPage = () => {
         const parsedData = JSON.parse(storedData);
         setAssessmentData(parsedData);
         setIsLoading(false);
+        
+        // We'll get the count from the StorePoint map once it loads
+        // This is just a placeholder until then
+        setTotalResults(0);
       } catch (error) {
         console.error("Error parsing assessment data:", error);
         setIsLoading(false);
@@ -37,6 +43,16 @@ const FacilityMapPage = () => {
       });
       navigate('/assessment');
     }
+    
+    // Add an event listener for when StorePoint loads
+    const checkSP = setInterval(() => {
+      if (window.SP && window.SP.locations) {
+        setTotalResults(window.SP.locations.length);
+        clearInterval(checkSP);
+      }
+    }, 1000);
+    
+    return () => clearInterval(checkSP);
   }, [navigate, toast]);
   
   const handleNewSearch = () => {
@@ -52,7 +68,7 @@ const FacilityMapPage = () => {
   };
 
   const handleOpenChat = () => {
-    console.log("Opening Ava chat");
+    navigate('/portal/ava');
   };
   
   return (
@@ -151,55 +167,21 @@ const FacilityMapPage = () => {
                     <div className="flex items-center justify-between">
                       <h2 className="text-lg font-medium">Matching Facilities</h2>
                       <span className="text-sm font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">
-                        28 Results
+                        {totalResults} Results
                       </span>
                     </div>
                   </div>
                   
-                  {isLoading ? (
-                    <div className="flex items-center justify-center h-64">
-                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                      <span className="ml-2 text-muted-foreground">Loading facilities...</span>
-                    </div>
-                  ) : (
-                    <div className="overflow-auto max-h-[600px]">
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map((id) => (
-                        <div 
-                          key={id} 
-                          className="p-4 border-b hover:bg-slate-50 cursor-pointer transition-colors"
-                          onClick={() => {
-                            console.log(`Facility ${id} selected`);
-                          }}
-                        >
-                          <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-medium">Sunrise Senior Living #{id}</h3>
-                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                              Available
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center text-sm text-muted-foreground mb-2">
-                            <MapPin className="h-3.5 w-3.5 mr-1" />
-                            <span>Phoenix, AZ • 3.2 miles away</span>
-                          </div>
-                          
-                          <div className="text-sm mb-2">
-                            <span className="font-medium">$3,500 - $5,800</span>
-                            <span className="text-muted-foreground text-xs ml-1">per month</span>
-                          </div>
-                          
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full">
-                              Memory Care
-                            </span>
-                            <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full">
-                              Assisted Living
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {/* StorePoint map will handle the actual list of facilities */}
+                  <div className="p-4 text-center text-muted-foreground">
+                    <p>Select a facility on the map to view details</p>
+                    {!window.SP && (
+                      <div className="flex items-center justify-center h-64">
+                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                        <span className="ml-2">Loading facilities...</span>
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -213,38 +195,6 @@ const FacilityMapPage = () => {
                 </CardContent>
               </Card>
             </div>
-          </div>
-          
-          <div className="hidden">
-            <Card className="fixed bottom-24 right-8 w-80 z-30 shadow-lg">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-medium">Sunrise Senior Living</h3>
-                  <Button variant="ghost" size="icon" className="h-6 w-6">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                <div className="text-sm space-y-2">
-                  <p className="flex items-center text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5 mr-1" />
-                    <span>1234 Main St, Phoenix, AZ</span>
-                  </p>
-                  <p><span className="font-medium">Price:</span> $3,500 - $5,800 /month</p>
-                  <p><span className="font-medium">Care Types:</span> Memory Care, Assisted Living</p>
-                  <p><span className="font-medium">Availability:</span> 3 rooms available</p>
-                </div>
-                
-                <div className="mt-3 flex justify-between">
-                  <Button variant="outline" size="sm" className="w-[48%]">
-                    Call
-                  </Button>
-                  <Button size="sm" className="w-[48%]">
-                    Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </main>

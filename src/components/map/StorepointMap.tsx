@@ -51,15 +51,15 @@ const StorepointMap = () => {
     script.onload = () => setMapScriptLoaded(true);
     document.body.appendChild(script);
 
-    // Set a timeout to check if the map loaded within a reasonable time
+    // Set a shorter timeout to show loading indicator feedback
     const mapTimeout = setTimeout(() => {
       if (isMapLoading) {
         toast({
-          title: "Map is taking longer than expected",
-          description: "Please wait a moment while it continues to load.",
+          title: "Map is loading",
+          description: "Please wait a moment while the facilities load.",
         });
       }
-    }, 5000);
+    }, 2000);
 
     // Wait for StorePoint to fully load
     const checkSP = setInterval(function() {
@@ -191,12 +191,16 @@ const StorepointMap = () => {
     <div className="relative w-full h-full">
       {isMapLoading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 z-10 rounded-lg">
-          <div className="space-y-2">
+          <div className="space-y-4">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
             <Skeleton className="h-4 w-[250px]" />
             <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-32 w-[300px] mt-4" />
+            <Skeleton className="h-4 w-[180px]" />
           </div>
-          <p className="mt-4 text-muted-foreground">Loading facility map...</p>
+          <p className="mt-6 text-muted-foreground">Loading facility locations...</p>
+          <p className="text-sm text-muted-foreground mt-1">This may take a moment to retrieve all facilities</p>
         </div>
       )}
       
