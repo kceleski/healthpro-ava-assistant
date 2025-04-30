@@ -1,10 +1,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, MapPin } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useNavigate } from 'react-router-dom';
 
 declare global {
   interface Window {
@@ -17,8 +18,10 @@ const StorepointMap = () => {
   const [mapInteractive, setMapInteractive] = useState(true);
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
+  const [selectedFacility, setSelectedFacility] = useState<any>(null);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   
   useEffect(() => {
     // Remove any existing StorePoint scripts to prevent duplication
@@ -65,13 +68,20 @@ const StorepointMap = () => {
         setIsMapLoading(false);
         
         // Configure map display
-        window.SP.options.maxLocations = 10; // Show locations at a time
+        window.SP.options.maxLocations = 20; // Show more locations at a time
         window.SP.options.defaultView = 'map'; // Start with map view
+        window.SP.options.templateType = 'custom';
+        window.SP.options.showSidePanel = true; // Enable side panel for more information
+        window.SP.options.scrollToLocation = true; // Scroll to selected location
+        window.SP.options.markerColor = '#9b87f5'; // Use custom brand color
         
         // Mobile-specific adjustments
         if (isMobile) {
           window.SP.options.markerSize = 'small'; // Smaller markers on mobile
           window.SP.options.infoWindowWidth = 280; // Smaller info windows
+        } else {
+          window.SP.options.markerSize = 'medium'; // Normal markers on desktop
+          window.SP.options.infoWindowWidth = 350; // Normal info windows
         }
         
         if (!mapInteractive) {
@@ -95,12 +105,22 @@ const StorepointMap = () => {
         window.SP.on('markerClick', function(location: any) {
           console.log('Location selected:', location.name);
           window.selectedLocation = location;
+          setSelectedFacility(location);
           
           toast({
             title: location.name,
             description: `${location.address}, ${location.city}, ${location.state}`,
           });
         });
+
+        // Set initial map center based on assessment data or default to US center
+        if (assessmentData && assessmentData.locationCoordinates) {
+          window.SP.map.setCenter({
+            lat: assessmentData.locationCoordinates.lat || 39.8283,
+            lng: assessmentData.locationCoordinates.lng || -98.5795
+          });
+          window.SP.map.setZoom(9);
+        }
       }
     }, 100);
 
@@ -163,6 +183,10 @@ const StorepointMap = () => {
     }, 2000);
   };
 
+  const handleAskAva = () => {
+    navigate('/portal/ava');
+  };
+
   return (
     <div className="relative w-full h-full">
       {isMapLoading && (
@@ -176,10 +200,56 @@ const StorepointMap = () => {
         </div>
       )}
       
-      <div id="storepoint-container" data-map-id="1645a775a8a422" className="storepoint-map h-full min-h-[600px]"></div>
+      <div 
+        id="storepoint-container" 
+        data-map-id="1645a775a8a422" 
+        className="storepoint-map h-full min-h-[600px]"
+        style={{ width: '100%', height: '100%' }}
+      ></div>
+      
+      {selectedFacility && (
+        <div className="absolute bottom-20 left-4 z-10 bg-white p-4 rounded-lg shadow-lg max-w-xs">
+          <div className="flex justify-between items-start">
+            <h3 className="font-medium">{selectedFacility.name}</h3>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6" 
+              onClick={() => setSelectedFacility(null)}
+            >
+              <span className="sr-only">Close</span>
+              <span aria-hidden="true">×</span>
+            </Button>
+          </div>
+          <div className="mt-2">
+            <div className="flex items-start gap-1 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{selectedFacility.address}, {selectedFacility.city}, {selectedFacility.state}</span>
+            </div>
+          </div>
+          <div className="mt-3 flex gap-2">
+            <Button size="sm" className="flex-1">Details</Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="flex-1"
+              onClick={() => {
+                if (selectedFacility.phone) {
+                  window.location.href = `tel:${selectedFacility.phone}`;
+                }
+              }}
+            >
+              Call
+            </Button>
+          </div>
+        </div>
+      )}
       
       <div className={`absolute ${isMobile ? 'bottom-20 right-4' : 'bottom-4 right-4'} z-10`}>
-        <Button className="shadow-lg">
+        <Button 
+          className="shadow-lg"
+          onClick={handleAskAva}
+        >
           <MessageSquare className="h-4 w-4 mr-2" />
           Ask Ava about facilities
         </Button>

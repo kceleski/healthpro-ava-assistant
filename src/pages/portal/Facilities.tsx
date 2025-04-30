@@ -16,6 +16,7 @@ import {
   Filter, Plus, Check, Heart, Map, ChevronRight, Info, Bed, Ban, 
   Clock, DollarSign, Leaf, Utensils, Dumbbell, Wifi, Car
 } from 'lucide-react';
+import StorepointMap from '@/components/map/StorepointMap';
 
 const Facilities = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -397,14 +398,8 @@ const Facilities = () => {
           
           <TabsContent value="map" className="mt-6">
             <Card>
-              <CardContent className="p-6 flex items-center justify-center">
-                <div className="text-center">
-                  <Map className="h-16 w-16 text-muted-foreground mx-auto" />
-                  <h3 className="text-lg font-medium mt-4">Map View Coming Soon</h3>
-                  <p className="text-muted-foreground mt-2">
-                    We're working on an interactive map view of all facilities.
-                  </p>
-                </div>
+              <CardContent className="p-0 h-[600px]">
+                <StorepointMap />
               </CardContent>
             </Card>
           </TabsContent>
