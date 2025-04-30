@@ -1,8 +1,6 @@
 
 import React, { ReactNode } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Bell, Settings, MessageSquare, Phone } from 'lucide-react';
 
 interface PortalLayoutProps {
   children: ReactNode;
@@ -18,18 +16,6 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
           </div>
           <nav className="flex items-center gap-6">
             <div className="flex items-center gap-4">
-              <Button size="sm" variant="ghost">
-                <Bell className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="ghost">
-                <MessageSquare className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="ghost">
-                <Phone className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="ghost">
-                <Settings className="h-4 w-4" />
-              </Button>
               <Avatar className="h-8 w-8">
                 <AvatarImage src="" alt="Profile" />
                 <AvatarFallback>JP</AvatarFallback>
