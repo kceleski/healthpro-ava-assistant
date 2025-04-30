@@ -1,33 +1,135 @@
 
 import React, { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Home, Users, Building, Brain, LogOut } from "lucide-react";
+import { mockLogout } from "@/components/auth/RequireAuth";
+import { useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
 
 interface PortalLayoutProps {
   children: ReactNode;
 }
 
 const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    mockLogout();
+    navigate('/');
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-30 w-full border-b bg-white">
-        <div className="container flex h-16 items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-semibold">Senior Care Portal</h1>
-          </div>
-          <nav className="flex items-center gap-6">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="" alt="Profile" />
-                <AvatarFallback>JP</AvatarFallback>
-              </Avatar>
+    <SidebarProvider defaultOpen={!isMobile}>
+      <div className="flex min-h-screen w-full bg-slate-50">
+        <AppSidebar />
+        <div className="flex flex-1 flex-col">
+          <header className="sticky top-0 z-30 w-full border-b bg-white">
+            <div className="flex h-16 items-center justify-between px-4 md:px-6">
+              <div className="flex items-center gap-2">
+                {isMobile && <SidebarTrigger />}
+                <h1 className="text-xl font-semibold">Senior Care Portal</h1>
+              </div>
+              <div className="flex items-center gap-4">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="" alt="Profile" />
+                  <AvatarFallback>JP</AvatarFallback>
+                </Avatar>
+              </div>
             </div>
-          </nav>
+          </header>
+          <main className="flex-1 p-4 md:p-6">
+            {children}
+          </main>
         </div>
-      </header>
-      <div className="container py-6">
-        <main>{children}</main>
       </div>
-    </div>
+    </SidebarProvider>
+  );
+};
+
+const AppSidebar = () => {
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    mockLogout();
+    navigate('/');
+  };
+
+  return (
+    <Sidebar>
+      <SidebarHeader>
+        <div className="flex items-center gap-2 px-2">
+          <img 
+            src="/lovable-uploads/b6e2fabe-745f-4129-a03e-51af7117e3c6.png" 
+            alt="HealthProAssist Logo" 
+            className="h-8 w-auto"
+          />
+          <span className="font-semibold text-lg">HealthPro</span>
+        </div>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link to="/portal/dashboard">
+                  <Home />
+                  <span>Dashboard</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link to="/portal/facilities">
+                  <Building />
+                  <span>Facilities</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link to="/portal/client/1">
+                  <Users />
+                  <span>Clients</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link to="/portal/ava">
+                  <Brain />
+                  <span>Ava Assistant</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start gap-2"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sign Out</span>
+        </Button>
+      </SidebarFooter>
+    </Sidebar>
   );
 };
 
