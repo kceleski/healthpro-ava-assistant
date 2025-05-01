@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Loader2, Map as MapIcon } from 'lucide-react';
-import StorepointMap from './map/StorepointMap';
+import { StorepointMap } from './map/StorepointMap';
 
 interface Facility {
   id: string;
@@ -28,7 +28,7 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
     <div className="relative w-full h-[600px]">
       {/* Storepoint Map wrapper */}
       {!isLoading && hasSearched && (
-        <StorepointMap />
+        <StorepointMap facilities={facilities} />
       )}
       
       {/* Loading state */}

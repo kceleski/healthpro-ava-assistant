@@ -16,6 +16,7 @@ import {
   Filter, Plus, Check, Heart, Map, ChevronRight, Info, Bed, Ban, 
   Clock, DollarSign, Leaf, Utensils, Dumbbell, Wifi, Car
 } from 'lucide-react';
+import { StorepointMap } from '@/components/map/StorepointMap';
 
 const Facilities = () => {
   const [searchQuery, setSearchQuery] = useState('');
