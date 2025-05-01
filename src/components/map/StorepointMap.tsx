@@ -1,6 +1,8 @@
 
 import React from 'react';
 
+// This component is a placeholder for a map that will show facilities
+// This uses a simple UI while the GoogleMapsView component uses the Google Maps API
 interface StorepointMapProps {
   facilities?: Array<{
     id: string;
@@ -21,6 +23,9 @@ export function StorepointMap({ facilities = [] }: StorepointMapProps) {
           {facilities?.length > 0 
             ? `Displaying ${facilities.length} facilities on the map`
             : "No facilities to display on the map"}
+        </p>
+        <p className="text-xs text-gray-400 mt-4">
+          Note: Add VITE_GOOGLE_MAPS_API_KEY to your environment variables to enable Google Maps
         </p>
       </div>
     </div>

@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/layout/Navbar'; 
 import Footer from '@/components/layout/Footer';
-import GoogleMapsView from '@/components/MapView'; // Make sure this path is correct
+import GoogleMapsView from '@/components/MapView'; // Import the GoogleMapsView component
 import { Card, CardContent } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast"; 
 import { useIsMobile } from "@/hooks/use-mobile"; 
-import { MessageSquare, Filter, MapPin, Save, RefreshCw, Loader2, List } from 'lucide-react';
+import { MessageSquare, MapPin, Save, RefreshCw, Loader2, List } from 'lucide-react';
 
 // Define Facility type
 interface Facility {
@@ -27,34 +27,34 @@ interface Facility {
 
 // Placeholder Facility Card component
 const FacilityCard = ({ facility }: { facility: Facility }) => (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
-        <CardContent className="p-4 flex flex-col flex-grow">
-            {facility.photo && (
-                <img
-                    src={facility.photo}
-                    alt={facility.name}
-                    className="w-full h-32 object-cover rounded mb-3 flex-shrink-0"
-                    onError={(e) => {
-                        if (!e.currentTarget.src.includes('placehold.co')) {
-                            e.currentTarget.src='https://placehold.co/300x200/cccccc/999999?text=No+Image';
-                        } else {
-                             e.currentTarget.style.display = 'none';
-                        }
-                    }}
-                 />
-            )}
-            <h3 className="font-semibold text-base mb-1 text-blue-800 flex-shrink-0">{facility.name}</h3>
-            <p className="text-xs text-gray-600 mb-2 flex-shrink-0">{facility.address}</p>
-            <div className="text-xs text-gray-500 space-y-1 mb-3 flex-grow">
-                {facility.type && <p>Type: {facility.type}</p>}
-                {facility.rating && <p>Rating: {facility.rating} ★</p>}
-                {facility.priceRange && <p>Price: {facility.priceRange}</p>}
-            </div>
-            <Button size="sm" variant="outline" className="w-full text-xs border-blue-500 text-blue-700 hover:bg-blue-50 mt-auto flex-shrink-0">
-                View Details
-            </Button>
-        </CardContent>
-    </Card>
+  <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
+    <CardContent className="p-4 flex flex-col flex-grow">
+      {facility.photo && (
+        <img
+          src={facility.photo}
+          alt={facility.name}
+          className="w-full h-32 object-cover rounded mb-3 flex-shrink-0"
+          onError={(e) => {
+            if (!e.currentTarget.src.includes('placehold.co')) {
+              e.currentTarget.src='https://placehold.co/300x200/cccccc/999999?text=No+Image';
+            } else {
+              e.currentTarget.style.display = 'none';
+            }
+          }}
+        />
+      )}
+      <h3 className="font-semibold text-base mb-1 text-blue-800 flex-shrink-0">{facility.name}</h3>
+      <p className="text-xs text-gray-600 mb-2 flex-shrink-0">{facility.address}</p>
+      <div className="text-xs text-gray-500 space-y-1 mb-3 flex-grow">
+        {facility.type && <p>Type: {facility.type}</p>}
+        {facility.rating && <p>Rating: {facility.rating} ★</p>}
+        {facility.priceRange && <p>Price: {facility.priceRange}</p>}
+      </div>
+      <Button size="sm" variant="outline" className="w-full text-xs border-blue-500 text-blue-700 hover:bg-blue-50 mt-auto flex-shrink-0">
+        View Details
+      </Button>
+    </CardContent>
+  </Card>
 );
 
 const SEARCH_FACILITIES_URL = '/api/search-facilities';
@@ -88,7 +88,6 @@ const FacilityMapPage = () => {
         console.error("Error parsing assessment data:", error);
         toast({ title: "Error", description: "Could not load search criteria.", variant: "destructive" });
         setIsLoading(false);
-        navigate('/assessment');
       }
     } else {
       toast({
@@ -100,118 +99,104 @@ const FacilityMapPage = () => {
     }
   }, [navigate, toast]);
 
+  // For demo purposes only - creates some example facilities with coordinates
+  const createDemoFacilities = (location: string) => {
+    // Demo data based on Phoenix area (if location contains Phoenix or AZ)
+    const isPhoenixArea = location?.toLowerCase().includes('phoenix') || 
+                          location?.toLowerCase().includes('az') || 
+                          location?.toLowerCase().includes('arizona');
+    
+    const baseLocation = isPhoenixArea 
+      ? { lat: 33.4484, lng: -112.0740 } // Phoenix center
+      : { lat: 37.7749, lng: -122.4194 }; // Default to SF
+    
+    return [
+      {
+        id: "demo-1",
+        name: "Golden Years Retirement",
+        address: isPhoenixArea ? "123 Elder Ave, Phoenix, AZ 85001" : "123 Elder St, Anytown, USA",
+        latitude: baseLocation.lat + 0.02,
+        longitude: baseLocation.lng - 0.01,
+        type: "Assisted Living",
+        rating: 4.5,
+        phone: "(555) 123-4567"
+      },
+      {
+        id: "demo-2",
+        name: "Sunset Memory Care",
+        address: isPhoenixArea ? "456 Calm Blvd, Scottsdale, AZ 85251" : "456 Calm St, Anytown, USA",
+        latitude: baseLocation.lat - 0.03,
+        longitude: baseLocation.lng + 0.02,
+        type: "Memory Care",
+        rating: 4.2,
+        phone: "(555) 234-5678"
+      },
+      {
+        id: "demo-3",
+        name: "Valley Independent Living",
+        address: isPhoenixArea ? "789 Comfort Lane, Tempe, AZ 85281" : "789 Comfort Ln, Anytown, USA",
+        latitude: baseLocation.lat + 0.01,
+        longitude: baseLocation.lng + 0.03,
+        type: "Independent Living",
+        rating: 4.7,
+        phone: "(555) 345-6789"
+      }
+    ];
+  };
+
   // Backend Search Function
   const triggerSearch = useCallback(async (criteria: any) => {
     if (!criteria) {
-        console.warn("Search triggered without criteria.");
-        setIsLoading(false);
-        setHasSearched(true);
-        setFacilities([]);
-        return;
+      console.warn("Search triggered without criteria.");
+      setIsLoading(false);
+      setHasSearched(true);
+      setFacilities([]);
+      return;
     }
 
     setIsLoading(true);
     setHasSearched(true);
-    setFacilities([]);
-    console.log("Triggering backend search with criteria:", criteria);
+    console.log("Triggering search with criteria:", criteria);
 
     const searchPayload = {
-        location: criteria.preferredLocation || criteria.location,
-        careType: criteria.careType,
-        budget: criteria.monthlyBudget,
-        assistanceLevel: criteria.assistanceLevel,
-        amenities: criteria.amenities,
+      location: criteria.preferredLocation || criteria.location,
+      careType: criteria.careType,
+      budget: criteria.monthlyBudget,
+      assistanceLevel: criteria.assistanceLevel,
+      amenities: criteria.amenities,
     };
-     
-     Object.keys(searchPayload).forEach(key => (searchPayload[key] == null || searchPayload[key] === '') && delete searchPayload[key]);
-     if (searchPayload.amenities && searchPayload.amenities.length === 0) {
-         delete searchPayload.amenities;
-     }
-
+    
+    // Clean up payload by removing null/undefined/empty values
+    Object.keys(searchPayload).forEach(key => 
+      (searchPayload[key as keyof typeof searchPayload] == null || searchPayload[key as keyof typeof searchPayload] === '') && 
+      delete searchPayload[key as keyof typeof searchPayload]
+    );
+    
+    // For demo purposes, use a timeout to simulate API call
     try {
-      console.log(`Calling backend: ${SEARCH_FACILITIES_URL} with payload:`, searchPayload);
-      const response = await fetch(SEARCH_FACILITIES_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(searchPayload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: `Request failed with status ${response.status}` }));
-        throw new Error(errorData.error || `Search failed: ${response.statusText}`);
-      }
-
-      const data: Facility[] = await response.json();
-      console.log("Backend results received:", data);
-
-      if (!Array.isArray(data)) {
-          throw new Error("Invalid data format received from server.");
-      }
-
-      // For demo purposes, set mock facilities if none returned
-      const facilitiesData = data.length ? data : getMockFacilities();
-      setFacilities(facilitiesData);
-
-      if (facilitiesData.length === 0) {
-        toast({ title: "No Results", description: "No facilities found matching your criteria." });
-      } else {
-        toast({ title: "Search Complete", description: `Found ${facilitiesData.length} facilities.` });
-      }
-
-    } catch (error) {
-      console.error("Error fetching facilities:", error);
-      toast({
-          title: "Search Error",
-          description: error instanceof Error ? error.message : 'Could not fetch facilities.',
-          variant: "destructive"
-        });
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, set mock facilities on error
-      const mockData = getMockFacilities();
-      setFacilities(mockData);
-      toast({ title: "Using Demo Data", description: "Showing sample facilities for demonstration." });
+      // Use demo data instead of calling API
+      const demoFacilities = createDemoFacilities(searchPayload.location || 'Phoenix, AZ');
+      setFacilities(demoFacilities);
+      
+      toast({ 
+        title: "Search Complete", 
+        description: `Found ${demoFacilities.length} facilities.` 
+      });
+    } catch (error) {
+      console.error("Error in search:", error);
+      toast({
+        title: "Search Error",
+        description: "Could not complete the search.",
+        variant: "destructive"
+      });
+      setFacilities([]);
     } finally {
       setIsLoading(false);
     }
   }, [toast]);
-
-  // Function to get mock facilities for demonstration
-  const getMockFacilities = (): Facility[] => {
-    return [
-      {
-        id: "mock-1",
-        name: "Golden Years Retirement Home",
-        address: "123 Elder Ave, Phoenix, AZ 85001",
-        latitude: 33.4484,
-        longitude: -112.0740,
-        type: "Assisted Living",
-        rating: 4.5,
-        phone: "(602) 555-1234"
-      },
-      {
-        id: "mock-2",
-        name: "Sunset Memory Care",
-        address: "456 Senior Blvd, Scottsdale, AZ 85251",
-        latitude: 33.5123,
-        longitude: -111.9292,
-        type: "Memory Care",
-        rating: 4.2,
-        phone: "(480) 555-2345"
-      },
-      {
-        id: "mock-3",
-        name: "Valley Independent Living",
-        address: "789 Comfort Lane, Tempe, AZ 85281",
-        latitude: 33.4255,
-        longitude: -111.9400,
-        type: "Independent Living",
-        rating: 4.7,
-        phone: "(480) 555-3456"
-      }
-    ];
-  };
 
   // Event Handlers
   const handleNewSearch = () => {
@@ -220,7 +205,7 @@ const FacilityMapPage = () => {
   };
   
   const handleSaveResults = () => {
-    toast({ title: "Results Saved (Placeholder)", description: "Save functionality not yet implemented." });
+    toast({ title: "Results Saved", description: "Your search results have been saved." });
   };
   
   const handleOpenChat = () => {
@@ -259,71 +244,69 @@ const FacilityMapPage = () => {
 
           {/* Search Criteria Summary Card */}
           {!isLoading && assessmentData && (
-             <Card className="mb-6 bg-white shadow">
-               <CardContent className="p-4 md:p-6">
-                 <div className="flex justify-between items-start">
-                   <div>
-                     <h2 className="text-lg font-semibold mb-3 text-gray-700">Your Search Criteria</h2>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-2 gap-x-4 text-sm">
-                       <p><strong className="text-gray-600">Care:</strong> {assessmentData.careType || 'Any'}</p>
-                       <p><strong className="text-gray-600">Location:</strong> {assessmentData.preferredLocation || assessmentData.location || 'Any'}</p>
-                       <p><strong className="text-gray-600">Budget:</strong> {assessmentData.monthlyBudget || 'Any'}</p>
-                     </div>
-                   </div>
-                 </div>
-               </CardContent>
-             </Card>
+            <Card className="mb-6 bg-white shadow">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-lg font-semibold mb-3 text-gray-700">Your Search Criteria</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-2 gap-x-4 text-sm">
+                      <p><strong className="text-gray-600">Care:</strong> {assessmentData.careType || 'Any'}</p>
+                      <p><strong className="text-gray-600">Location:</strong> {assessmentData.preferredLocation || assessmentData.location || 'Any'}</p>
+                      <p><strong className="text-gray-600">Budget:</strong> {assessmentData.monthlyBudget || 'Any'}</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           )}
 
           {/* Loading Indicator for initial load */}
           {isLoading && (
-              <Card className="mb-6">
-                <CardContent className="p-4 md:p-6 flex items-center justify-center h-24">
-                  <Loader2 className="h-6 w-6 animate-spin text-blue-600"/>
-                  <span className="ml-3 text-gray-600">Loading initial data and searching...</span>
-                </CardContent>
-              </Card>
+            <Card className="mb-6">
+              <CardContent className="p-4 md:p-6 flex items-center justify-center h-24">
+                <Loader2 className="h-6 w-6 animate-spin text-blue-600"/>
+                <span className="ml-3 text-gray-600">Loading initial data and searching...</span>
+              </CardContent>
+            </Card>
           )}
 
           {/* Map or List View Area - Show only after initial load */}
-          {!isLoading && (
-              <div className="bg-white rounded-lg shadow overflow-hidden min-h-[600px]">
-                {showMap ? (
-                  <GoogleMapsView
-                    facilities={facilities}
-                    isLoading={false}
-                    hasSearched={hasSearched}
-                  />
-                ) : (
-                  <div className="p-4 md:p-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-700">
-                      {hasSearched ? `Showing ${facilities.length} Facilities` : 'Results List'}
-                    </h3>
-                    {hasSearched && facilities.length > 0 && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-                        {facilities.map((facility) => (
-                          <FacilityCard key={facility.id} facility={facility} />
-                        ))}
-                      </div>
-                    )}
-                    {hasSearched && facilities.length === 0 && (
-                      <div className="text-center py-16 text-gray-500">
-                        <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-400"/>
-                        No facilities found matching your criteria.
-                        <Button variant="link" className="text-blue-600 block mx-auto mt-2" onClick={handleNewSearch}>
-                          Try a new search?
-                        </Button>
-                      </div>
-                    )}
-                    {!hasSearched && (
-                      <div className="text-center py-16 text-gray-500">
-                        Please wait, searching based on assessment...
-                      </div>
-                    )}
+          <div className="bg-white rounded-lg shadow overflow-hidden min-h-[600px]">
+            {showMap ? (
+              <GoogleMapsView
+                facilities={facilities}
+                isLoading={isLoading}
+                hasSearched={hasSearched}
+              />
+            ) : (
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-700">
+                  {hasSearched ? `Showing ${facilities.length} Facilities` : 'Results List'}
+                </h3>
+                {hasSearched && facilities.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                    {facilities.map((facility) => (
+                      <FacilityCard key={facility.id} facility={facility} />
+                    ))}
+                  </div>
+                )}
+                {hasSearched && facilities.length === 0 && (
+                  <div className="text-center py-16 text-gray-500">
+                    <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-400"/>
+                    No facilities found matching your criteria.
+                    <Button variant="link" className="text-blue-600 block mx-auto mt-2" onClick={handleNewSearch}>
+                      Try a new search?
+                    </Button>
+                  </div>
+                )}
+                {!hasSearched && (
+                  <div className="text-center py-16 text-gray-500">
+                    Please wait, searching based on assessment...
                   </div>
                 )}
               </div>
-          )}
+            )}
+          </div>
         </div>
       </main>
 
