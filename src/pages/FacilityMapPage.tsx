@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/layout/Navbar'; // Assuming these exist
 import Footer from '@/components/layout/Footer';
