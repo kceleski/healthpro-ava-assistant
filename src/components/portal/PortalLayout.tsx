@@ -15,7 +15,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Home, Users, Building, Brain, LogOut } from "lucide-react";
+import { Home, Users, Building, Brain, LogOut, Settings } from "lucide-react";
 import { mockLogout } from "@/components/auth/RequireAuth";
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -45,10 +45,17 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
                 <h1 className="text-xl font-semibold">Senior Care Portal</h1>
               </div>
               <div className="flex items-center gap-4">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="" alt="Profile" />
-                  <AvatarFallback>JP</AvatarFallback>
-                </Avatar>
+                <Button variant="outline" size="sm" className="hidden sm:flex">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </Button>
+                <Link to="/portal/ava" className="relative">
+                  <Avatar className="h-9 w-9 border-2 border-primary">
+                    <AvatarImage src="/lovable-uploads/avatar-ava.png" alt="Ava" />
+                    <AvatarFallback className="bg-primary/20 text-primary">AVA</AvatarFallback>
+                  </Avatar>
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
+                </Link>
               </div>
             </div>
           </header>

@@ -543,6 +543,39 @@ export type Database = {
           },
         ]
       }
+      facility_info: {
+        Row: {
+          amenities: string[]
+          created_at: string | null
+          id: string
+          location: string
+          phone_number: string
+          type_of_facility: string
+          url_googlemaps: string
+          website: string
+        }
+        Insert: {
+          amenities: string[]
+          created_at?: string | null
+          id?: string
+          location: string
+          phone_number: string
+          type_of_facility: string
+          url_googlemaps: string
+          website: string
+        }
+        Update: {
+          amenities?: string[]
+          created_at?: string | null
+          id?: string
+          location?: string
+          phone_number?: string
+          type_of_facility?: string
+          url_googlemaps?: string
+          website?: string
+        }
+        Relationships: []
+      }
       facility_tags: {
         Row: {
           address: string | null
