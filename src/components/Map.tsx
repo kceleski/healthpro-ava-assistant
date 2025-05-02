@@ -13,7 +13,8 @@ const center = {
 };
 
 // Define the libraries
-const libraries = ['places'] as const; // Use const assertion to fix type issue
+// Using type assertion to fix the type issue
+const libraries = ['places'] as unknown as ["places"];
 
 export default function Map({ markers = [] }) {
   const { isLoaded, loadError } = useLoadScript({
