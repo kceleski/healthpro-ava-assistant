@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-// This component is a placeholder for a map that will show facilities
+<div id="storepoint-container" data-map-id="1645a775a8a422"></div><script>(function(){var a=document.createElement("script");a.type="text/javascript";a.async=!0;a.src="https://cdn.storepoint.co/api/v1/js/1645a775a8a422.js";var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);}());</script>// This component is a placeholder for a map that will show facilities
 // This uses a simple UI while the GoogleMapsView component uses the Google Maps API
 interface StorepointMapProps {
   facilities?: Array<{
