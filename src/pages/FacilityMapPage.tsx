@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -186,11 +185,13 @@ const FacilityMapPage = () => {
               ref={storepointContainerRef}
               className="w-full h-full"
             ></div>
-            <style jsx>{`
-              #storepoint-tag-dropdown {
-                display: none !important;
-              }
-            `}</style>
+            <style>
+              {`
+                #storepoint-tag-dropdown {
+                  display: none !important;
+                }
+              `}
+            </style>
           </div>
         </div>
       </div>
