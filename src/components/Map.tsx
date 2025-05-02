@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
 
 const mapContainerStyle = {
@@ -12,17 +12,16 @@ const center = {
   lng: -112.074, // Phoenix, AZ as default center
 };
 
-// Define the libraries with the correct type
-// @ts-expect-error - Google Maps types are not perfectly aligned with the library
-const libraries = ['places'];
+// Define the libraries
+const libraries = ['places'] as const; // Use const assertion to fix type issue
 
 export default function Map({ markers = [] }) {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
-    libraries: libraries,
+    libraries, // This will now be properly typed
   });
   
-  const mapRef = useRef(null);
+  const mapRef = React.useRef(null);
   
   const onMapLoad = React.useCallback((map) => {
     mapRef.current = map;
