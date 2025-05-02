@@ -18,6 +18,13 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 
+// Define the proper type for the ListItem component props
+interface ListItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
+  title: string;
+  href: string;
+  children: React.ReactNode;
+}
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -56,30 +63,33 @@ const Navbar = () => {
     navigate('/');
   };
 
-  // Navigation menu item styling - fixed with proper TypeScript interface
-  const ListItem = React.forwardRef(({ className, title, children, ...props }, ref) => {
-    return (
-      <li>
-        <NavigationMenuLink asChild>
-          <a
-            ref={ref}
-            className={cn(
-              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-              className
-            )}
-            {...props}
-          >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-              {children}
-            </p>
-          </a>
-        </NavigationMenuLink>
-      </li>
-    );
-  });
+  // Navigation menu item styling with proper TypeScript interface
+  const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(
+    ({ className, title, children, href, ...props }, ref) => {
+      return (
+        <li>
+          <NavigationMenuLink asChild>
+            <a
+              ref={ref}
+              href={href}
+              className={cn(
+                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                className
+              )}
+              {...props}
+            >
+              <div className="text-sm font-medium leading-none">{title}</div>
+              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                {children}
+              </p>
+            </a>
+          </NavigationMenuLink>
+        </li>
+      );
+    }
+  );
   
-  // Add proper display name and TypeScript interface
+  // Add proper display name for React DevTools
   ListItem.displayName = "ListItem";
   
   return (

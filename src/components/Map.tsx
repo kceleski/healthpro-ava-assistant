@@ -12,8 +12,9 @@ const center = {
   lng: -112.074, // Phoenix, AZ as default center
 };
 
-// Define the libraries correctly with the proper type
-const libraries = ['places'] as const;
+// Define the libraries with the correct type
+// @ts-expect-error - Google Maps types are not perfectly aligned with the library
+const libraries = ['places'];
 
 export default function Map({ markers = [] }) {
   const { isLoaded, loadError } = useLoadScript({
