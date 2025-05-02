@@ -1,8 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import GoogleMapsView from '@/components/MapView';
-import { StorepointMap } from '@/components/map/StorepointMap';
 
 // Facility object type
 interface Facility {
@@ -95,6 +93,28 @@ const FacilityMapPage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(true); // Set to true to show the map by default
+  const storepointContainerRef = useRef<HTMLDivElement>(null);
+
+  // Initialize Storepoint map
+  useEffect(() => {
+    if (storepointContainerRef.current) {
+      // Create script element dynamically
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.src = 'https://cdn.storepoint.co/api/v1/js/1645a775a8a422.js';
+      
+      // Append script to the container
+      storepointContainerRef.current.appendChild(script);
+      
+      // Clean up function to remove script when component unmounts
+      return () => {
+        if (storepointContainerRef.current && script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      };
+    }
+  }, []);
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-6xl">
@@ -156,12 +176,22 @@ const FacilityMapPage = () => {
       {/* Interactive Map */}
       <div className="mb-10">
         <h2 className="text-xl font-bold text-gray-800 mb-4">Facility Map</h2>
-        <div className="bg-white rounded-xl shadow-sm">
-          <GoogleMapsView 
-            facilities={facilities}
-            isLoading={isLoading}
-            hasSearched={hasSearched}
-          />
+        <div className="bg-white rounded-xl shadow-sm p-2">
+          {/* Storepoint Map Container */}
+          <div className="h-[600px]">
+            <div 
+              id="storepoint-container" 
+              data-tags="subscribed" 
+              data-map-id="1645a775a8a422"
+              ref={storepointContainerRef}
+              className="w-full h-full"
+            ></div>
+            <style jsx>{`
+              #storepoint-tag-dropdown {
+                display: none !important;
+              }
+            `}</style>
+          </div>
         </div>
       </div>
     </main>
