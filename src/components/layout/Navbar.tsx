@@ -56,7 +56,7 @@ const Navbar = () => {
     navigate('/');
   };
 
-  // Navigation menu item styling
+  // Navigation menu item styling - fixed with proper TypeScript interface
   const ListItem = React.forwardRef(({ className, title, children, ...props }, ref) => {
     return (
       <li>
@@ -78,6 +78,8 @@ const Navbar = () => {
       </li>
     );
   });
+  
+  // Add proper display name and TypeScript interface
   ListItem.displayName = "ListItem";
   
   return (

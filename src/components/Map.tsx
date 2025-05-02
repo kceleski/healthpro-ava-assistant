@@ -12,7 +12,8 @@ const center = {
   lng: -112.074, // Phoenix, AZ as default center
 };
 
-const libraries = ['places'];
+// Define the libraries correctly with the proper type
+const libraries = ['places'] as const;
 
 export default function Map({ markers = [] }) {
   const { isLoaded, loadError } = useLoadScript({
