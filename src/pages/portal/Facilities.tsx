@@ -16,7 +16,7 @@ import {
   Filter, Plus, Check, Heart, Map, ChevronRight, Info, Bed, Ban, 
   Clock, DollarSign, Leaf, Utensils, Dumbbell, Wifi, Car
 } from 'lucide-react';
-import { StorepointMap } from '@/components/map/StorepointMap';
+import GoogleMapsView from '@/components/MapView'; // Import the updated GoogleMapsView
 
 const Facilities = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,6 +25,8 @@ const Facilities = () => {
   const [priceRange, setPriceRange] = useState([2000, 8000]);
   const [amenities, setAmenities] = useState<string[]>([]);
   const [availability, setAvailability] = useState('any');
+  const [currentView, setCurrentView] = useState('grid');
+  const [hasSearched, setHasSearched] = useState(true); // Set default to true to show initial facilities
 
   const toggleAmenity = (amenity: string) => {
     if (amenities.includes(amenity)) {
@@ -36,7 +38,7 @@ const Facilities = () => {
 
   const facilities = [
     {
-      id: 1,
+      id: "1",
       name: "Desert Bloom Senior Living",
       type: "Memory Care & Assisted Living",
       location: "Phoenix, AZ",
@@ -46,6 +48,8 @@ const Facilities = () => {
       website: "www.desertbloom.com",
       rating: 4.8,
       reviews: 42,
+      latitude: 33.5228,
+      longitude: -112.1005,
       beds: {
         total: 120,
         available: 3
@@ -75,7 +79,7 @@ const Facilities = () => {
       ]
     },
     {
-      id: 2,
+      id: "2",
       name: "Sunrise of Scottsdale",
       type: "Assisted Living & Memory Care",
       location: "Scottsdale, AZ",
@@ -85,6 +89,8 @@ const Facilities = () => {
       website: "www.sunriseseniorliving.com/scottsdale",
       rating: 4.5,
       reviews: 38,
+      latitude: 33.5658,
+      longitude: -111.9254,
       beds: {
         total: 85,
         available: 2
@@ -114,7 +120,7 @@ const Facilities = () => {
       ]
     },
     {
-      id: 3,
+      id: "3",
       name: "Arizona Sunset Care",
       type: "Memory Care",
       location: "Mesa, AZ",
@@ -124,6 +130,8 @@ const Facilities = () => {
       website: "www.azsunsetcare.com",
       rating: 4.3,
       reviews: 25,
+      latitude: 33.3857,
+      longitude: -111.8726,
       beds: {
         total: 64,
         available: 1
@@ -153,7 +161,7 @@ const Facilities = () => {
       ]
     },
     {
-      id: 4,
+      id: "4",
       name: "Mesa Gardens Retirement",
       type: "Independent Living",
       location: "Mesa, AZ",
@@ -163,6 +171,8 @@ const Facilities = () => {
       website: "www.mesagardens.com",
       rating: 4.7,
       reviews: 56,
+      latitude: 33.4367,
+      longitude: -111.8249,
       beds: {
         total: 150,
         available: 8
@@ -238,6 +248,11 @@ const Facilities = () => {
     return true;
   });
 
+  // Function to handle search
+  const handleSearch = () => {
+    setHasSearched(true);
+  };
+
   return (
     <PortalLayout>
       <div className="space-y-6">
@@ -257,15 +272,23 @@ const Facilities = () => {
         
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search facilities by name or location" 
-            className="pl-9"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            handleSearch();
+          }}>
+            <div className="flex gap-2">
+              <Input 
+                placeholder="Search facilities by name or location" 
+                className="pl-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button type="submit">Search</Button>
+            </div>
+          </form>
         </div>
         
-        <Tabs defaultValue="grid">
+        <Tabs defaultValue="grid" onValueChange={setCurrentView}>
           <div className="flex justify-between items-center">
             <TabsList>
               <TabsTrigger value="grid">Grid View</TabsTrigger>
@@ -399,7 +422,13 @@ const Facilities = () => {
           <TabsContent value="map" className="mt-6">
             <Card>
               <CardContent className="p-0 h-[600px]">
-                <StorepointMap />
+                {/* Use the updated GoogleMapsView component with isVisible control */}
+                <GoogleMapsView 
+                  facilities={filteredFacilities}
+                  isLoading={false}
+                  hasSearched={hasSearched}
+                  isVisible={currentView === 'map'}
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -495,7 +524,10 @@ const Facilities = () => {
             }}>
               Reset
             </Button>
-            <Button type="submit" onClick={() => setFilterDialogOpen(false)}>
+            <Button type="submit" onClick={() => {
+              setFilterDialogOpen(false);
+              handleSearch(); // Apply search when filters are applied
+            }}>
               Apply Filters
             </Button>
           </DialogFooter>
