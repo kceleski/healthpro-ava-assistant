@@ -1,4 +1,41 @@
-const [period, setPeriod] = useState('week');
+import React, { useState } from 'react';
+import PortalLayout from '@/components/portal/PortalLayout';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Link } from 'react-router-dom';
+import { 
+  User, Calendar, Building, MapPin, BarChart3, PlusCircle, Search, 
+  ArrowRight, Phone, Mail, ChevronRight, Clock, FileText, CalendarClock, 
+  AlertCircle, Filter, Home, BellRing, CheckCircle, PieChart, Activity,
+  MoreHorizontal, Download, Printer, Share2, RefreshCw, Star, Users, 
+  Clipboard
+} from 'lucide-react';
+
+// Generate random percentage for demo
+const randomProgress = () => Math.floor(Math.random() * 100);
+
+// Helper function for current date
+const getCurrentDate = () => {
+  const date = new Date();
+  return date.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+};
+
+const Dashboard = () => {
+  const [period, setPeriod] = useState('week');
   const [addClientDialog, setAddClientDialog] = useState(false);
   const currentDate = getCurrentDate();
   
@@ -262,41 +299,200 @@ const [period, setPeriod] = useState('week');
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Assessments</span>
-                  <span classimport React, { useState } from 'react';
-import PortalLayout from '@/components/portal/PortalLayout';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Link } from 'react-router-dom';
-import { 
-  User, Calendar, Building, MapPin, BarChart3, PlusCircle, Search, 
-  ArrowRight, Phone, Mail, ChevronRight, Clock, FileText, CalendarClock, 
-  AlertCircle, Filter, Home, BellRing, CheckCircle, PieChart, Activity,
-  MoreHorizontal, Download, Printer, Share2, RefreshCw, Star, Users, 
-  Clipboard
-} from 'lucide-react';
-
-// Generate random percentage for demo
-const randomProgress = () => Math.floor(Math.random() * 100);
-
-// Helper function for current date
-const getCurrentDate = () => {
-  const date = new Date();
-  return date.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  });
+                  <span className="font-medium">{taskCompletion.assessments}%</span>
+                </div>
+                <Progress value={taskCompletion.assessments} className="h-2" />
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Tours Conducted</span>
+                  <span className="font-medium">{taskCompletion.tours}%</span>
+                </div>
+                <Progress value={taskCompletion.tours} className="h-2" />
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Placement Success</span>
+                  <span className="font-medium">{taskCompletion.placements}%</span>
+                </div>
+                <Progress value={taskCompletion.placements} className="h-2" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Recent Clients */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle>Recent Clients</CardTitle>
+                <CardDescription>Last 30 days</CardDescription>
+              </div>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/clients">
+                  View All
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[280px]">
+                <div className="space-y-4">
+                  {recentClients.map((client) => (
+                    <div key={client.id} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={client.avatar} alt={client.name} />
+                          <AvatarFallback>{client.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{client.name}</p>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <MapPin className="mr-1 h-3 w-3" />
+                            {client.location}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <Badge variant={
+                          client.status === 'Active' ? 'default' :
+                          client.status === 'Assessment' ? 'secondary' :
+                          client.status === 'Tour Scheduled' ? 'outline' :
+                          client.status === 'Placed' ? 'success' :
+                          'outline'
+                        }>
+                          {client.status}
+                        </Badge>
+                        <p className="text-xs text-muted-foreground mt-1">{client.careType}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Upcoming Appointments */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle>Upcoming Appointments</CardTitle>
+                <CardDescription>Next 7 days</CardDescription>
+              </div>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/calendar">
+                  View Calendar
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {upcomingAppointments.map((appointment) => (
+                  <div key={appointment.id} className="flex items-start gap-3 p-2 rounded-md hover:bg-muted/50 transition-colors">
+                    <div className={`p-2 rounded-full ${
+                      appointment.type === 'facility-tour' ? 'bg-blue-100' :
+                      appointment.type === 'assessment' ? 'bg-amber-100' :
+                      'bg-green-100'
+                    }`}>
+                      {appointment.type === 'facility-tour' ? (
+                        <Building className={`h-4 w-4 ${
+                          appointment.type === 'facility-tour' ? 'text-blue-600' :
+                          appointment.type === 'assessment' ? 'text-amber-600' :
+                          'text-green-600'
+                        }`} />
+                      ) : appointment.type === 'assessment' ? (
+                        <ClipboardList className="h-4 w-4 text-amber-600" />
+                      ) : (
+                        <Phone className="h-4 w-4 text-green-600" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">{appointment.title}</p>
+                      <p className="text-sm text-muted-foreground">{appointment.facility}</p>
+                    </div>
+                    <div className="text-right text-sm">
+                      <p className="font-medium">{appointment.date}</p>
+                      <p className="text-muted-foreground">{appointment.time}</p>
+                    </div>
+                  </div>
+                ))}
+                
+                <Button variant="outline" className="w-full">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Appointment
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Top Facilities & Notifications */}
+          <div className="space-y-6">
+            {/* Top Facilities */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Facilities</CardTitle>
+                <CardDescription>By placement rate</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {topFacilities.map((facility) => (
+                    <div key={facility.id} className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{facility.name}</p>
+                        <p className="text-sm text-muted-foreground">{facility.type}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                          <span className="font-medium">{facility.rating}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{facility.placements} placements</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Notifications */}
+            <Card>
+              <CardHeader className="flex flex-row items-center pb-2">
+                <CardTitle className="flex-1">Notifications</CardTitle>
+                <Button variant="ghost" size="sm" className="h-8 text-xs">
+                  Mark All Read
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {notifications.slice(0, 3).map((notification) => (
+                    <div key={notification.id} className={`flex gap-3 ${!notification.read ? 'bg-muted/50' : ''} p-2 rounded-md`}>
+                      <div className={`p-2 rounded-full shrink-0 ${!notification.read ? 'bg-blue-100' : 'bg-gray-100'}`}>
+                        <BellRing className={`h-4 w-4 ${!notification.read ? 'text-blue-600' : 'text-gray-500'}`} />
+                      </div>
+                      <div className="space-y-1">
+                        <p className={`text-sm font-medium ${!notification.read ? '' : 'text-muted-foreground'}`}>
+                          {notification.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{notification.description}</p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {notification.time}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </PortalLayout>
+  );
 };
 
-const Dashboard = () => {
-  const [period, setPerio
+export default Dashboard;
