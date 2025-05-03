@@ -359,7 +359,7 @@ const Dashboard = () => {
                           client.status === 'Active' ? 'default' :
                           client.status === 'Assessment' ? 'secondary' :
                           client.status === 'Tour Scheduled' ? 'outline' :
-                          client.status === 'Placed' ? 'success' :
+                          client.status === 'Placed' ? 'secondary' :
                           'outline'
                         }>
                           {client.status}
@@ -405,7 +405,7 @@ const Dashboard = () => {
                           'text-green-600'
                         }`} />
                       ) : appointment.type === 'assessment' ? (
-                        <ClipboardList className="h-4 w-4 text-amber-600" />
+                        <Clipboard className="h-4 w-4 text-amber-600" />
                       ) : (
                         <Phone className="h-4 w-4 text-green-600" />
                       )}
