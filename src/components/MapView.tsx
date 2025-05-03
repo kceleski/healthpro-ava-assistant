@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { GoogleMap, useLoadScript, MarkerF, InfoWindowF } from '@react-google-maps/api';
 import { Button } from "@/components/ui/button";
@@ -26,23 +25,26 @@ interface GoogleMapsViewProps {
   facilities: Facility[] | null | undefined;
   isLoading: boolean;
   hasSearched: boolean;
+  isVisible: boolean; // New prop to control when map should load
 }
 
-// Use environment variable or fallback for API key
+// Use environment variable for API key
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
-const mapLibraries = ["places", "geometry"];
+const mapLibraries = ["places"];
 
-const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewProps) => {
+const GoogleMapsView = ({ facilities, isLoading, hasSearched, isVisible }: GoogleMapsViewProps) => {
   const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
   const [mapCenter, setMapCenter] = useState({ lat: 33.4484, lng: -112.0740 }); // Phoenix center
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const isMobile = useIsMobile();
   const mapRef = useRef<google.maps.Map | null>(null);
 
-  // Load the Google Maps script
+  // Only load the script when isVisible is true
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     libraries: mapLibraries as any,
+    // Only load the script when the tab is active
+    preventGoogleFontsLoading: !isVisible
   });
 
   // Memoize valid facilities with coordinates
@@ -52,8 +54,7 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
 
   // Effect to get user's location
   useEffect(() => {
-    if (hasSearched && !userLocation && navigator.geolocation) {
-      console.log('Attempting to get user location...');
+    if (isVisible && hasSearched && !userLocation && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const newUserLocation = {
@@ -61,7 +62,6 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
             lng: position.coords.longitude
           };
           setUserLocation(newUserLocation);
-          console.log('User location set:', newUserLocation);
         },
         (error) => {
           console.warn('Error getting user location:', error.message);
@@ -69,7 +69,7 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
         { timeout: 10000 }
       );
     }
-  }, [hasSearched, userLocation]);
+  }, [hasSearched, userLocation, isVisible]);
 
   // Effect to fit bounds when facilities or user location change
   const fitBounds = useCallback(() => {
@@ -112,10 +112,10 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
   }, [validFacilities, userLocation, isLoading, hasSearched]);
 
   useEffect(() => {
-    if (isLoaded && mapRef.current) {
+    if (isLoaded && mapRef.current && isVisible) {
       fitBounds();
     }
-  }, [isLoaded, validFacilities, userLocation, isLoading, hasSearched, fitBounds]);
+  }, [isLoaded, validFacilities, userLocation, isLoading, hasSearched, fitBounds, isVisible]);
 
   // Effect to pan map when a facility is selected
   useEffect(() => {
@@ -131,19 +131,18 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
   const containerStyle = {
     width: '100%',
     height: '100%',
-    minHeight: '600px',
+    minHeight: '500px',
     borderRadius: '0.5rem',
     overflow: 'hidden'
   };
 
   const mapOptions = {
     streetViewControl: false,
-    mapTypeControl: true,
+    mapTypeControl: false,
     fullscreenControl: true,
     zoomControl: true,
     styles: [
-      { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-      { featureType: 'transit', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] }
+      { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] }
     ]
   };
 
@@ -157,7 +156,6 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
   };
 
   const handleMarkerClick = (facility: Facility) => {
-    console.log('Marker clicked:', facility.name);
     setSelectedFacility(facility);
   };
 
@@ -179,21 +177,32 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
   };
 
   const handleMapLoad = (map: google.maps.Map) => {
-    console.log("Map loaded.");
     mapRef.current = map;
   };
 
   const handleMapUnmount = () => {
-    console.log("Map unmounted.");
     mapRef.current = null;
   };
 
-  // --- Render Logic ---
+  // Don't try to load anything if the tab isn't visible
+  if (!isVisible) {
+    return (
+      <div className="w-full h-[500px] flex items-center justify-center bg-slate-50 rounded-lg">
+        <div className="text-center p-6">
+          <h3 className="text-xl font-medium text-gray-700 mb-2">Map View</h3>
+          <p className="text-sm text-gray-500">
+            Click the "Map View" tab to load the interactive map.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
+  // --- Render Logic ---
   // Loading state
   if (isLoading) {
     return (
-      <div className="relative w-full h-[600px] flex flex-col items-center justify-center bg-slate-100 rounded-lg border">
+      <div className="relative w-full h-[500px] flex flex-col items-center justify-center bg-slate-100 rounded-lg border">
         <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
         <p className="mt-4 text-muted-foreground text-center">Loading facilities map...</p>
       </div>
@@ -203,10 +212,13 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
   // No search performed yet
   if (!hasSearched) {
     return (
-      <div className="relative w-full h-[600px] flex flex-col items-center justify-center bg-slate-100 rounded-lg border border-dashed">
+      <div className="relative w-full h-[500px] flex flex-col items-center justify-center bg-slate-100 rounded-lg border border-dashed">
         <MapPin className="h-16 w-16 mb-4 text-gray-400" />
         <p className="text-lg font-medium text-gray-600">Search for facilities to see them on the map</p>
         <p className="text-sm text-gray-500">Your search results will appear here</p>
+        <Button variant="outline" className="mt-4" onClick={() => window.open("https://maps.google.com", "_blank")}>
+          Open Google Maps
+        </Button>
       </div>
     );
   }
@@ -214,7 +226,7 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
   // No results found after search
   if (hasSearched && (!facilities || facilities.length === 0)) {
     return (
-      <div className="relative w-full h-[600px] flex flex-col items-center justify-center bg-slate-100 rounded-lg border border-dashed">
+      <div className="relative w-full h-[500px] flex flex-col items-center justify-center bg-slate-100 rounded-lg border border-dashed">
         <MapPin className="h-16 w-16 mb-4 text-gray-400" />
         <p className="text-lg font-medium text-gray-600">No Facilities Found</p>
         <p className="text-sm text-gray-500 text-center max-w-xs">
@@ -227,7 +239,7 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
   // Loading script
   if (!isLoaded) {
     return (
-      <div className="relative w-full h-[600px] flex flex-col items-center justify-center bg-slate-100 rounded-lg border">
+      <div className="relative w-full h-[500px] flex flex-col items-center justify-center bg-slate-100 rounded-lg border">
         <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
         <p className="mt-4 text-muted-foreground text-center">Loading Google Maps...</p>
       </div>
@@ -237,7 +249,7 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
   // Maps API error
   if (loadError) {
     return (
-      <div className="relative w-full h-[600px] flex flex-col items-center justify-center bg-red-50 rounded-lg border border-red-200">
+      <div className="relative w-full h-[500px] flex flex-col items-center justify-center bg-red-50 rounded-lg border border-red-200">
         <div className="text-red-500 mb-2">⚠️</div>
         <p className="text-lg font-medium text-red-700">Failed to load Google Maps</p>
         <p className="text-sm text-red-600 mt-2 text-center max-w-md px-4">
@@ -246,13 +258,16 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
             "There was an error loading Google Maps. Please try again later."
           }
         </p>
+        <Button variant="outline" className="mt-4" onClick={() => window.open("https://maps.google.com", "_blank")}>
+          Open Google Maps Instead
+        </Button>
       </div>
     );
   }
 
   // *** Render Google Map ***
   return (
-    <div className="relative w-full h-[600px] rounded-lg overflow-hidden border">
+    <div className="relative w-full h-[500px] rounded-lg overflow-hidden border">
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={mapCenter}
@@ -318,6 +333,18 @@ const GoogleMapsView = ({ facilities, isLoading, hasSearched }: GoogleMapsViewPr
           </InfoWindowF>
         )}
       </GoogleMap>
+      <div className="absolute bottom-4 right-4">
+        <Button 
+          variant="default"
+          className="shadow-lg"
+          onClick={() => {
+            const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent('Senior Living Facilities near Phoenix, AZ')}`;
+            window.open(googleMapsUrl, '_blank', 'noopener,noreferrer');
+          }}
+        >
+          <MapPin className="h-4 w-4 mr-2" /> Open in Google Maps
+        </Button>
+      </div>
     </div>
   );
 };
