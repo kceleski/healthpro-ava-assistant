@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -890,7 +891,125 @@ const AssessmentPage = () => {
               </Card>
             </div>
           </div>
-       <d></d>
+        </div>
+      </div>
+      
+      {/* Submit Confirmation Dialog */}
+      <Dialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Complete Assessment</DialogTitle>
+            <DialogDescription>
+              Are you ready to submit this assessment? Our team will review the information and match the client with suitable facilities.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="flex items-center gap-2 text-center justify-center mb-4">
+              <CheckCircle className="h-5 w-5 text-green-500" />
+              <p className="font-medium">Assessment Complete</p>
+            </div>
+            <p className="text-sm text-muted-foreground text-center">
+              You can still edit this assessment after submission if needed.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSubmitDialog(false)}>
+              Review Again
+            </Button>
+            <Button onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit Assessment'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Help Dialog */}
+      <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Assessment Guidelines</DialogTitle>
+            <DialogDescription>
+              Tips for completing each section of the assessment
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh]">
+            <div className="py-4 space-y-6">
+              <div>
+                <h3 className="font-medium flex items-center gap-2">
+                  <User className="h-4 w-4 text-blue-500" />
+                  Personal Information
+                </h3>
+                <p className="text-sm mt-2">
+                  Provide accurate contact information to ensure we can reach the client or their representative. 
+                  The address information helps us identify suitable facilities in the preferred area.
+                </p>
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <h3 className="font-medium flex items-center gap-2">
+                  <Heart className="h-4 w-4 text-red-500" />
+                  Medical Information
+                </h3>
+                <p className="text-sm mt-2">
+                  Include all diagnosed conditions, especially those that affect daily functioning or require 
+                  specialized care. Be specific with medication names, dosages, and frequencies to ensure 
+                  proper medication management.
+                </p>
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <h3 className="font-medium flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-green-500" />
+                  Functional Assessment
+                </h3>
+                <p className="text-sm mt-2">
+                  This section determines the level of care needed. Be honest about current abilities and 
+                  assistance required with activities of daily living. Note any cognitive impairments and 
+                  their impact on daily functioning.
+                </p>
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <h3 className="font-medium flex items-center gap-2">
+                  <Home className="h-4 w-4 text-amber-500" />
+                  Care Preferences
+                </h3>
+                <p className="text-sm mt-2">
+                  The budget range helps us identify affordable options. Location preferences should consider 
+                  proximity to family members for visits. Amenities selection helps find facilities with features 
+                  important to the client's quality of life.
+                </p>
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <h3 className="font-medium flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-purple-500" />
+                  Additional Information
+                </h3>
+                <p className="text-sm mt-2">
+                  Insurance details help determine coverage options. Legal documents ensure proper decision-making 
+                  authority is established. Emergency contacts are crucial for facilities to have on file.
+                </p>
+              </div>
+            </div>
+          </ScrollArea>
+          <DialogFooter>
+            <Button onClick={() => setShowHelpDialog(false)}>
+              Got It
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
-    };       
-export default AssessmentPage
+};
+
+export default AssessmentPage;

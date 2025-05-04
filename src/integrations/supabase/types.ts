@@ -913,7 +913,7 @@ export type Database = {
           "Geocoding Footnote": string | null
           "Health Inspection Rating": string | null
           "Health Inspection Rating Footnote": string | null
-          id: string | null
+          id: string
           Latitude: number | null
           "Legal Business Name": string | null
           Location: string | null
@@ -1053,7 +1053,7 @@ export type Database = {
           "Geocoding Footnote"?: string | null
           "Health Inspection Rating"?: string | null
           "Health Inspection Rating Footnote"?: string | null
-          id?: string | null
+          id?: string
           Latitude?: number | null
           "Legal Business Name"?: string | null
           Location?: string | null
@@ -1201,7 +1201,7 @@ export type Database = {
           "Geocoding Footnote"?: string | null
           "Health Inspection Rating"?: string | null
           "Health Inspection Rating Footnote"?: string | null
-          id?: string | null
+          id?: string
           Latitude?: number | null
           "Legal Business Name"?: string | null
           Location?: string | null
