@@ -890,3 +890,6 @@ const AssessmentPage = () => {
               </Card>
             </div>
           </div>
+};
+
+export default AssessmentPage;
