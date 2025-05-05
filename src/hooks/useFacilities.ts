@@ -106,7 +106,7 @@ export function useSaveFavorite() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ facilityId, notes }: { facilityId: string; notes?: string }) => {
+    mutationFn: async ({ facilityId, notes }: { facilityId: string; notes?: string }) => {
       // Get existing favorites from localStorage
       const existingFavoritesJson = localStorage.getItem('favoriteFacilities') || '[]';
       const existingFavorites = JSON.parse(existingFavoritesJson);
