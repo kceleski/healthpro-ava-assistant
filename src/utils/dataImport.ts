@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -98,7 +99,7 @@ const sampleFacilities = [
 /**
  * Import sample facility data to the database
  */
-export async function importSampleFacilities() {
+export async function importSampleFacilities(): Promise<boolean> {
   try {
     // First check if data already exists
     const { count, error: countError } = await supabase
@@ -167,7 +168,7 @@ export async function clearAllFacilities() {
 // Add this function to the global window object for the admin interface
 declare global {
   interface Window {
-    importSampleFacilities: () => Promise<void>;
+    importSampleFacilities: () => Promise<boolean>;
   }
 }
 
