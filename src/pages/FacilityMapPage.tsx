@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   MapPin, Search, Building, Star, Navigation, 
-  Phone, Globe, Filter, Info, ChevronDown, Loader2
+  Phone, Globe, Filter, Info, ChevronDown, Loader2,
+  ExternalLink
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import GoogleMapsView from '@/components/MapView';
+import { StorepointMap } from '@/components/map/StorepointMap';
 import { useFacilitySearch } from '@/hooks/useFacilities';
 import { type Facility } from '@/services/facilityService';
 import { toast } from 'sonner';
@@ -18,7 +19,6 @@ import { useNavigate } from 'react-router-dom';
 
 const FacilityMapPage = () => {
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState('cards');
   const [searchQuery, setSearchQuery] = useState('');
   const [facilityType, setFacilityType] = useState('all');
   const [hasSearched, setHasSearched] = useState(false);
@@ -56,6 +56,15 @@ const FacilityMapPage = () => {
       console.error('Search error:', error);
       toast.error('Error searching facilities');
     }
+  };
+
+  // Handle opening Google Maps with all facilities
+  const handleOpenInMaps = () => {
+    // Create a query string with all facility addresses
+    const locations = displayFacilities.map(f => f.address).join('|');
+    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('senior living')}`;
+    window.open(mapUrl, '_blank', 'noopener,noreferrer');
+    toast.success('Opening Google Maps with facility locations');
   };
 
   // If no facilities are present in the database, use the hardcoded demo data
@@ -165,22 +174,6 @@ const FacilityMapPage = () => {
     }
   }, [useDemoData, isLoading, isError, hasSearched]);
 
-  // Adapt facility data for the Google Maps component
-  const mapFacilities = displayFacilities.map(facility => ({
-    id: facility.id,
-    name: facility.name,
-    address: facility.address,
-    latitude: facility.latitude,
-    longitude: facility.longitude,
-    type: facility.type,
-    phone: facility.phone,
-    website: facility.website,
-    rating: facility.rating,
-    priceRange: facility.price_min && facility.price_max 
-      ? `$${facility.price_min.toLocaleString()} - $${facility.price_max.toLocaleString()}`
-      : undefined
-  }));
-
   return (
     <main className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="mb-8">
@@ -257,109 +250,110 @@ const FacilityMapPage = () => {
               <p className="text-gray-800">{displayFacilities.length} facilities found</p>
             </div>
           </div>
+
+          {displayFacilities.length > 0 && (
+            <div className="mt-4">
+              <Button 
+                onClick={handleOpenInMaps}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <MapPin className="h-4 w-4" />
+                <span>View All Facilities in Google Maps</span>
+                <ExternalLink className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          )}
         </div>
       )}
       
-      {/* View Toggle */}
+      {/* Facility List */}
       <div className="mb-6">
-        <Tabs defaultValue="cards" onValueChange={setCurrentView}>
-          <div className="flex justify-between items-center">
-            <TabsList>
-              <TabsTrigger value="cards">Card View</TabsTrigger>
-              <TabsTrigger value="map">Map View</TabsTrigger>
-            </TabsList>
-            <span className="text-sm text-muted-foreground">
-              Showing {displayFacilities.length} {hasSearched ? "results" : "facilities"}
-              {useDemoData && " (demo data)"}
-            </span>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Facilities</h2>
+          <span className="text-sm text-muted-foreground">
+            Showing {displayFacilities.length} {hasSearched ? "results" : "facilities"}
+            {useDemoData && " (demo data)"}
+          </span>
+        </div>
+        
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2">Loading facilities...</span>
           </div>
-          
-          {/* Card View */}
-          <TabsContent value="cards" className="mt-6">
-            {isLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <span className="ml-2">Loading facilities...</span>
-              </div>
-            ) : displayFacilities.length === 0 ? (
-              <div className="text-center py-12 bg-gray-50 rounded-lg">
-                <Building className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-700">No Facilities Found</h3>
-                <p className="text-gray-500 mt-2 max-w-md mx-auto">
-                  Try adjusting your search criteria or adding new facilities to the database.
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {displayFacilities.map((facility) => (
-                  <Card key={facility.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                    <div className="bg-slate-100 h-40 flex items-center justify-center">
-                      <Building className="h-16 w-16 text-slate-400" />
+        ) : displayFacilities.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <Building className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-700">No Facilities Found</h3>
+            <p className="text-gray-500 mt-2 max-w-md mx-auto">
+              Try adjusting your search criteria or adding new facilities to the database.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayFacilities.map((facility) => (
+              <Card key={facility.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                <div className="bg-slate-100 h-40 flex items-center justify-center">
+                  <Building className="h-16 w-16 text-slate-400" />
+                </div>
+                
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold text-lg">{facility.name}</h3>
+                      <div className="flex items-center text-sm text-muted-foreground mt-1">
+                        <MapPin className="h-3.5 w-3.5 mr-1" />
+                        <span>{facility.address}</span>
+                      </div>
                     </div>
-                    
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-semibold text-lg">{facility.name}</h3>
-                          <div className="flex items-center text-sm text-muted-foreground mt-1">
-                            <MapPin className="h-3.5 w-3.5 mr-1" />
-                            <span>{facility.address}</span>
-                          </div>
-                        </div>
-                        {facility.rating && (
-                          <div className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded-full">
-                            <Star className="h-3.5 w-3.5 mr-1 fill-primary" />
-                            <span className="text-xs font-medium">{facility.rating}</span>
-                          </div>
-                        )}
+                    {facility.rating && (
+                      <div className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded-full">
+                        <Star className="h-3.5 w-3.5 mr-1 fill-primary" />
+                        <span className="text-xs font-medium">{facility.rating}</span>
                       </div>
-                      
-                      <div className="flex mt-3">
-                        <Badge className="mr-2">{facility.type}</Badge>
-                      </div>
-                      
-                      <div className="mt-4">
-                        <p className="text-sm text-muted-foreground line-clamp-3">
-                          Senior living facility offering personalized care and amenities.
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                        <div>
-                          {facility.price_min && facility.price_max ? (
-                            <>
-                              <p className="text-sm font-medium">${facility.price_min?.toLocaleString()} - ${facility.price_max?.toLocaleString()}</p>
-                              <p className="text-xs text-muted-foreground">per month</p>
-                            </>
-                          ) : (
-                            <p className="text-sm text-muted-foreground">Price unavailable</p>
-                          )}
-                        </div>
-                        <Button size="sm">
-                          View Details
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-          
-          {/* Map View */}
-          <TabsContent value="map" className="mt-6">
-            <Card>
-              <CardContent className="p-0 h-[600px]">
-                <GoogleMapsView
-                  facilities={mapFacilities}
-                  isLoading={isLoading}
-                  hasSearched={hasSearched || displayFacilities.length > 0}
-                  isVisible={currentView === 'map'}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                    )}
+                  </div>
+                  
+                  <div className="flex mt-3">
+                    <Badge className="mr-2">{facility.type}</Badge>
+                  </div>
+                  
+                  <div className="mt-4">
+                    <p className="text-sm text-muted-foreground line-clamp-3">
+                      Senior living facility offering personalized care and amenities.
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                    <div>
+                      {facility.price_min && facility.price_max ? (
+                        <>
+                          <p className="text-sm font-medium">${facility.price_min?.toLocaleString()} - ${facility.price_max?.toLocaleString()}</p>
+                          <p className="text-xs text-muted-foreground">per month</p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">Price unavailable</p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => {
+                        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(facility.address)}`;
+                        window.open(mapUrl, '_blank', 'noopener,noreferrer');
+                      }}>
+                        <MapPin className="h-3.5 w-3.5 mr-1" />
+                        Map
+                      </Button>
+                      <Button size="sm">
+                        View Details
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
       
       {/* Call to Action */}

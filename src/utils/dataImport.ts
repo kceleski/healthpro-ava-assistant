@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -162,6 +161,13 @@ export async function clearAllFacilities() {
     console.error('Unexpected error clearing facilities:', error);
     toast.error('An unexpected error occurred');
     return false;
+  }
+}
+
+// Add this function to the global window object for the admin interface
+declare global {
+  interface Window {
+    importSampleFacilities: () => Promise<void>;
   }
 }
 
