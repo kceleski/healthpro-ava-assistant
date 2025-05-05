@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -5,166 +6,180 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   MapPin, Search, Building, Star, Navigation, 
-  Phone, Globe, Filter, Info, ChevronDown 
+  Phone, Globe, Filter, Info, ChevronDown, Loader2
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GoogleMapsView from '@/components/MapView';
-
-// Facility object type
-interface Facility {
-  id: string;
-  name: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  type?: string;
-  phone?: string;
-  website?: string;
-  rating?: number;
-  photo?: string;
-  priceRange?: string;
-  isFeatured?: boolean;
-  description?: string;
-}
+import { useFacilitySearch } from '@/hooks/useFacilities';
+import { type Facility } from '@/services/facilityService';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const FacilityMapPage = () => {
-  // Sample facilities data
-  const [facilities, setFacilities] = useState<Facility[]>([
+  const navigate = useNavigate();
+  const [currentView, setCurrentView] = useState('cards');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [facilityType, setFacilityType] = useState('all');
+  const [hasSearched, setHasSearched] = useState(false);
+  
+  // Set default values for search
+  const initialSearchParams = {
+    limit: 20,
+  };
+  
+  // Use React Query to fetch facilities
+  const { 
+    data: facilities = [], 
+    isLoading, 
+    isError, 
+    refetch 
+  } = useFacilitySearch(
+    initialSearchParams,
+    true // Start with enabled to show some initial data
+  );
+
+  // Handle search submission
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const searchParams = {
+      query: searchQuery,
+      type: facilityType !== 'all' ? facilityType : undefined,
+      limit: 50
+    };
+    
+    try {
+      await refetch();
+      setHasSearched(true);
+    } catch (error) {
+      console.error('Search error:', error);
+      toast.error('Error searching facilities');
+    }
+  };
+
+  // If no facilities are present in the database, use the hardcoded demo data
+  const useDemoData = facilities.length === 0;
+  
+  // Hardcoded demo data for when DB is empty
+  const demoFacilities: Facility[] = [
     {
       id: '1',
       name: 'Sunny Pines Care Center',
       address: '123 Pine Street, Phoenix, AZ 85001',
-      latitude: 33.4484,
-      longitude: -112.074,
+      city: 'Phoenix',
+      state: 'AZ',
       type: 'Assisted Living',
       phone: '(602) 555-1234',
       website: 'sunnypines.com',
       rating: 4.5,
-      photo: 'https://placehold.co/300x200?text=Sunny+Pines',
-      priceRange: "$3,500 - $5,500",
-      isFeatured: true,
-      description: "A vibrant community offering personalized care in a comfortable setting. Features include beautiful gardens, social activities, and a dedicated care staff."
+      latitude: 33.4484,
+      longitude: -112.074,
+      price_min: 3500,
+      price_max: 5500
     },
     {
       id: '2',
       name: 'Golden Years Retirement Home',
       address: '456 Oak Avenue, Phoenix, AZ 85004',
-      latitude: 33.4539,
-      longitude: -112.0691,
+      city: 'Phoenix',
+      state: 'AZ',
       type: 'Independent Living',
       phone: '(602) 555-5678',
       website: 'goldenyears.com',
       rating: 4.2,
-      photo: 'https://placehold.co/300x200?text=Golden+Years',
-      priceRange: "$2,800 - $4,000",
-      isFeatured: true,
-      description: "An active senior community with resort-style amenities. Residents enjoy independence with optional support services as needed."
+      latitude: 33.4539,
+      longitude: -112.0691,
+      price_min: 2800,
+      price_max: 4000
     },
     {
       id: '3',
       name: 'Serene Valley Care Facility',
       address: '789 Maple Road, Phoenix, AZ 85006',
-      latitude: 33.4602,
-      longitude: -112.0645,
+      city: 'Phoenix',
+      state: 'AZ',
       type: 'Memory Care',
       phone: '(602) 555-9012',
       website: 'serenevalley.com',
       rating: 4.7,
-      priceRange: "$4,200 - $6,200",
-      isFeatured: false,
-      description: "Specialized memory care in a secure, nurturing environment with a high staff-to-resident ratio for personalized attention."
+      latitude: 33.4602,
+      longitude: -112.0645,
+      price_min: 4200,
+      price_max: 6200
     },
     {
       id: '4',
       name: 'Tranquil Gardens Senior Living',
       address: '101 Elm Street, Phoenix, AZ 85008',
-      latitude: 33.4484,
-      longitude: -112.0599,
+      city: 'Phoenix',
+      state: 'AZ',
       type: 'Assisted Living',
       phone: '(602) 555-3456',
       website: 'tranquilgardens.com',
       rating: 4.0,
-      photo: 'https://placehold.co/300x200?text=Tranquil+Gardens',
-      priceRange: "$3,200 - $4,800",
-      isFeatured: false,
-      description: "Comfortable assisted living with a focus on wellness and independence. Features restaurant-style dining and engaging activities."
+      latitude: 33.4484,
+      longitude: -112.0599,
+      price_min: 3200,
+      price_max: 4800
     },
     {
       id: '5',
       name: 'Sunset Manor',
       address: '202 Willow Lane, Phoenix, AZ 85020',
-      latitude: 33.4637,
-      longitude: -112.0822,
+      city: 'Phoenix',
+      state: 'AZ',
       type: 'Nursing Home',
       phone: '(602) 555-7890',
       website: 'sunsetmanor.com',
       rating: 3.9,
-      priceRange: "$5,200 - $7,500",
-      isFeatured: true,
-      description: "Comprehensive skilled nursing care with rehabilitation services and 24/7 medical supervision."
+      latitude: 33.4637,
+      longitude: -112.0822,
+      price_min: 5200,
+      price_max: 7500
     },
     {
       id: '6',
       name: 'Riverside Retirement Community',
       address: '303 River Road, Phoenix, AZ 85040',
-      latitude: 33.4246,
-      longitude: -112.0684,
+      city: 'Phoenix',
+      state: 'AZ',
       type: 'Independent Living',
       phone: '(602) 555-2345',
       website: 'riversideretirement.com',
       rating: 4.3,
-      photo: 'https://placehold.co/300x200?text=Riverside',
-      priceRange: "$2,500 - $3,800",
-      isFeatured: false,
-      description: "A vibrant community for active seniors with social events, fitness programs, and beautiful riverside views."
+      latitude: 33.4246,
+      longitude: -112.0684,
+      price_min: 2500,
+      price_max: 3800
     }
-  ]);
+  ];
 
-  const [currentView, setCurrentView] = useState('cards');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [facilityType, setFacilityType] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [filteredFacilities, setFilteredFacilities] = useState<Facility[]>([]);
-
-  // Filter facilities based on search
+  // Choose which facilities to display based on database content
+  const displayFacilities = useDemoData ? demoFacilities : facilities;
+  
+  // If we're using demo data and there's no error loading, show a message
   useEffect(() => {
-    if (hasSearched) {
-      const filtered = facilities.filter(facility => {
-        // Filter by search query
-        const matchesSearch = 
-          searchQuery === '' || 
-          facility.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          facility.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          facility.type?.toLowerCase().includes(searchQuery.toLowerCase());
-        
-        // Filter by facility type
-        const matchesType = 
-          facilityType === 'all' || 
-          facility.type?.toLowerCase().includes(facilityType.toLowerCase());
-        
-        return matchesSearch && matchesType;
-      });
-      
-      setFilteredFacilities(filtered);
-    } else {
-      // Show featured facilities when no search performed
-      setFilteredFacilities(facilities.filter(f => f.isFeatured));
+    if (useDemoData && !isLoading && !isError && hasSearched) {
+      toast.info("Using demo data - no facilities found in database");
     }
-  }, [searchQuery, facilityType, facilities, hasSearched]);
+  }, [useDemoData, isLoading, isError, hasSearched]);
 
-  // Handle search submission
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate loading
-    setTimeout(() => {
-      setHasSearched(true);
-      setIsLoading(false);
-    }, 500);
-  };
+  // Adapt facility data for the Google Maps component
+  const mapFacilities = displayFacilities.map(facility => ({
+    id: facility.id,
+    name: facility.name,
+    address: facility.address,
+    latitude: facility.latitude,
+    longitude: facility.longitude,
+    type: facility.type,
+    phone: facility.phone,
+    website: facility.website,
+    rating: facility.rating,
+    priceRange: facility.price_min && facility.price_max 
+      ? `$${facility.price_min.toLocaleString()} - $${facility.price_max.toLocaleString()}`
+      : undefined
+  }));
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-6xl">
@@ -199,10 +214,10 @@ const FacilityMapPage = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Facility Types</SelectItem>
-                    <SelectItem value="assisted living">Assisted Living</SelectItem>
-                    <SelectItem value="independent living">Independent Living</SelectItem>
-                    <SelectItem value="memory care">Memory Care</SelectItem>
-                    <SelectItem value="nursing home">Nursing Home</SelectItem>
+                    <SelectItem value="Assisted Living">Assisted Living</SelectItem>
+                    <SelectItem value="Independent Living">Independent Living</SelectItem>
+                    <SelectItem value="Memory Care">Memory Care</SelectItem>
+                    <SelectItem value="Nursing Home">Nursing Home</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -210,7 +225,14 @@ const FacilityMapPage = () => {
             
             <div className="flex justify-end">
               <Button type="submit" className="px-8" disabled={isLoading}>
-                {isLoading ? "Searching..." : "Search Facilities"}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Searching...
+                  </>
+                ) : (
+                  "Search Facilities"
+                )}
               </Button>
             </div>
           </form>
@@ -232,7 +254,7 @@ const FacilityMapPage = () => {
             </div>
             <div>
               <span className="text-sm font-medium text-gray-500">Results:</span>
-              <p className="text-gray-800">{filteredFacilities.length} facilities found</p>
+              <p className="text-gray-800">{displayFacilities.length} facilities found</p>
             </div>
           </div>
         </div>
@@ -247,71 +269,81 @@ const FacilityMapPage = () => {
               <TabsTrigger value="map">Map View</TabsTrigger>
             </TabsList>
             <span className="text-sm text-muted-foreground">
-              Showing {filteredFacilities.length} {hasSearched ? "results" : "featured facilities"}
+              Showing {displayFacilities.length} {hasSearched ? "results" : "facilities"}
+              {useDemoData && " (demo data)"}
             </span>
           </div>
           
           {/* Card View */}
           <TabsContent value="cards" className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredFacilities.map((facility) => (
-                <Card key={facility.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="bg-slate-100 h-40 flex items-center justify-center">
-                    {facility.photo ? (
-                      <img 
-                        src={facility.photo} 
-                        alt={facility.name} 
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://placehold.co/300x200?text=No+Image';
-                        }}
-                      />
-                    ) : (
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="ml-2">Loading facilities...</span>
+              </div>
+            ) : displayFacilities.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-lg">
+                <Building className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-xl font-semibold text-gray-700">No Facilities Found</h3>
+                <p className="text-gray-500 mt-2 max-w-md mx-auto">
+                  Try adjusting your search criteria or adding new facilities to the database.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {displayFacilities.map((facility) => (
+                  <Card key={facility.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                    <div className="bg-slate-100 h-40 flex items-center justify-center">
                       <Building className="h-16 w-16 text-slate-400" />
-                    )}
-                  </div>
-                  
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-semibold text-lg">{facility.name}</h3>
-                        <div className="flex items-center text-sm text-muted-foreground mt-1">
-                          <MapPin className="h-3.5 w-3.5 mr-1" />
-                          <span>{facility.address}</span>
+                    </div>
+                    
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold text-lg">{facility.name}</h3>
+                          <div className="flex items-center text-sm text-muted-foreground mt-1">
+                            <MapPin className="h-3.5 w-3.5 mr-1" />
+                            <span>{facility.address}</span>
+                          </div>
                         </div>
+                        {facility.rating && (
+                          <div className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded-full">
+                            <Star className="h-3.5 w-3.5 mr-1 fill-primary" />
+                            <span className="text-xs font-medium">{facility.rating}</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded-full">
-                        <Star className="h-3.5 w-3.5 mr-1 fill-primary" />
-                        <span className="text-xs font-medium">{facility.rating}</span>
+                      
+                      <div className="flex mt-3">
+                        <Badge className="mr-2">{facility.type}</Badge>
                       </div>
-                    </div>
-                    
-                    <div className="flex mt-3">
-                      <Badge className="mr-2">{facility.type}</Badge>
-                      {facility.isFeatured && (
-                        <Badge variant="outline" className="bg-amber-50">Featured</Badge>
-                      )}
-                    </div>
-                    
-                    <div className="mt-4">
-                      <p className="text-sm text-muted-foreground line-clamp-3">
-                        {facility.description || "Senior living facility offering personalized care and amenities."}
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                      <div>
-                        <p className="text-sm font-medium">{facility.priceRange}</p>
-                        <p className="text-xs text-muted-foreground">per month</p>
+                      
+                      <div className="mt-4">
+                        <p className="text-sm text-muted-foreground line-clamp-3">
+                          Senior living facility offering personalized care and amenities.
+                        </p>
                       </div>
-                      <Button size="sm">
-                        View Details
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      
+                      <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                        <div>
+                          {facility.price_min && facility.price_max ? (
+                            <>
+                              <p className="text-sm font-medium">${facility.price_min?.toLocaleString()} - ${facility.price_max?.toLocaleString()}</p>
+                              <p className="text-xs text-muted-foreground">per month</p>
+                            </>
+                          ) : (
+                            <p className="text-sm text-muted-foreground">Price unavailable</p>
+                          )}
+                        </div>
+                        <Button size="sm">
+                          View Details
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
           
           {/* Map View */}
@@ -319,9 +351,9 @@ const FacilityMapPage = () => {
             <Card>
               <CardContent className="p-0 h-[600px]">
                 <GoogleMapsView
-                  facilities={filteredFacilities}
+                  facilities={mapFacilities}
                   isLoading={isLoading}
-                  hasSearched={hasSearched || filteredFacilities.length > 0}
+                  hasSearched={hasSearched || displayFacilities.length > 0}
                   isVisible={currentView === 'map'}
                 />
               </CardContent>
@@ -345,9 +377,9 @@ const FacilityMapPage = () => {
                   <Phone className="h-4 w-4 mr-2" />
                   Request a Call
                 </Button>
-                <Button variant="outline" className="sm:w-auto">
+                <Button variant="outline" className="sm:w-auto" onClick={() => navigate('/assessment')}>
                   <Info className="h-4 w-4 mr-2" />
-                  Learn More
+                  Take Assessment
                 </Button>
               </div>
             </div>

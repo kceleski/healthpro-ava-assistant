@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,7 @@ import AvaPortal from "./pages/portal/AvaPortal";
 import FacilityMapPage from "./pages/FacilityMapPage";
 import AssessmentPage from "./pages/AssessmentPage";
 import RequireAuth from "./components/auth/RequireAuth";
+import AdminTools from "./pages/portal/AdminTools";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +34,7 @@ const App = () => (
           <Route path="/portal/facilities" element={<Facilities />} />
           <Route path="/portal/client/:id" element={<ClientDetails />} />
           <Route path="/portal/ava" element={<AvaPortal />} />
+          <Route path="/portal/admin" element={<AdminTools />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -120,6 +120,33 @@ export type Database = {
           },
         ]
       }
+      assessment_results: {
+        Row: {
+          answers: Json
+          created_at: string | null
+          id: string
+          recommendations: Json | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          answers: Json
+          created_at?: string | null
+          id?: string
+          recommendations?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          created_at?: string | null
+          id?: string
+          recommendations?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       Assisted_Living_Home: {
         Row: {
           altcs: string | null
@@ -444,6 +471,7 @@ export type Database = {
           tiktok: string | null
           twitter: string | null
           type: string | null
+          UUID: string
           virtual_tour: string | null
           visit_website: string | null
           website: string | null
@@ -475,6 +503,7 @@ export type Database = {
           tiktok?: string | null
           twitter?: string | null
           type?: string | null
+          UUID?: string
           virtual_tour?: string | null
           visit_website?: string | null
           website?: string | null
@@ -506,6 +535,7 @@ export type Database = {
           tiktok?: string | null
           twitter?: string | null
           type?: string | null
+          UUID?: string
           virtual_tour?: string | null
           visit_website?: string | null
           website?: string | null
@@ -1948,6 +1978,47 @@ export type Database = {
         }
         Relationships: []
       }
+      search_history: {
+        Row: {
+          amenities: string[] | null
+          created_at: string | null
+          facility_type: string | null
+          id: string
+          location: string | null
+          query: string
+          search_result_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amenities?: string[] | null
+          created_at?: string | null
+          facility_type?: string | null
+          id?: string
+          location?: string | null
+          query: string
+          search_result_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amenities?: string[] | null
+          created_at?: string | null
+          facility_type?: string | null
+          id?: string
+          location?: string | null
+          query?: string
+          search_result_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_history_search_result_id_fkey"
+            columns: ["search_result_id"]
+            isOneToOne: false
+            referencedRelation: "search_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       search_results: {
         Row: {
           amenities: string[] | null
@@ -2134,6 +2205,38 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_saved_facilities: {
+        Row: {
+          created_at: string | null
+          facility_id: string
+          id: string
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          facility_id: string
+          id?: string
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          facility_id?: string
+          id?: string
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_saved_facilities_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {

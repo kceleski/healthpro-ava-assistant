@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { UserProfileMenu } from '@/components/auth/UserProfileMenu';
 
 // Define the proper type for the ListItem component props
 interface ListItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
@@ -382,6 +382,19 @@ const Navbar = () => {
             </RouterLink>
           </div>
         </div>
+      </div>
+      
+      <div className="hidden md:flex gap-4 items-center">
+        <Button asChild variant="ghost">
+          <Link to="/assessment">Take Assessment</Link>
+        </Button>
+        <Button asChild variant="ghost">
+          <Link to="/facilities-map">Find Facilities</Link>
+        </Button>
+        <Button asChild>
+          <Link to="/portal/dashboard">Advisor Portal</Link>
+        </Button>
+        <UserProfileMenu />
       </div>
     </header>
   );
