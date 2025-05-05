@@ -304,157 +304,157 @@ const Facilities = () => {
           </form>
         </div>
         
-        <div className="flex justify-between items-center">
-          <Tabs defaultValue="grid" onValueChange={setCurrentView}>
+        <Tabs defaultValue={currentView} onValueChange={setCurrentView}>
+          <div className="flex justify-between items-center">
             <TabsList>
               <TabsTrigger value="grid">Grid View</TabsTrigger>
               <TabsTrigger value="table">Table View</TabsTrigger>
             </TabsList>
-          </Tabs>
-          
-          <Button
-            variant="outline"
-            onClick={openAllInMaps}
-            className="flex items-center gap-2"
-          >
-            <Map className="h-4 w-4" />
-            <span>Open in Google Maps</span>
-            <ExternalLink className="h-4 w-4 ml-1" />
-          </Button>
-        </div>
-        
-        <div>
-          <span className="text-sm text-muted-foreground">
-            Showing {filteredFacilities.length} of {facilities.length} facilities
-          </span>
-        </div>
-        
-        <TabsContent value="grid" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredFacilities.map((facility) => (
-              <Card key={facility.id} className="overflow-hidden">
-                <div className="bg-slate-100 h-40 flex items-center justify-center">
-                  <Building className="h-16 w-16 text-slate-400" />
-                </div>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-semibold text-lg">{facility.name}</h3>
-                      <div className="flex items-center text-sm text-muted-foreground mt-1">
-                        <MapPin className="h-3.5 w-3.5 mr-1" />
-                        <span>{facility.location}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded-full">
-                      <Star className="h-3.5 w-3.5 mr-1 fill-primary" />
-                      <span className="text-xs font-medium">{facility.rating}</span>
-                    </div>
-                  </div>
-                  
-                  <Badge className="mt-3">{facility.type}</Badge>
-                  
-                  <div className="mt-4">
-                    <p className="text-sm text-muted-foreground line-clamp-3">{facility.description}</p>
-                  </div>
-                  
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {facility.amenities.slice(0, 5).map((amenity, idx) => (
-                      <div key={idx} className="flex items-center text-xs bg-slate-100 px-2 py-1 rounded-full">
-                        {getAmenityIcon(amenity)}
-                        <span className="ml-1">{amenity}</span>
-                      </div>
-                    ))}
-                    {facility.amenities.length > 5 && (
-                      <div className="text-xs bg-slate-100 px-2 py-1 rounded-full">
-                        +{facility.amenities.length - 5} more
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                    <div>
-                      <p className="text-sm font-medium">${facility.pricing.min.toLocaleString()} - ${facility.pricing.max.toLocaleString()}</p>
-                      <p className="text-xs text-muted-foreground">per month</p>
-                    </div>
-                    <div className="flex items-center">
-                      <Badge variant={facility.beds.available > 0 ? "default" : "destructive"} className="mr-2">
-                        {facility.beds.available > 0 ? `${facility.beds.available} Available` : "Full"}
-                      </Badge>
-                      <Button variant="ghost" size="icon" onClick={() => openFacilityInMaps(facility)}>
-                        <MapPin className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Heart className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="bg-slate-50 px-6 py-3 flex justify-between">
-                  <div className="flex items-center">
-                    <Badge variant="outline">{facility.partnership.status}</Badge>
-                  </div>
-                  <Button size="sm">
-                    View Details
-                    <ChevronRight className="h-3.5 w-3.5 ml-1" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+            
+            <Button
+              variant="outline"
+              onClick={openAllInMaps}
+              className="flex items-center gap-2"
+            >
+              <Map className="h-4 w-4" />
+              <span>Open in Google Maps</span>
+              <ExternalLink className="h-4 w-4 ml-1" />
+            </Button>
           </div>
-        </TabsContent>
-        
-        <TabsContent value="table" className="mt-6">
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[300px]">Name</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Rating</TableHead>
-                    <TableHead>Price Range</TableHead>
-                    <TableHead>Availability</TableHead>
-                    <TableHead>Partner Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredFacilities.map((facility) => (
-                    <TableRow key={facility.id}>
-                      <TableCell className="font-medium">{facility.name}</TableCell>
-                      <TableCell>{facility.type}</TableCell>
-                      <TableCell>{facility.location}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center">
-                          <Star className="h-3.5 w-3.5 mr-1 fill-amber-400 text-amber-400" />
-                          <span>{facility.rating}</span>
+          
+          <div>
+            <span className="text-sm text-muted-foreground">
+              Showing {filteredFacilities.length} of {facilities.length} facilities
+            </span>
+          </div>
+          
+          <TabsContent value="grid" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredFacilities.map((facility) => (
+                <Card key={facility.id} className="overflow-hidden">
+                  <div className="bg-slate-100 h-40 flex items-center justify-center">
+                    <Building className="h-16 w-16 text-slate-400" />
+                  </div>
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-semibold text-lg">{facility.name}</h3>
+                        <div className="flex items-center text-sm text-muted-foreground mt-1">
+                          <MapPin className="h-3.5 w-3.5 mr-1" />
+                          <span>{facility.location}</span>
                         </div>
-                      </TableCell>
-                      <TableCell>${facility.pricing.min.toLocaleString()} - ${facility.pricing.max.toLocaleString()}</TableCell>
-                      <TableCell>
-                        <Badge variant={facility.beds.available > 0 ? "default" : "destructive"}>
+                      </div>
+                      <div className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded-full">
+                        <Star className="h-3.5 w-3.5 mr-1 fill-primary" />
+                        <span className="text-xs font-medium">{facility.rating}</span>
+                      </div>
+                    </div>
+                    
+                    <Badge className="mt-3">{facility.type}</Badge>
+                    
+                    <div className="mt-4">
+                      <p className="text-sm text-muted-foreground line-clamp-3">{facility.description}</p>
+                    </div>
+                    
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {facility.amenities.slice(0, 5).map((amenity, idx) => (
+                        <div key={idx} className="flex items-center text-xs bg-slate-100 px-2 py-1 rounded-full">
+                          {getAmenityIcon(amenity)}
+                          <span className="ml-1">{amenity}</span>
+                        </div>
+                      ))}
+                      {facility.amenities.length > 5 && (
+                        <div className="text-xs bg-slate-100 px-2 py-1 rounded-full">
+                          +{facility.amenities.length - 5} more
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                      <div>
+                        <p className="text-sm font-medium">${facility.pricing.min.toLocaleString()} - ${facility.pricing.max.toLocaleString()}</p>
+                        <p className="text-xs text-muted-foreground">per month</p>
+                      </div>
+                      <div className="flex items-center">
+                        <Badge variant={facility.beds.available > 0 ? "default" : "destructive"} className="mr-2">
                           {facility.beds.available > 0 ? `${facility.beds.available} Available` : "Full"}
                         </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{facility.partnership.status}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end items-center gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => openFacilityInMaps(facility)}>
-                            <MapPin className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">View</Button>
-                        </div>
-                      </TableCell>
+                        <Button variant="ghost" size="icon" onClick={() => openFacilityInMaps(facility)}>
+                          <MapPin className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon">
+                          <Heart className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="bg-slate-50 px-6 py-3 flex justify-between">
+                    <div className="flex items-center">
+                      <Badge variant="outline">{facility.partnership.status}</Badge>
+                    </div>
+                    <Button size="sm">
+                      View Details
+                      <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="table" className="mt-6">
+            <Card>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[300px]">Name</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead>Rating</TableHead>
+                      <TableHead>Price Range</TableHead>
+                      <TableHead>Availability</TableHead>
+                      <TableHead>Partner Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredFacilities.map((facility) => (
+                      <TableRow key={facility.id}>
+                        <TableCell className="font-medium">{facility.name}</TableCell>
+                        <TableCell>{facility.type}</TableCell>
+                        <TableCell>{facility.location}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            <Star className="h-3.5 w-3.5 mr-1 fill-amber-400 text-amber-400" />
+                            <span>{facility.rating}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>${facility.pricing.min.toLocaleString()} - ${facility.pricing.max.toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Badge variant={facility.beds.available > 0 ? "default" : "destructive"}>
+                            {facility.beds.available > 0 ? `${facility.beds.available} Available` : "Full"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{facility.partnership.status}</Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end items-center gap-1">
+                            <Button variant="ghost" size="icon" onClick={() => openFacilityInMaps(facility)}>
+                              <MapPin className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm">View</Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
       
       <Dialog open={filterDialogOpen} onOpenChange={setFilterDialogOpen}>
