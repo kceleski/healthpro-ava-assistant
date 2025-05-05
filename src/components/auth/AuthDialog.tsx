@@ -29,7 +29,7 @@ export function AuthDialog({ trigger, defaultTab = 'sign-in', onSuccess }: AuthD
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
   
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +56,20 @@ export function AuthDialog({ trigger, defaultTab = 'sign-in', onSuccess }: AuthD
         setOpen(false);
         if (onSuccess) onSuccess();
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      alert("Please enter your email address first");
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      await resetPassword(email);
     } finally {
       setLoading(false);
     }
@@ -97,7 +111,13 @@ export function AuthDialog({ trigger, defaultTab = 'sign-in', onSuccess }: AuthD
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="signin-password">Password</Label>
-                  <Button variant="link" size="sm" className="p-0 h-auto text-xs">
+                  <Button 
+                    variant="link" 
+                    size="sm" 
+                    className="p-0 h-auto text-xs"
+                    type="button"
+                    onClick={handleForgotPassword}
+                  >
                     Forgot password?
                   </Button>
                 </div>

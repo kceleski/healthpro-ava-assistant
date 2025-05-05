@@ -4,22 +4,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { LockKeyhole, AlertCircle } from 'lucide-react';
-
-// This is a temporary mock authentication check
-// In a real application, this would connect to your authentication system
-const isAuthenticated = () => {
-  return localStorage.getItem('authenticated') === 'true';
-};
-
-// Mock login function - in a real app, this would use proper auth
-export const mockLogin = () => {
-  localStorage.setItem('authenticated', 'true');
-};
-
-// Mock logout function
-export const mockLogout = () => {
-  localStorage.setItem('authenticated', 'false');
-};
+import { useAuth } from '@/hooks/useAuth';
 
 interface RequireAuthProps {
   children: React.ReactNode;
@@ -27,9 +12,25 @@ interface RequireAuthProps {
 
 const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const location = useLocation();
-  const authenticated = isAuthenticated();
+  const { isAuthenticated, loading } = useAuth();
 
-  if (!authenticated) {
+  // If still loading authentication status, show a loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Checking Authentication</CardTitle>
+            <CardDescription>
+              Please wait while we verify your login status...
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <Card className="w-full max-w-md">
@@ -57,8 +58,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
             <Button 
               className="w-full" 
               onClick={() => {
-                mockLogin();
-                window.location.reload();
+                window.location.href = '/';
               }}
             >
               Sign In

@@ -15,6 +15,23 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Set up listener for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email || '',
+            avatar_url: session.user.user_metadata?.avatar_url,
+            full_name: session.user.user_metadata?.full_name,
+          });
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
+      }
+    );
+
     // Check for current session
     const fetchUser = async () => {
       setLoading(true);
@@ -39,23 +56,6 @@ export function useAuth() {
     };
 
     fetchUser();
-
-    // Set up listener for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (session?.user) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            avatar_url: session.user.user_metadata?.avatar_url,
-            full_name: session.user.user_metadata?.full_name,
-          });
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
-      }
-    );
 
     return () => {
       subscription.unsubscribe();
