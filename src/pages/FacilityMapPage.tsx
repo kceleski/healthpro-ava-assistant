@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -78,6 +77,7 @@ const FacilityMapPage = () => {
       address: '123 Pine Street, Phoenix, AZ 85001',
       city: 'Phoenix',
       state: 'AZ',
+      zip_code: '85001',
       type: 'Assisted Living',
       phone: '(602) 555-1234',
       website: 'sunnypines.com',
@@ -93,6 +93,7 @@ const FacilityMapPage = () => {
       address: '456 Oak Avenue, Phoenix, AZ 85004',
       city: 'Phoenix',
       state: 'AZ',
+      zip_code: '85004',
       type: 'Independent Living',
       phone: '(602) 555-5678',
       website: 'goldenyears.com',
@@ -108,6 +109,7 @@ const FacilityMapPage = () => {
       address: '789 Maple Road, Phoenix, AZ 85006',
       city: 'Phoenix',
       state: 'AZ',
+      zip_code: '85006',
       type: 'Memory Care',
       phone: '(602) 555-9012',
       website: 'serenevalley.com',
@@ -123,6 +125,7 @@ const FacilityMapPage = () => {
       address: '101 Elm Street, Phoenix, AZ 85008',
       city: 'Phoenix',
       state: 'AZ',
+      zip_code: '85008',
       type: 'Assisted Living',
       phone: '(602) 555-3456',
       website: 'tranquilgardens.com',
@@ -138,6 +141,7 @@ const FacilityMapPage = () => {
       address: '202 Willow Lane, Phoenix, AZ 85020',
       city: 'Phoenix',
       state: 'AZ',
+      zip_code: '85020',
       type: 'Nursing Home',
       phone: '(602) 555-7890',
       website: 'sunsetmanor.com',
@@ -153,6 +157,7 @@ const FacilityMapPage = () => {
       address: '303 River Road, Phoenix, AZ 85040',
       city: 'Phoenix',
       state: 'AZ',
+      zip_code: '85040',
       type: 'Independent Living',
       phone: '(602) 555-2345',
       website: 'riversideretirement.com',
