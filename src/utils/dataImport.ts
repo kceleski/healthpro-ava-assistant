@@ -118,10 +118,29 @@ export async function importSampleFacilities(): Promise<boolean> {
       return true;
     }
     
+    // Format the data to match the Supabase table structure
+    const facilitiesForImport = sampleFacilities.map(facility => ({
+      name: facility.name,
+      address: facility.address,
+      city: facility.city,
+      state: facility.state,
+      zip_code: facility.zip_code,
+      phone_number: facility.phone,
+      website: facility.website,
+      rating: facility.rating,
+      latitude: facility.latitude,
+      longitude: facility.longitude,
+      price_min: facility.price_min,
+      price_max: facility.price_max,
+      care_types: [facility.type],
+      description: `${facility.name} is a ${facility.type} facility located in ${facility.city}, ${facility.state}.`,
+      amenities: ["24/7 Staff", "Dining", "Activities"]
+    }));
+    
     // Import sample data
     const { data, error } = await supabase
       .from('facilities')
-      .insert(sampleFacilities)
+      .insert(facilitiesForImport)
       .select();
     
     if (error) {
