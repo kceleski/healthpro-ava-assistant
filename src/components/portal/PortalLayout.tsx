@@ -1,6 +1,6 @@
 
 import React, { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -16,8 +16,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Home, Users, Building, Brain, LogOut, Settings } from "lucide-react";
-import { mockLogout } from "@/components/auth/RequireAuth";
-import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 
 interface PortalLayoutProps {
@@ -27,11 +25,6 @@ interface PortalLayoutProps {
 const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    mockLogout();
-    navigate('/');
-  };
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>
@@ -72,7 +65,8 @@ const AppSidebar = () => {
   const navigate = useNavigate();
   
   const handleLogout = () => {
-    mockLogout();
+    // Simple logout functionality
+    localStorage.removeItem('user');
     navigate('/');
   };
 
