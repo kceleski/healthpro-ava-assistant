@@ -9,561 +9,491 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      amenities: {
+      assessments: {
         Row: {
-          created_at: string | null
-          description: string | null
-          id: string
-          name: string
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name: string
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
-      appointment_reminders: {
-        Row: {
-          appointment_id: string
+          budget_range: string | null
+          conversation_history: Json | null
           created_at: string | null
           id: string
-          sent: boolean
-          time_before: string
-          type: string
-          user_id: string
+          other_preferences: Json | null
+          preferred_location: string | null
+          recommended_care_types: string[] | null
+          summary: string | null
+          user_id: string | null
         }
         Insert: {
-          appointment_id: string
+          budget_range?: string | null
+          conversation_history?: Json | null
           created_at?: string | null
           id?: string
-          sent?: boolean
-          time_before: string
-          type: string
-          user_id: string
+          other_preferences?: Json | null
+          preferred_location?: string | null
+          recommended_care_types?: string[] | null
+          summary?: string | null
+          user_id?: string | null
         }
         Update: {
-          appointment_id?: string
+          budget_range?: string | null
+          conversation_history?: Json | null
           created_at?: string | null
           id?: string
-          sent?: boolean
-          time_before?: string
-          type?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      appointments: {
-        Row: {
-          calendar_event_id: string | null
-          contact_id: string
-          created_at: string | null
-          description: string | null
-          end_time: string
-          facility_id: string | null
-          id: string
-          start_time: string
-          status: string
-          title: string
-          updated_at: string | null
-          video_room_id: string | null
-        }
-        Insert: {
-          calendar_event_id?: string | null
-          contact_id: string
-          created_at?: string | null
-          description?: string | null
-          end_time: string
-          facility_id?: string | null
-          id?: string
-          start_time: string
-          status: string
-          title: string
-          updated_at?: string | null
-          video_room_id?: string | null
-        }
-        Update: {
-          calendar_event_id?: string | null
-          contact_id?: string
-          created_at?: string | null
-          description?: string | null
-          end_time?: string
-          facility_id?: string | null
-          id?: string
-          start_time?: string
-          status?: string
-          title?: string
-          updated_at?: string | null
-          video_room_id?: string | null
+          other_preferences?: Json | null
+          preferred_location?: string | null
+          recommended_care_types?: string[] | null
+          summary?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "appointments_contact_id_fkey"
+            foreignKeyName: "assessments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_assessments: {
+        Row: {
+          additional_notes: string | null
+          adl_status: string | null
+          age: number | null
+          conversational_id: string | null
+          created_at: string
+          funding_source: string | null
+          id: string
+          medical_complexity: string | null
+          memory_status: string | null
+          mobility_status: string | null
+          monthly_budget_range: string | null
+          patient_name: string | null
+          preferred_location: string | null
+          search_executed: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          additional_notes?: string | null
+          adl_status?: string | null
+          age?: number | null
+          conversational_id?: string | null
+          created_at?: string
+          funding_source?: string | null
+          id?: string
+          medical_complexity?: string | null
+          memory_status?: string | null
+          mobility_status?: string | null
+          monthly_budget_range?: string | null
+          patient_name?: string | null
+          preferred_location?: string | null
+          search_executed?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          additional_notes?: string | null
+          adl_status?: string | null
+          age?: number | null
+          conversational_id?: string | null
+          created_at?: string
+          funding_source?: string | null
+          id?: string
+          medical_complexity?: string | null
+          memory_status?: string | null
+          mobility_status?: string | null
+          monthly_budget_range?: string | null
+          patient_name?: string | null
+          preferred_location?: string | null
+          search_executed?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      care_recommendations: {
+        Row: {
+          confirmed_at: string | null
+          final_level: string | null
+          form_id: string | null
+          id: string
+          recommended_level: string
+        }
+        Insert: {
+          confirmed_at?: string | null
+          final_level?: string | null
+          form_id?: string | null
+          id?: string
+          recommended_level: string
+        }
+        Update: {
+          confirmed_at?: string | null
+          final_level?: string | null
+          form_id?: string | null
+          id?: string
+          recommended_level?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_recommendations_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "placement_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_history: {
+        Row: {
+          contact_id: string | null
+          created_at: string | null
+          id: string
+          note: string
+          user_id: string | null
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string | null
+          id?: string
+          note: string
+          user_id?: string | null
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string | null
+          id?: string
+          note?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_history_contact_id_fkey"
             columns: ["contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "appointments_facility_id_fkey"
-            columns: ["facility_id"]
+            foreignKeyName: "contact_history_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "facilities"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
-      assessment_results: {
-        Row: {
-          answers: Json
-          created_at: string | null
-          id: string
-          recommendations: Json | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          answers: Json
-          created_at?: string | null
-          id?: string
-          recommendations?: Json | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          answers?: Json
-          created_at?: string | null
-          id?: string
-          recommendations?: Json | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      Assisted_Living_Home: {
-        Row: {
-          altcs: string | null
-          azdhs: string | null
-          capacity: number | null
-          City: string | null
-          contact_us: string | null
-          Country: string | null
-          description: string | null
-          email: string | null
-          extra: string | null
-          extra2: string | null
-          extra3: string | null
-          facebook: string | null
-          features: string | null
-          features2: string | null
-          friday: string | null
-          image_url: string | null
-          instagram: string | null
-          lat: number | null
-          license: string
-          lng: number | null
-          monday: string | null
-          name: string | null
-          "Overall Star Rating": string | null
-          phone: string | null
-          "Quality Rating": string | null
-          reviews: string | null
-          saturday: string | null
-          schedule_tour: string | null
-          specials: string | null
-          "Staffing Rating": string | null
-          State: string | null
-          "Street Address": string | null
-          sunday: string | null
-          "Survey Rating": string | null
-          tags: string | null
-          thursday: string | null
-          tiktok: string | null
-          tuesday: string | null
-          twitter: string | null
-          type: string | null
-          virtual_tour: string | null
-          visit_website: string | null
-          website: string | null
-          wednesday: string | null
-          youtube: string | null
-          "ZIP Code": number | null
-        }
-        Insert: {
-          altcs?: string | null
-          azdhs?: string | null
-          capacity?: number | null
-          City?: string | null
-          contact_us?: string | null
-          Country?: string | null
-          description?: string | null
-          email?: string | null
-          extra?: string | null
-          extra2?: string | null
-          extra3?: string | null
-          facebook?: string | null
-          features?: string | null
-          features2?: string | null
-          friday?: string | null
-          image_url?: string | null
-          instagram?: string | null
-          lat?: number | null
-          license: string
-          lng?: number | null
-          monday?: string | null
-          name?: string | null
-          "Overall Star Rating"?: string | null
-          phone?: string | null
-          "Quality Rating"?: string | null
-          reviews?: string | null
-          saturday?: string | null
-          schedule_tour?: string | null
-          specials?: string | null
-          "Staffing Rating"?: string | null
-          State?: string | null
-          "Street Address"?: string | null
-          sunday?: string | null
-          "Survey Rating"?: string | null
-          tags?: string | null
-          thursday?: string | null
-          tiktok?: string | null
-          tuesday?: string | null
-          twitter?: string | null
-          type?: string | null
-          virtual_tour?: string | null
-          visit_website?: string | null
-          website?: string | null
-          wednesday?: string | null
-          youtube?: string | null
-          "ZIP Code"?: number | null
-        }
-        Update: {
-          altcs?: string | null
-          azdhs?: string | null
-          capacity?: number | null
-          City?: string | null
-          contact_us?: string | null
-          Country?: string | null
-          description?: string | null
-          email?: string | null
-          extra?: string | null
-          extra2?: string | null
-          extra3?: string | null
-          facebook?: string | null
-          features?: string | null
-          features2?: string | null
-          friday?: string | null
-          image_url?: string | null
-          instagram?: string | null
-          lat?: number | null
-          license?: string
-          lng?: number | null
-          monday?: string | null
-          name?: string | null
-          "Overall Star Rating"?: string | null
-          phone?: string | null
-          "Quality Rating"?: string | null
-          reviews?: string | null
-          saturday?: string | null
-          schedule_tour?: string | null
-          specials?: string | null
-          "Staffing Rating"?: string | null
-          State?: string | null
-          "Street Address"?: string | null
-          sunday?: string | null
-          "Survey Rating"?: string | null
-          tags?: string | null
-          thursday?: string | null
-          tiktok?: string | null
-          tuesday?: string | null
-          twitter?: string | null
-          type?: string | null
-          virtual_tour?: string | null
-          visit_website?: string | null
-          website?: string | null
-          wednesday?: string | null
-          youtube?: string | null
-          "ZIP Code"?: number | null
-        }
-        Relationships: []
-      }
-      audio_cache: {
-        Row: {
-          audio_url: string
-          created_at: string | null
-          id: number
-          text: string
-          voice_settings: Json
-        }
-        Insert: {
-          audio_url: string
-          created_at?: string | null
-          id?: number
-          text: string
-          voice_settings: Json
-        }
-        Update: {
-          audio_url?: string
-          created_at?: string | null
-          id?: number
-          text?: string
-          voice_settings?: Json
-        }
-        Relationships: []
-      }
-      calendar_connections: {
-        Row: {
-          calendar_id: string | null
-          connected: boolean
-          created_at: string | null
-          id: string
-          last_synced: string | null
-          provider: string
-          user_id: string
-        }
-        Insert: {
-          calendar_id?: string | null
-          connected?: boolean
-          created_at?: string | null
-          id?: string
-          last_synced?: string | null
-          provider: string
-          user_id: string
-        }
-        Update: {
-          calendar_id?: string | null
-          connected?: boolean
-          created_at?: string | null
-          id?: string
-          last_synced?: string | null
-          provider?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       contacts: {
         Row: {
-          address: string | null
           created_at: string | null
-          email: string | null
-          full_name: string
+          email: string
+          facility: string | null
           id: string
-          notes: string | null
+          name: string
           phone: string | null
-          source: string | null
+          role: string
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
-          address?: string | null
           created_at?: string | null
-          email?: string | null
-          full_name: string
+          email: string
+          facility?: string | null
           id?: string
-          notes?: string | null
+          name: string
           phone?: string | null
-          source?: string | null
+          role: string
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
-          address?: string | null
           created_at?: string | null
-          email?: string | null
-          full_name?: string
+          email?: string
+          facility?: string | null
           id?: string
-          notes?: string | null
+          name?: string
           phone?: string | null
-          source?: string | null
+          role?: string
           updated_at?: string | null
           user_id?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_threads: {
+        Row: {
+          created_at: string | null
+          elevenlabs_thread_id: string | null
+          external_conversation_id: string | null
+          id: string
+          openai_thread_id: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          elevenlabs_thread_id?: string | null
+          external_conversation_id?: string | null
+          id?: string
+          openai_thread_id: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          elevenlabs_thread_id?: string | null
+          external_conversation_id?: string | null
+          id?: string
+          openai_thread_id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_threads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enriched_facilities: {
+        Row: {
+          address: string | null
+          city: string | null
+          id: string
+          last_enriched_at: string | null
+          lat: number | null
+          lng: number | null
+          name: string
+          original_query: string | null
+          overview: string | null
+          phone: string | null
+          source: string | null
+          state: string | null
+          website: string | null
+          zip: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          id?: string
+          last_enriched_at?: string | null
+          lat?: number | null
+          lng?: number | null
+          name: string
+          original_query?: string | null
+          overview?: string | null
+          phone?: string | null
+          source?: string | null
+          state?: string | null
+          website?: string | null
+          zip?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          id?: string
+          last_enriched_at?: string | null
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          original_query?: string | null
+          overview?: string | null
+          phone?: string | null
+          source?: string | null
+          state?: string | null
+          website?: string | null
+          zip?: string | null
+        }
         Relationships: []
+      }
+      event_attendees: {
+        Row: {
+          created_at: string | null
+          event_id: string | null
+          id: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          date: string
+          description: string | null
+          id: string
+          is_virtual: boolean | null
+          location: string
+          time: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          date: string
+          description?: string | null
+          id?: string
+          is_virtual?: boolean | null
+          location: string
+          time: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          date?: string
+          description?: string | null
+          id?: string
+          is_virtual?: boolean | null
+          location?: string
+          time?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       facilities: {
         Row: {
           address: string
-          city: string
+          amenities: string[] | null
+          care_types: string[] | null
+          city: string | null
+          contact_email: string | null
           created_at: string | null
+          created_by: string | null
+          description: string
           id: string
+          image_urls: string[] | null
+          is_featured: boolean | null
           latitude: number | null
           longitude: number | null
           name: string
-          phone: string | null
-          price_max: number | null
-          price_min: number | null
+          phone_number: string | null
           rating: number | null
-          state: string
-          type: string
+          state: string | null
           updated_at: string | null
+          url: string | null
           website: string | null
           zip_code: string | null
         }
         Insert: {
           address: string
-          city: string
+          amenities?: string[] | null
+          care_types?: string[] | null
+          city?: string | null
+          contact_email?: string | null
           created_at?: string | null
+          created_by?: string | null
+          description: string
           id?: string
+          image_urls?: string[] | null
+          is_featured?: boolean | null
           latitude?: number | null
           longitude?: number | null
           name: string
-          phone?: string | null
-          price_max?: number | null
-          price_min?: number | null
+          phone_number?: string | null
           rating?: number | null
-          state: string
-          type: string
+          state?: string | null
           updated_at?: string | null
+          url?: string | null
           website?: string | null
           zip_code?: string | null
         }
         Update: {
           address?: string
-          city?: string
+          amenities?: string[] | null
+          care_types?: string[] | null
+          city?: string | null
+          contact_email?: string | null
           created_at?: string | null
+          created_by?: string | null
+          description?: string
           id?: string
+          image_urls?: string[] | null
+          is_featured?: boolean | null
           latitude?: number | null
           longitude?: number | null
           name?: string
-          phone?: string | null
-          price_max?: number | null
-          price_min?: number | null
+          phone_number?: string | null
           rating?: number | null
-          state?: string
-          type?: string
+          state?: string | null
           updated_at?: string | null
+          url?: string | null
           website?: string | null
           zip_code?: string | null
         }
-        Relationships: []
-      }
-      "facility tags": {
-        Row: {
-          address: string | null
-          altcs: string | null
-          azdhs: string | null
-          capacity: string | null
-          contact_us: string | null
-          email: string | null
-          facebook: string | null
-          image_url: string | null
-          instagram: string | null
-          lat: string | null
-          license: string | null
-          lng: string | null
-          name: string | null
-          "Overall Star Rating": string | null
-          phone: string | null
-          "Quality Rating": string | null
-          reviews: string | null
-          schedule_tour: string | null
-          specials: string | null
-          "Staffing Rating": string | null
-          "Survey Rating": string | null
-          tags: string | null
-          tiktok: string | null
-          twitter: string | null
-          type: string | null
-          UUID: string
-          virtual_tour: string | null
-          visit_website: string | null
-          website: string | null
-          youtube: string | null
-        }
-        Insert: {
-          address?: string | null
-          altcs?: string | null
-          azdhs?: string | null
-          capacity?: string | null
-          contact_us?: string | null
-          email?: string | null
-          facebook?: string | null
-          image_url?: string | null
-          instagram?: string | null
-          lat?: string | null
-          license?: string | null
-          lng?: string | null
-          name?: string | null
-          "Overall Star Rating"?: string | null
-          phone?: string | null
-          "Quality Rating"?: string | null
-          reviews?: string | null
-          schedule_tour?: string | null
-          specials?: string | null
-          "Staffing Rating"?: string | null
-          "Survey Rating"?: string | null
-          tags?: string | null
-          tiktok?: string | null
-          twitter?: string | null
-          type?: string | null
-          UUID?: string
-          virtual_tour?: string | null
-          visit_website?: string | null
-          website?: string | null
-          youtube?: string | null
-        }
-        Update: {
-          address?: string | null
-          altcs?: string | null
-          azdhs?: string | null
-          capacity?: string | null
-          contact_us?: string | null
-          email?: string | null
-          facebook?: string | null
-          image_url?: string | null
-          instagram?: string | null
-          lat?: string | null
-          license?: string | null
-          lng?: string | null
-          name?: string | null
-          "Overall Star Rating"?: string | null
-          phone?: string | null
-          "Quality Rating"?: string | null
-          reviews?: string | null
-          schedule_tour?: string | null
-          specials?: string | null
-          "Staffing Rating"?: string | null
-          "Survey Rating"?: string | null
-          tags?: string | null
-          tiktok?: string | null
-          twitter?: string | null
-          type?: string | null
-          UUID?: string
-          virtual_tour?: string | null
-          visit_website?: string | null
-          website?: string | null
-          youtube?: string | null
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "facilities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       facility_amenities: {
         Row: {
-          amenity_id: string
-          facility_id: string
+          amenity: string
+          facility_id: string | null
+          id: string
         }
         Insert: {
-          amenity_id: string
-          facility_id: string
+          amenity: string
+          facility_id?: string | null
+          id?: string
         }
         Update: {
-          amenity_id?: string
-          facility_id?: string
+          amenity?: string
+          facility_id?: string | null
+          id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "facility_amenities_amenity_id_fkey"
-            columns: ["amenity_id"]
-            isOneToOne: false
-            referencedRelation: "amenities"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "facility_amenities_facility_id_fkey"
             columns: ["facility_id"]
@@ -573,1664 +503,40 @@ export type Database = {
           },
         ]
       }
-      facility_info: {
+      facility_availability: {
         Row: {
-          amenities: string[]
-          created_at: string | null
+          available: number
+          care_type: string
+          facility_id: string | null
           id: string
-          location: string
-          phone_number: string
-          type_of_facility: string
-          url_googlemaps: string
-          website: string
-        }
-        Insert: {
-          amenities: string[]
-          created_at?: string | null
-          id?: string
-          location: string
-          phone_number: string
-          type_of_facility: string
-          url_googlemaps: string
-          website: string
-        }
-        Update: {
-          amenities?: string[]
-          created_at?: string | null
-          id?: string
-          location?: string
-          phone_number?: string
-          type_of_facility?: string
-          url_googlemaps?: string
-          website?: string
-        }
-        Relationships: []
-      }
-      facility_tags: {
-        Row: {
-          address: string | null
-          altcs: string | null
-          azdhs: string | null
-          capacity: string | null
-          contact_us: string | null
-          email: string | null
-          facebook: string | null
-          image_url: string | null
-          instagram: string | null
-          lat: string | null
-          license: string | null
-          lng: string | null
-          name: string | null
-          "Overall Star Rating": string | null
-          phone: string | null
-          "Quality Rating": string | null
-          reviews: string | null
-          schedule_tour: string | null
-          specials: string | null
-          "Staffing Rating": string | null
-          "Survey Rating": string | null
-          tags: string | null
-          tiktok: string | null
-          twitter: string | null
-          type: string | null
-          virtual_tour: string | null
-          visit_website: string | null
-          website: string | null
-          youtube: string | null
-        }
-        Insert: {
-          address?: string | null
-          altcs?: string | null
-          azdhs?: string | null
-          capacity?: string | null
-          contact_us?: string | null
-          email?: string | null
-          facebook?: string | null
-          image_url?: string | null
-          instagram?: string | null
-          lat?: string | null
-          license?: string | null
-          lng?: string | null
-          name?: string | null
-          "Overall Star Rating"?: string | null
-          phone?: string | null
-          "Quality Rating"?: string | null
-          reviews?: string | null
-          schedule_tour?: string | null
-          specials?: string | null
-          "Staffing Rating"?: string | null
-          "Survey Rating"?: string | null
-          tags?: string | null
-          tiktok?: string | null
-          twitter?: string | null
-          type?: string | null
-          virtual_tour?: string | null
-          visit_website?: string | null
-          website?: string | null
-          youtube?: string | null
-        }
-        Update: {
-          address?: string | null
-          altcs?: string | null
-          azdhs?: string | null
-          capacity?: string | null
-          contact_us?: string | null
-          email?: string | null
-          facebook?: string | null
-          image_url?: string | null
-          instagram?: string | null
-          lat?: string | null
-          license?: string | null
-          lng?: string | null
-          name?: string | null
-          "Overall Star Rating"?: string | null
-          phone?: string | null
-          "Quality Rating"?: string | null
-          reviews?: string | null
-          schedule_tour?: string | null
-          specials?: string | null
-          "Staffing Rating"?: string | null
-          "Survey Rating"?: string | null
-          tags?: string | null
-          tiktok?: string | null
-          twitter?: string | null
-          type?: string | null
-          virtual_tour?: string | null
-          visit_website?: string | null
-          website?: string | null
-          youtube?: string | null
-        }
-        Relationships: []
-      }
-      feature_flags: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          feature_key: string
-          id: string
-          name: string
+          total: number
+          unit_type: string
           updated_at: string | null
+          waitlist: boolean | null
         }
         Insert: {
-          created_at?: string | null
-          description?: string | null
-          feature_key: string
+          available?: number
+          care_type: string
+          facility_id?: string | null
           id?: string
-          name: string
+          total?: number
+          unit_type: string
           updated_at?: string | null
+          waitlist?: boolean | null
         }
         Update: {
-          created_at?: string | null
-          description?: string | null
-          feature_key?: string
+          available?: number
+          care_type?: string
+          facility_id?: string | null
           id?: string
-          name?: string
+          total?: number
+          unit_type?: string
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      interactions: {
-        Row: {
-          contact_id: string
-          created_at: string | null
-          created_by: string | null
-          details: Json | null
-          id: string
-          summary: string
-          type: string
-        }
-        Insert: {
-          contact_id: string
-          created_at?: string | null
-          created_by?: string | null
-          details?: Json | null
-          id?: string
-          summary: string
-          type: string
-        }
-        Update: {
-          contact_id?: string
-          created_at?: string | null
-          created_by?: string | null
-          details?: Json | null
-          id?: string
-          summary?: string
-          type?: string
+          waitlist?: boolean | null
         }
         Relationships: [
           {
-            foreignKeyName: "interactions_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "contacts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      locations: {
-        Row: {
-          address: string | null
-          azdhs: string | null
-          capacity: string | null
-          contact_us: string | null
-          description: string | null
-          email: string | null
-          extra: string | null
-          facebook: string | null
-          featured_: string | null
-          features: string | null
-          features_: string | null
-          friday: string | null
-          id: string
-          image_url: string | null
-          instagram: string | null
-          lat: number | null
-          license: string
-          lng: number | null
-          ltc: string | null
-          monday: string | null
-          name: string | null
-          overall_star_rating: string | null
-          phone: string | null
-          quality_rating: string | null
-          reviews: string | null
-          saturday: string | null
-          save_to_favorites: string | null
-          schedule_tour: string | null
-          specials: string | null
-          staffing_rating: string | null
-          sunday: string | null
-          survey_rating: string | null
-          tags: string | null
-          thursday: string | null
-          tiktok: string | null
-          tuesday: string | null
-          twitter: string | null
-          virtual_tour_available: string | null
-          visit_website: string | null
-          website: string | null
-          wednesday: string | null
-          youtube: string | null
-        }
-        Insert: {
-          address?: string | null
-          azdhs?: string | null
-          capacity?: string | null
-          contact_us?: string | null
-          description?: string | null
-          email?: string | null
-          extra?: string | null
-          facebook?: string | null
-          featured_?: string | null
-          features?: string | null
-          features_?: string | null
-          friday?: string | null
-          id: string
-          image_url?: string | null
-          instagram?: string | null
-          lat?: number | null
-          license: string
-          lng?: number | null
-          ltc?: string | null
-          monday?: string | null
-          name?: string | null
-          overall_star_rating?: string | null
-          phone?: string | null
-          quality_rating?: string | null
-          reviews?: string | null
-          saturday?: string | null
-          save_to_favorites?: string | null
-          schedule_tour?: string | null
-          specials?: string | null
-          staffing_rating?: string | null
-          sunday?: string | null
-          survey_rating?: string | null
-          tags?: string | null
-          thursday?: string | null
-          tiktok?: string | null
-          tuesday?: string | null
-          twitter?: string | null
-          virtual_tour_available?: string | null
-          visit_website?: string | null
-          website?: string | null
-          wednesday?: string | null
-          youtube?: string | null
-        }
-        Update: {
-          address?: string | null
-          azdhs?: string | null
-          capacity?: string | null
-          contact_us?: string | null
-          description?: string | null
-          email?: string | null
-          extra?: string | null
-          facebook?: string | null
-          featured_?: string | null
-          features?: string | null
-          features_?: string | null
-          friday?: string | null
-          id?: string
-          image_url?: string | null
-          instagram?: string | null
-          lat?: number | null
-          license?: string
-          lng?: number | null
-          ltc?: string | null
-          monday?: string | null
-          name?: string | null
-          overall_star_rating?: string | null
-          phone?: string | null
-          quality_rating?: string | null
-          reviews?: string | null
-          saturday?: string | null
-          save_to_favorites?: string | null
-          schedule_tour?: string | null
-          specials?: string | null
-          staffing_rating?: string | null
-          sunday?: string | null
-          survey_rating?: string | null
-          tags?: string | null
-          thursday?: string | null
-          tiktok?: string | null
-          tuesday?: string | null
-          twitter?: string | null
-          virtual_tour_available?: string | null
-          visit_website?: string | null
-          website?: string | null
-          wednesday?: string | null
-          youtube?: string | null
-        }
-        Relationships: []
-      }
-      Medicare_NH_Providers: {
-        Row: {
-          "Abuse Icon": string | null
-          "Adjusted LPN Staffing Hours per Resident per Day": string | null
-          "Adjusted Nurse Aide Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Adjusted RN Staffing Hours per Resident per Day": string | null
-          "Adjusted Total Nurse Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Adjusted Weekend Total Nurse Staffing Hours per Resident per Da":
-            | string
-            | null
-          "Administrator turnover footnote": string | null
-          "Affiliated Entity ID": string | null
-          "Affiliated Entity Name": string | null
-          "Automatic Sprinkler Systems in All Required Areas": string | null
-          "Average Number of Residents per Day": number | null
-          "Average Number of Residents per Day Footnote": string | null
-          "Case-Mix LPN Staffing Hours per Resident per Day": string | null
-          "Case-Mix Nurse Aide Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Case-Mix RN Staffing Hours per Resident per Day": string | null
-          "Case-Mix Total Nurse Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Case-Mix Weekend Total Nurse Staffing Hours per Resident per Da":
-            | string
-            | null
-          "City/Town": string | null
-          "CMS Certification Number (CCN)": string | null
-          "Continuing Care Retirement Community": string | null
-          "County/Parish": string | null
-          "Date First Approved to Provide Medicare and Medicaid Services":
-            | string
-            | null
-          "Geocoding Footnote": string | null
-          "Health Inspection Rating": string | null
-          "Health Inspection Rating Footnote": string | null
-          id: string
-          Latitude: number | null
-          "Legal Business Name": string | null
-          Location: string | null
-          "Long-Stay QM Rating": string | null
-          "Long-Stay QM Rating Footnote": string | null
-          Longitude: number | null
-          "Most Recent Health Inspection More Than 2 Years Ago": string | null
-          "Number of administrators who have left the nursing home":
-            | string
-            | null
-          "Number of Certified Beds": number | null
-          "Number of Citations from Infection Control Inspections":
-            | string
-            | null
-          "Number of Facility Reported Incidents": string | null
-          "Number of Fines": string | null
-          "Number of Payment Denials": string | null
-          "Number of Substantiated Complaints": string | null
-          "Nursing Case-Mix Index": string | null
-          "Nursing Case-Mix Index Ratio": string | null
-          "Overall Rating": string | null
-          "Overall Rating Footnote": string | null
-          "Ownership Type": string | null
-          "Physical Therapist Staffing Footnote": string | null
-          "Processing Date": string | null
-          "Provider Address": string | null
-          "Provider Changed Ownership in Last 12 Months": string | null
-          "Provider Name": string | null
-          "Provider Resides in Hospital": string | null
-          "Provider SSA County Code": string | null
-          "Provider Type": string | null
-          "QM Rating": string | null
-          "QM Rating Footnote": string | null
-          "Rating Cycle 1 Health Deficiency Score": string | null
-          "Rating Cycle 1 Health Revisit Score": string | null
-          "Rating Cycle 1 Number of Complaint Health Deficiencies":
-            | string
-            | null
-          "Rating Cycle 1 Number of Health Revisits": string | null
-          "Rating Cycle 1 Number of Standard Health Deficiencies": string | null
-          "Rating Cycle 1 Standard Survey Health Date": string | null
-          "Rating Cycle 1 Total Health Score": string | null
-          "Rating Cycle 1 Total Number of Health Deficiencies": string | null
-          "Rating Cycle 2 Health Deficiency Score": string | null
-          "Rating Cycle 2 Health Revisit Score": string | null
-          "Rating Cycle 2 Number of Complaint Health Deficiencies":
-            | string
-            | null
-          "Rating Cycle 2 Number of Health Revisits": string | null
-          "Rating Cycle 2 Number of Standard Health Deficiencies": string | null
-          "Rating Cycle 2 Standard Health Survey Date": string | null
-          "Rating Cycle 2 Total Health Score": string | null
-          "Rating Cycle 2 Total Number of Health Deficiencies": string | null
-          "Rating Cycle 3 Health Deficiency Score": string | null
-          "Rating Cycle 3 Health Revisit Score": string | null
-          "Rating Cycle 3 Number of Complaint Health Deficiencies":
-            | string
-            | null
-          "Rating Cycle 3 Number of Health Revisits": string | null
-          "Rating Cycle 3 Number of Standard Health Deficiencies": string | null
-          "Rating Cycle 3 Standard Health Survey Date": string | null
-          "Rating Cycle 3 Total Health Score": string | null
-          "Rating Cycle 3 Total Number of Health Deficiencies": string | null
-          "Registered Nurse hours per resident per day on the weekend":
-            | string
-            | null
-          "Registered Nurse turnover": string | null
-          "Registered Nurse turnover footnote": string | null
-          "Reported Licensed Staffing Hours per Resident per Day": string | null
-          "Reported LPN Staffing Hours per Resident per Day": string | null
-          "Reported Nurse Aide Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Reported Physical Therapist Staffing Hours per Resident Per Day":
-            | string
-            | null
-          "Reported RN Staffing Hours per Resident per Day": string | null
-          "Reported Staffing Footnote": string | null
-          "Reported Total Nurse Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Short-Stay QM Rating": string | null
-          "Short-Stay QM Rating Footnote": string | null
-          "Special Focus Status": string | null
-          "Staffing Rating": string | null
-          "Staffing Rating Footnote": string | null
-          State: string | null
-          "Telephone Number": number | null
-          "Total Amount of Fines in Dollars": string | null
-          "Total number of nurse staff hours per resident per day on the w":
-            | string
-            | null
-          "Total Number of Penalties": string | null
-          "Total nursing staff turnover": string | null
-          "Total nursing staff turnover footnote": string | null
-          "Total Weighted Health Survey Score": number | null
-          "With a Resident and Family Council": string | null
-          "ZIP Code": number | null
-        }
-        Insert: {
-          "Abuse Icon"?: string | null
-          "Adjusted LPN Staffing Hours per Resident per Day"?: string | null
-          "Adjusted Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Adjusted RN Staffing Hours per Resident per Day"?: string | null
-          "Adjusted Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Adjusted Weekend Total Nurse Staffing Hours per Resident per Da"?:
-            | string
-            | null
-          "Administrator turnover footnote"?: string | null
-          "Affiliated Entity ID"?: string | null
-          "Affiliated Entity Name"?: string | null
-          "Automatic Sprinkler Systems in All Required Areas"?: string | null
-          "Average Number of Residents per Day"?: number | null
-          "Average Number of Residents per Day Footnote"?: string | null
-          "Case-Mix LPN Staffing Hours per Resident per Day"?: string | null
-          "Case-Mix Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Case-Mix RN Staffing Hours per Resident per Day"?: string | null
-          "Case-Mix Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Case-Mix Weekend Total Nurse Staffing Hours per Resident per Da"?:
-            | string
-            | null
-          "City/Town"?: string | null
-          "CMS Certification Number (CCN)"?: string | null
-          "Continuing Care Retirement Community"?: string | null
-          "County/Parish"?: string | null
-          "Date First Approved to Provide Medicare and Medicaid Services"?:
-            | string
-            | null
-          "Geocoding Footnote"?: string | null
-          "Health Inspection Rating"?: string | null
-          "Health Inspection Rating Footnote"?: string | null
-          id?: string
-          Latitude?: number | null
-          "Legal Business Name"?: string | null
-          Location?: string | null
-          "Long-Stay QM Rating"?: string | null
-          "Long-Stay QM Rating Footnote"?: string | null
-          Longitude?: number | null
-          "Most Recent Health Inspection More Than 2 Years Ago"?: string | null
-          "Number of administrators who have left the nursing home"?:
-            | string
-            | null
-          "Number of Certified Beds"?: number | null
-          "Number of Citations from Infection Control Inspections"?:
-            | string
-            | null
-          "Number of Facility Reported Incidents"?: string | null
-          "Number of Fines"?: string | null
-          "Number of Payment Denials"?: string | null
-          "Number of Substantiated Complaints"?: string | null
-          "Nursing Case-Mix Index"?: string | null
-          "Nursing Case-Mix Index Ratio"?: string | null
-          "Overall Rating"?: string | null
-          "Overall Rating Footnote"?: string | null
-          "Ownership Type"?: string | null
-          "Physical Therapist Staffing Footnote"?: string | null
-          "Processing Date"?: string | null
-          "Provider Address"?: string | null
-          "Provider Changed Ownership in Last 12 Months"?: string | null
-          "Provider Name"?: string | null
-          "Provider Resides in Hospital"?: string | null
-          "Provider SSA County Code"?: string | null
-          "Provider Type"?: string | null
-          "QM Rating"?: string | null
-          "QM Rating Footnote"?: string | null
-          "Rating Cycle 1 Health Deficiency Score"?: string | null
-          "Rating Cycle 1 Health Revisit Score"?: string | null
-          "Rating Cycle 1 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 1 Number of Health Revisits"?: string | null
-          "Rating Cycle 1 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 1 Standard Survey Health Date"?: string | null
-          "Rating Cycle 1 Total Health Score"?: string | null
-          "Rating Cycle 1 Total Number of Health Deficiencies"?: string | null
-          "Rating Cycle 2 Health Deficiency Score"?: string | null
-          "Rating Cycle 2 Health Revisit Score"?: string | null
-          "Rating Cycle 2 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 2 Number of Health Revisits"?: string | null
-          "Rating Cycle 2 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 2 Standard Health Survey Date"?: string | null
-          "Rating Cycle 2 Total Health Score"?: string | null
-          "Rating Cycle 2 Total Number of Health Deficiencies"?: string | null
-          "Rating Cycle 3 Health Deficiency Score"?: string | null
-          "Rating Cycle 3 Health Revisit Score"?: string | null
-          "Rating Cycle 3 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 3 Number of Health Revisits"?: string | null
-          "Rating Cycle 3 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 3 Standard Health Survey Date"?: string | null
-          "Rating Cycle 3 Total Health Score"?: string | null
-          "Rating Cycle 3 Total Number of Health Deficiencies"?: string | null
-          "Registered Nurse hours per resident per day on the weekend"?:
-            | string
-            | null
-          "Registered Nurse turnover"?: string | null
-          "Registered Nurse turnover footnote"?: string | null
-          "Reported Licensed Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Reported LPN Staffing Hours per Resident per Day"?: string | null
-          "Reported Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Reported Physical Therapist Staffing Hours per Resident Per Day"?:
-            | string
-            | null
-          "Reported RN Staffing Hours per Resident per Day"?: string | null
-          "Reported Staffing Footnote"?: string | null
-          "Reported Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Short-Stay QM Rating"?: string | null
-          "Short-Stay QM Rating Footnote"?: string | null
-          "Special Focus Status"?: string | null
-          "Staffing Rating"?: string | null
-          "Staffing Rating Footnote"?: string | null
-          State?: string | null
-          "Telephone Number"?: number | null
-          "Total Amount of Fines in Dollars"?: string | null
-          "Total number of nurse staff hours per resident per day on the w"?:
-            | string
-            | null
-          "Total Number of Penalties"?: string | null
-          "Total nursing staff turnover"?: string | null
-          "Total nursing staff turnover footnote"?: string | null
-          "Total Weighted Health Survey Score"?: number | null
-          "With a Resident and Family Council"?: string | null
-          "ZIP Code"?: number | null
-        }
-        Update: {
-          "Abuse Icon"?: string | null
-          "Adjusted LPN Staffing Hours per Resident per Day"?: string | null
-          "Adjusted Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Adjusted RN Staffing Hours per Resident per Day"?: string | null
-          "Adjusted Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Adjusted Weekend Total Nurse Staffing Hours per Resident per Da"?:
-            | string
-            | null
-          "Administrator turnover footnote"?: string | null
-          "Affiliated Entity ID"?: string | null
-          "Affiliated Entity Name"?: string | null
-          "Automatic Sprinkler Systems in All Required Areas"?: string | null
-          "Average Number of Residents per Day"?: number | null
-          "Average Number of Residents per Day Footnote"?: string | null
-          "Case-Mix LPN Staffing Hours per Resident per Day"?: string | null
-          "Case-Mix Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Case-Mix RN Staffing Hours per Resident per Day"?: string | null
-          "Case-Mix Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Case-Mix Weekend Total Nurse Staffing Hours per Resident per Da"?:
-            | string
-            | null
-          "City/Town"?: string | null
-          "CMS Certification Number (CCN)"?: string | null
-          "Continuing Care Retirement Community"?: string | null
-          "County/Parish"?: string | null
-          "Date First Approved to Provide Medicare and Medicaid Services"?:
-            | string
-            | null
-          "Geocoding Footnote"?: string | null
-          "Health Inspection Rating"?: string | null
-          "Health Inspection Rating Footnote"?: string | null
-          id?: string
-          Latitude?: number | null
-          "Legal Business Name"?: string | null
-          Location?: string | null
-          "Long-Stay QM Rating"?: string | null
-          "Long-Stay QM Rating Footnote"?: string | null
-          Longitude?: number | null
-          "Most Recent Health Inspection More Than 2 Years Ago"?: string | null
-          "Number of administrators who have left the nursing home"?:
-            | string
-            | null
-          "Number of Certified Beds"?: number | null
-          "Number of Citations from Infection Control Inspections"?:
-            | string
-            | null
-          "Number of Facility Reported Incidents"?: string | null
-          "Number of Fines"?: string | null
-          "Number of Payment Denials"?: string | null
-          "Number of Substantiated Complaints"?: string | null
-          "Nursing Case-Mix Index"?: string | null
-          "Nursing Case-Mix Index Ratio"?: string | null
-          "Overall Rating"?: string | null
-          "Overall Rating Footnote"?: string | null
-          "Ownership Type"?: string | null
-          "Physical Therapist Staffing Footnote"?: string | null
-          "Processing Date"?: string | null
-          "Provider Address"?: string | null
-          "Provider Changed Ownership in Last 12 Months"?: string | null
-          "Provider Name"?: string | null
-          "Provider Resides in Hospital"?: string | null
-          "Provider SSA County Code"?: string | null
-          "Provider Type"?: string | null
-          "QM Rating"?: string | null
-          "QM Rating Footnote"?: string | null
-          "Rating Cycle 1 Health Deficiency Score"?: string | null
-          "Rating Cycle 1 Health Revisit Score"?: string | null
-          "Rating Cycle 1 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 1 Number of Health Revisits"?: string | null
-          "Rating Cycle 1 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 1 Standard Survey Health Date"?: string | null
-          "Rating Cycle 1 Total Health Score"?: string | null
-          "Rating Cycle 1 Total Number of Health Deficiencies"?: string | null
-          "Rating Cycle 2 Health Deficiency Score"?: string | null
-          "Rating Cycle 2 Health Revisit Score"?: string | null
-          "Rating Cycle 2 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 2 Number of Health Revisits"?: string | null
-          "Rating Cycle 2 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 2 Standard Health Survey Date"?: string | null
-          "Rating Cycle 2 Total Health Score"?: string | null
-          "Rating Cycle 2 Total Number of Health Deficiencies"?: string | null
-          "Rating Cycle 3 Health Deficiency Score"?: string | null
-          "Rating Cycle 3 Health Revisit Score"?: string | null
-          "Rating Cycle 3 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 3 Number of Health Revisits"?: string | null
-          "Rating Cycle 3 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 3 Standard Health Survey Date"?: string | null
-          "Rating Cycle 3 Total Health Score"?: string | null
-          "Rating Cycle 3 Total Number of Health Deficiencies"?: string | null
-          "Registered Nurse hours per resident per day on the weekend"?:
-            | string
-            | null
-          "Registered Nurse turnover"?: string | null
-          "Registered Nurse turnover footnote"?: string | null
-          "Reported Licensed Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Reported LPN Staffing Hours per Resident per Day"?: string | null
-          "Reported Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Reported Physical Therapist Staffing Hours per Resident Per Day"?:
-            | string
-            | null
-          "Reported RN Staffing Hours per Resident per Day"?: string | null
-          "Reported Staffing Footnote"?: string | null
-          "Reported Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Short-Stay QM Rating"?: string | null
-          "Short-Stay QM Rating Footnote"?: string | null
-          "Special Focus Status"?: string | null
-          "Staffing Rating"?: string | null
-          "Staffing Rating Footnote"?: string | null
-          State?: string | null
-          "Telephone Number"?: number | null
-          "Total Amount of Fines in Dollars"?: string | null
-          "Total number of nurse staff hours per resident per day on the w"?:
-            | string
-            | null
-          "Total Number of Penalties"?: string | null
-          "Total nursing staff turnover"?: string | null
-          "Total nursing staff turnover footnote"?: string | null
-          "Total Weighted Health Survey Score"?: number | null
-          "With a Resident and Family Council"?: string | null
-          "ZIP Code"?: number | null
-        }
-        Relationships: []
-      }
-      notifications: {
-        Row: {
-          content: string
-          created_at: string | null
-          id: string
-          read: boolean | null
-          related_id: string | null
-          title: string
-          type: string
-          user_id: string
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          id?: string
-          read?: boolean | null
-          related_id?: string | null
-          title: string
-          type: string
-          user_id: string
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          id?: string
-          read?: boolean | null
-          related_id?: string | null
-          title?: string
-          type?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      nursing_homes_medicare: {
-        Row: {
-          "Abuse Icon": string | null
-          "Adjusted LPN Staffing Hours per Resident per Day": string | null
-          "Adjusted Nurse Aide Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Adjusted RN Staffing Hours per Resident per Day": string | null
-          "Adjusted Total Nurse Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Adjusted Weekend Total Nurse Staffing Hours per Resident per Da":
-            | string
-            | null
-          "Administrator turnover footnote": string | null
-          "Affiliated Entity ID": string | null
-          "Affiliated Entity Name": string | null
-          "Automatic Sprinkler Systems in All Required Areas": string | null
-          "Average Number of Residents per Day": number | null
-          "Average Number of Residents per Day Footnote": string | null
-          "Case-Mix LPN Staffing Hours per Resident per Day": string | null
-          "Case-Mix Nurse Aide Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Case-Mix RN Staffing Hours per Resident per Day": string | null
-          "Case-Mix Total Nurse Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Case-Mix Weekend Total Nurse Staffing Hours per Resident per Da":
-            | string
-            | null
-          "City/Town": string | null
-          "CMS Certification Number (CCN)": string
-          "Continuing Care Retirement Community": string | null
-          "County/Parish": string | null
-          "Date First Approved to Provide Medicare and Medicaid Services":
-            | string
-            | null
-          "Geocoding Footnote": string | null
-          "Health Inspection Rating": number | null
-          "Health Inspection Rating Footnote": string | null
-          Latitude: number | null
-          "Legal Business Name": string | null
-          Location: string | null
-          "Long-Stay QM Rating": string | null
-          "Long-Stay QM Rating Footnote": string | null
-          Longitude: number | null
-          "Most Recent Health Inspection More Than 2 Years Ago": string | null
-          "Number of administrators who have left the nursing home":
-            | string
-            | null
-          "Number of Certified Beds": number | null
-          "Number of Citations from Infection Control Inspections":
-            | string
-            | null
-          "Number of Facility Reported Incidents": string | null
-          "Number of Fines": string | null
-          "Number of Payment Denials": string | null
-          "Number of Substantiated Complaints": string | null
-          "Nursing Case-Mix Index": string | null
-          "Nursing Case-Mix Index Ratio": string | null
-          "Overall Rating": number | null
-          "Overall Rating Footnote": string | null
-          "Ownership Type": string | null
-          "Physical Therapist Staffing Footnote": string | null
-          "Processing Date": string | null
-          "Provider Address": string | null
-          "Provider Changed Ownership in Last 12 Months": string | null
-          "Provider Name": string | null
-          "Provider Resides in Hospital": string | null
-          "Provider SSA County Code": number | null
-          "Provider Type": string | null
-          "QM Rating": string | null
-          "QM Rating Footnote": string | null
-          "Rating Cycle 1 Health Deficiency Score": string | null
-          "Rating Cycle 1 Health Revisit Score": string | null
-          "Rating Cycle 1 Number of Complaint Health Deficiencies":
-            | string
-            | null
-          "Rating Cycle 1 Number of Health Revisits": string | null
-          "Rating Cycle 1 Number of Standard Health Deficiencies": string | null
-          "Rating Cycle 1 Standard Survey Health Date": string | null
-          "Rating Cycle 1 Total Health Score": string | null
-          "Rating Cycle 1 Total Number of Health Deficiencies": string | null
-          "Rating Cycle 2 Health Deficiency Score": string | null
-          "Rating Cycle 2 Health Revisit Score": string | null
-          "Rating Cycle 2 Number of Complaint Health Deficiencies":
-            | string
-            | null
-          "Rating Cycle 2 Number of Health Revisits": string | null
-          "Rating Cycle 2 Number of Standard Health Deficiencies": string | null
-          "Rating Cycle 2 Standard Health Survey Date": string | null
-          "Rating Cycle 2 Total Health Score": string | null
-          "Rating Cycle 2 Total Number of Health Deficiencies": string | null
-          "Rating Cycle 3 Health Deficiency Score": string | null
-          "Rating Cycle 3 Health Revisit Score": string | null
-          "Rating Cycle 3 Number of Complaint Health Deficiencies":
-            | string
-            | null
-          "Rating Cycle 3 Number of Health Revisits": string | null
-          "Rating Cycle 3 Number of Standard Health Deficiencies": string | null
-          "Rating Cycle 3 Standard Health Survey Date": string | null
-          "Rating Cycle 3 Total Health Score": string | null
-          "Rating Cycle 3 Total Number of Health Deficiencies": string | null
-          "Registered Nurse hours per resident per day on the weekend":
-            | string
-            | null
-          "Registered Nurse turnover": string | null
-          "Registered Nurse turnover footnote": string | null
-          "Reported Licensed Staffing Hours per Resident per Day": string | null
-          "Reported LPN Staffing Hours per Resident per Day": string | null
-          "Reported Nurse Aide Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Reported Physical Therapist Staffing Hours per Resident Per Day":
-            | string
-            | null
-          "Reported RN Staffing Hours per Resident per Day": string | null
-          "Reported Staffing Footnote": string | null
-          "Reported Total Nurse Staffing Hours per Resident per Day":
-            | string
-            | null
-          "Short-Stay QM Rating": string | null
-          "Short-Stay QM Rating Footnote": string | null
-          "Special Focus Status": string | null
-          "Staffing Rating": string | null
-          "Staffing Rating Footnote": string | null
-          State: string | null
-          "Telephone Number": number | null
-          "Total Amount of Fines in Dollars": string | null
-          "Total number of nurse staff hours per resident per day on the w":
-            | string
-            | null
-          "Total Number of Penalties": string | null
-          "Total nursing staff turnover": string | null
-          "Total nursing staff turnover footnote": string | null
-          "Total Weighted Health Survey Score": number | null
-          "With a Resident and Family Council": string | null
-          "ZIP Code": number | null
-        }
-        Insert: {
-          "Abuse Icon"?: string | null
-          "Adjusted LPN Staffing Hours per Resident per Day"?: string | null
-          "Adjusted Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Adjusted RN Staffing Hours per Resident per Day"?: string | null
-          "Adjusted Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Adjusted Weekend Total Nurse Staffing Hours per Resident per Da"?:
-            | string
-            | null
-          "Administrator turnover footnote"?: string | null
-          "Affiliated Entity ID"?: string | null
-          "Affiliated Entity Name"?: string | null
-          "Automatic Sprinkler Systems in All Required Areas"?: string | null
-          "Average Number of Residents per Day"?: number | null
-          "Average Number of Residents per Day Footnote"?: string | null
-          "Case-Mix LPN Staffing Hours per Resident per Day"?: string | null
-          "Case-Mix Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Case-Mix RN Staffing Hours per Resident per Day"?: string | null
-          "Case-Mix Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Case-Mix Weekend Total Nurse Staffing Hours per Resident per Da"?:
-            | string
-            | null
-          "City/Town"?: string | null
-          "CMS Certification Number (CCN)": string
-          "Continuing Care Retirement Community"?: string | null
-          "County/Parish"?: string | null
-          "Date First Approved to Provide Medicare and Medicaid Services"?:
-            | string
-            | null
-          "Geocoding Footnote"?: string | null
-          "Health Inspection Rating"?: number | null
-          "Health Inspection Rating Footnote"?: string | null
-          Latitude?: number | null
-          "Legal Business Name"?: string | null
-          Location?: string | null
-          "Long-Stay QM Rating"?: string | null
-          "Long-Stay QM Rating Footnote"?: string | null
-          Longitude?: number | null
-          "Most Recent Health Inspection More Than 2 Years Ago"?: string | null
-          "Number of administrators who have left the nursing home"?:
-            | string
-            | null
-          "Number of Certified Beds"?: number | null
-          "Number of Citations from Infection Control Inspections"?:
-            | string
-            | null
-          "Number of Facility Reported Incidents"?: string | null
-          "Number of Fines"?: string | null
-          "Number of Payment Denials"?: string | null
-          "Number of Substantiated Complaints"?: string | null
-          "Nursing Case-Mix Index"?: string | null
-          "Nursing Case-Mix Index Ratio"?: string | null
-          "Overall Rating"?: number | null
-          "Overall Rating Footnote"?: string | null
-          "Ownership Type"?: string | null
-          "Physical Therapist Staffing Footnote"?: string | null
-          "Processing Date"?: string | null
-          "Provider Address"?: string | null
-          "Provider Changed Ownership in Last 12 Months"?: string | null
-          "Provider Name"?: string | null
-          "Provider Resides in Hospital"?: string | null
-          "Provider SSA County Code"?: number | null
-          "Provider Type"?: string | null
-          "QM Rating"?: string | null
-          "QM Rating Footnote"?: string | null
-          "Rating Cycle 1 Health Deficiency Score"?: string | null
-          "Rating Cycle 1 Health Revisit Score"?: string | null
-          "Rating Cycle 1 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 1 Number of Health Revisits"?: string | null
-          "Rating Cycle 1 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 1 Standard Survey Health Date"?: string | null
-          "Rating Cycle 1 Total Health Score"?: string | null
-          "Rating Cycle 1 Total Number of Health Deficiencies"?: string | null
-          "Rating Cycle 2 Health Deficiency Score"?: string | null
-          "Rating Cycle 2 Health Revisit Score"?: string | null
-          "Rating Cycle 2 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 2 Number of Health Revisits"?: string | null
-          "Rating Cycle 2 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 2 Standard Health Survey Date"?: string | null
-          "Rating Cycle 2 Total Health Score"?: string | null
-          "Rating Cycle 2 Total Number of Health Deficiencies"?: string | null
-          "Rating Cycle 3 Health Deficiency Score"?: string | null
-          "Rating Cycle 3 Health Revisit Score"?: string | null
-          "Rating Cycle 3 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 3 Number of Health Revisits"?: string | null
-          "Rating Cycle 3 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 3 Standard Health Survey Date"?: string | null
-          "Rating Cycle 3 Total Health Score"?: string | null
-          "Rating Cycle 3 Total Number of Health Deficiencies"?: string | null
-          "Registered Nurse hours per resident per day on the weekend"?:
-            | string
-            | null
-          "Registered Nurse turnover"?: string | null
-          "Registered Nurse turnover footnote"?: string | null
-          "Reported Licensed Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Reported LPN Staffing Hours per Resident per Day"?: string | null
-          "Reported Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Reported Physical Therapist Staffing Hours per Resident Per Day"?:
-            | string
-            | null
-          "Reported RN Staffing Hours per Resident per Day"?: string | null
-          "Reported Staffing Footnote"?: string | null
-          "Reported Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Short-Stay QM Rating"?: string | null
-          "Short-Stay QM Rating Footnote"?: string | null
-          "Special Focus Status"?: string | null
-          "Staffing Rating"?: string | null
-          "Staffing Rating Footnote"?: string | null
-          State?: string | null
-          "Telephone Number"?: number | null
-          "Total Amount of Fines in Dollars"?: string | null
-          "Total number of nurse staff hours per resident per day on the w"?:
-            | string
-            | null
-          "Total Number of Penalties"?: string | null
-          "Total nursing staff turnover"?: string | null
-          "Total nursing staff turnover footnote"?: string | null
-          "Total Weighted Health Survey Score"?: number | null
-          "With a Resident and Family Council"?: string | null
-          "ZIP Code"?: number | null
-        }
-        Update: {
-          "Abuse Icon"?: string | null
-          "Adjusted LPN Staffing Hours per Resident per Day"?: string | null
-          "Adjusted Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Adjusted RN Staffing Hours per Resident per Day"?: string | null
-          "Adjusted Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Adjusted Weekend Total Nurse Staffing Hours per Resident per Da"?:
-            | string
-            | null
-          "Administrator turnover footnote"?: string | null
-          "Affiliated Entity ID"?: string | null
-          "Affiliated Entity Name"?: string | null
-          "Automatic Sprinkler Systems in All Required Areas"?: string | null
-          "Average Number of Residents per Day"?: number | null
-          "Average Number of Residents per Day Footnote"?: string | null
-          "Case-Mix LPN Staffing Hours per Resident per Day"?: string | null
-          "Case-Mix Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Case-Mix RN Staffing Hours per Resident per Day"?: string | null
-          "Case-Mix Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Case-Mix Weekend Total Nurse Staffing Hours per Resident per Da"?:
-            | string
-            | null
-          "City/Town"?: string | null
-          "CMS Certification Number (CCN)"?: string
-          "Continuing Care Retirement Community"?: string | null
-          "County/Parish"?: string | null
-          "Date First Approved to Provide Medicare and Medicaid Services"?:
-            | string
-            | null
-          "Geocoding Footnote"?: string | null
-          "Health Inspection Rating"?: number | null
-          "Health Inspection Rating Footnote"?: string | null
-          Latitude?: number | null
-          "Legal Business Name"?: string | null
-          Location?: string | null
-          "Long-Stay QM Rating"?: string | null
-          "Long-Stay QM Rating Footnote"?: string | null
-          Longitude?: number | null
-          "Most Recent Health Inspection More Than 2 Years Ago"?: string | null
-          "Number of administrators who have left the nursing home"?:
-            | string
-            | null
-          "Number of Certified Beds"?: number | null
-          "Number of Citations from Infection Control Inspections"?:
-            | string
-            | null
-          "Number of Facility Reported Incidents"?: string | null
-          "Number of Fines"?: string | null
-          "Number of Payment Denials"?: string | null
-          "Number of Substantiated Complaints"?: string | null
-          "Nursing Case-Mix Index"?: string | null
-          "Nursing Case-Mix Index Ratio"?: string | null
-          "Overall Rating"?: number | null
-          "Overall Rating Footnote"?: string | null
-          "Ownership Type"?: string | null
-          "Physical Therapist Staffing Footnote"?: string | null
-          "Processing Date"?: string | null
-          "Provider Address"?: string | null
-          "Provider Changed Ownership in Last 12 Months"?: string | null
-          "Provider Name"?: string | null
-          "Provider Resides in Hospital"?: string | null
-          "Provider SSA County Code"?: number | null
-          "Provider Type"?: string | null
-          "QM Rating"?: string | null
-          "QM Rating Footnote"?: string | null
-          "Rating Cycle 1 Health Deficiency Score"?: string | null
-          "Rating Cycle 1 Health Revisit Score"?: string | null
-          "Rating Cycle 1 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 1 Number of Health Revisits"?: string | null
-          "Rating Cycle 1 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 1 Standard Survey Health Date"?: string | null
-          "Rating Cycle 1 Total Health Score"?: string | null
-          "Rating Cycle 1 Total Number of Health Deficiencies"?: string | null
-          "Rating Cycle 2 Health Deficiency Score"?: string | null
-          "Rating Cycle 2 Health Revisit Score"?: string | null
-          "Rating Cycle 2 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 2 Number of Health Revisits"?: string | null
-          "Rating Cycle 2 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 2 Standard Health Survey Date"?: string | null
-          "Rating Cycle 2 Total Health Score"?: string | null
-          "Rating Cycle 2 Total Number of Health Deficiencies"?: string | null
-          "Rating Cycle 3 Health Deficiency Score"?: string | null
-          "Rating Cycle 3 Health Revisit Score"?: string | null
-          "Rating Cycle 3 Number of Complaint Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 3 Number of Health Revisits"?: string | null
-          "Rating Cycle 3 Number of Standard Health Deficiencies"?:
-            | string
-            | null
-          "Rating Cycle 3 Standard Health Survey Date"?: string | null
-          "Rating Cycle 3 Total Health Score"?: string | null
-          "Rating Cycle 3 Total Number of Health Deficiencies"?: string | null
-          "Registered Nurse hours per resident per day on the weekend"?:
-            | string
-            | null
-          "Registered Nurse turnover"?: string | null
-          "Registered Nurse turnover footnote"?: string | null
-          "Reported Licensed Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Reported LPN Staffing Hours per Resident per Day"?: string | null
-          "Reported Nurse Aide Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Reported Physical Therapist Staffing Hours per Resident Per Day"?:
-            | string
-            | null
-          "Reported RN Staffing Hours per Resident per Day"?: string | null
-          "Reported Staffing Footnote"?: string | null
-          "Reported Total Nurse Staffing Hours per Resident per Day"?:
-            | string
-            | null
-          "Short-Stay QM Rating"?: string | null
-          "Short-Stay QM Rating Footnote"?: string | null
-          "Special Focus Status"?: string | null
-          "Staffing Rating"?: string | null
-          "Staffing Rating Footnote"?: string | null
-          State?: string | null
-          "Telephone Number"?: number | null
-          "Total Amount of Fines in Dollars"?: string | null
-          "Total number of nurse staff hours per resident per day on the w"?:
-            | string
-            | null
-          "Total Number of Penalties"?: string | null
-          "Total nursing staff turnover"?: string | null
-          "Total nursing staff turnover footnote"?: string | null
-          "Total Weighted Health Survey Score"?: number | null
-          "With a Resident and Family Council"?: string | null
-          "ZIP Code"?: number | null
-        }
-        Relationships: []
-      }
-      orders: {
-        Row: {
-          "Amount Refunded": string | null
-          "Billing Address1": string | null
-          "Billing Address2": string | null
-          "Billing City": string | null
-          "Billing Country": string | null
-          "Billing Name": string | null
-          "Billing Phone": string | null
-          "Billing Province": string | null
-          "Billing Zip": number | null
-          "Cancelled at": string | null
-          "Channel Name": string | null
-          "Channel Order Number": number | null
-          "Channel Type": string | null
-          "Created at": string | null
-          Currency: string | null
-          "Discount Amount": string | null
-          "Discount Code": string | null
-          Email: string | null
-          "Financial Status": string | null
-          "Fulfilled at": string | null
-          "Fulfillment Status": string | null
-          "Lineitem fulfillment status": string | null
-          "Lineitem name": string | null
-          "Lineitem price": number | null
-          "Lineitem quantity": number | null
-          "Lineitem requires shipping": boolean | null
-          "Lineitem sku": string | null
-          "Lineitem taxable": boolean | null
-          "Lineitem variant": string | null
-          "Order ID": number
-          "Paid at": string | null
-          "Payment Method": string | null
-          "Payment Reference": string | null
-          "Private Notes": string | null
-          Shipping: string | null
-          "Shipping Address1": string | null
-          "Shipping Address2": string | null
-          "Shipping City": string | null
-          "Shipping Country": string | null
-          "Shipping Method": string | null
-          "Shipping Name": string | null
-          "Shipping Phone": string | null
-          "Shipping Province": string | null
-          "Shipping Zip": string | null
-          Subtotal: number | null
-          Taxes: string | null
-          Total: number | null
-        }
-        Insert: {
-          "Amount Refunded"?: string | null
-          "Billing Address1"?: string | null
-          "Billing Address2"?: string | null
-          "Billing City"?: string | null
-          "Billing Country"?: string | null
-          "Billing Name"?: string | null
-          "Billing Phone"?: string | null
-          "Billing Province"?: string | null
-          "Billing Zip"?: number | null
-          "Cancelled at"?: string | null
-          "Channel Name"?: string | null
-          "Channel Order Number"?: number | null
-          "Channel Type"?: string | null
-          "Created at"?: string | null
-          Currency?: string | null
-          "Discount Amount"?: string | null
-          "Discount Code"?: string | null
-          Email?: string | null
-          "Financial Status"?: string | null
-          "Fulfilled at"?: string | null
-          "Fulfillment Status"?: string | null
-          "Lineitem fulfillment status"?: string | null
-          "Lineitem name"?: string | null
-          "Lineitem price"?: number | null
-          "Lineitem quantity"?: number | null
-          "Lineitem requires shipping"?: boolean | null
-          "Lineitem sku"?: string | null
-          "Lineitem taxable"?: boolean | null
-          "Lineitem variant"?: string | null
-          "Order ID": number
-          "Paid at"?: string | null
-          "Payment Method"?: string | null
-          "Payment Reference"?: string | null
-          "Private Notes"?: string | null
-          Shipping?: string | null
-          "Shipping Address1"?: string | null
-          "Shipping Address2"?: string | null
-          "Shipping City"?: string | null
-          "Shipping Country"?: string | null
-          "Shipping Method"?: string | null
-          "Shipping Name"?: string | null
-          "Shipping Phone"?: string | null
-          "Shipping Province"?: string | null
-          "Shipping Zip"?: string | null
-          Subtotal?: number | null
-          Taxes?: string | null
-          Total?: number | null
-        }
-        Update: {
-          "Amount Refunded"?: string | null
-          "Billing Address1"?: string | null
-          "Billing Address2"?: string | null
-          "Billing City"?: string | null
-          "Billing Country"?: string | null
-          "Billing Name"?: string | null
-          "Billing Phone"?: string | null
-          "Billing Province"?: string | null
-          "Billing Zip"?: number | null
-          "Cancelled at"?: string | null
-          "Channel Name"?: string | null
-          "Channel Order Number"?: number | null
-          "Channel Type"?: string | null
-          "Created at"?: string | null
-          Currency?: string | null
-          "Discount Amount"?: string | null
-          "Discount Code"?: string | null
-          Email?: string | null
-          "Financial Status"?: string | null
-          "Fulfilled at"?: string | null
-          "Fulfillment Status"?: string | null
-          "Lineitem fulfillment status"?: string | null
-          "Lineitem name"?: string | null
-          "Lineitem price"?: number | null
-          "Lineitem quantity"?: number | null
-          "Lineitem requires shipping"?: boolean | null
-          "Lineitem sku"?: string | null
-          "Lineitem taxable"?: boolean | null
-          "Lineitem variant"?: string | null
-          "Order ID"?: number
-          "Paid at"?: string | null
-          "Payment Method"?: string | null
-          "Payment Reference"?: string | null
-          "Private Notes"?: string | null
-          Shipping?: string | null
-          "Shipping Address1"?: string | null
-          "Shipping Address2"?: string | null
-          "Shipping City"?: string | null
-          "Shipping Country"?: string | null
-          "Shipping Method"?: string | null
-          "Shipping Name"?: string | null
-          "Shipping Phone"?: string | null
-          "Shipping Province"?: string | null
-          "Shipping Zip"?: string | null
-          Subtotal?: number | null
-          Taxes?: string | null
-          Total?: number | null
-        }
-        Relationships: []
-      }
-      project_map: {
-        Row: {
-          id: number
-          map: Json | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: number
-          map?: Json | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: number
-          map?: Json | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      search_history: {
-        Row: {
-          amenities: string[] | null
-          created_at: string | null
-          facility_type: string | null
-          id: string
-          location: string | null
-          query: string
-          search_result_id: string | null
-          user_id: string | null
-        }
-        Insert: {
-          amenities?: string[] | null
-          created_at?: string | null
-          facility_type?: string | null
-          id?: string
-          location?: string | null
-          query: string
-          search_result_id?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          amenities?: string[] | null
-          created_at?: string | null
-          facility_type?: string | null
-          id?: string
-          location?: string | null
-          query?: string
-          search_result_id?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "search_history_search_result_id_fkey"
-            columns: ["search_result_id"]
-            isOneToOne: false
-            referencedRelation: "search_results"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      search_results: {
-        Row: {
-          amenities: string[] | null
-          created_at: string | null
-          facility_type: string | null
-          id: string
-          location: string | null
-          query: string
-          results: Json
-          user_id: string | null
-        }
-        Insert: {
-          amenities?: string[] | null
-          created_at?: string | null
-          facility_type?: string | null
-          id?: string
-          location?: string | null
-          query: string
-          results: Json
-          user_id?: string | null
-        }
-        Update: {
-          amenities?: string[] | null
-          created_at?: string | null
-          facility_type?: string | null
-          id?: string
-          location?: string | null
-          query?: string
-          results?: Json
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      subscription_features: {
-        Row: {
-          created_at: string | null
-          feature_id: string | null
-          id: string
-          tier: Database["public"]["Enums"]["subscription_tier"]
-        }
-        Insert: {
-          created_at?: string | null
-          feature_id?: string | null
-          id?: string
-          tier: Database["public"]["Enums"]["subscription_tier"]
-        }
-        Update: {
-          created_at?: string | null
-          feature_id?: string | null
-          id?: string
-          tier?: Database["public"]["Enums"]["subscription_tier"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscription_features_feature_id_fkey"
-            columns: ["feature_id"]
-            isOneToOne: false
-            referencedRelation: "feature_flags"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tasks: {
-        Row: {
-          assigned_to: string | null
-          contact_id: string
-          created_at: string | null
-          description: string | null
-          due_date: string | null
-          id: string
-          priority: string
-          status: string
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          assigned_to?: string | null
-          contact_id: string
-          created_at?: string | null
-          description?: string | null
-          due_date?: string | null
-          id?: string
-          priority: string
-          status: string
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          assigned_to?: string | null
-          contact_id?: string
-          created_at?: string | null
-          description?: string | null
-          due_date?: string | null
-          id?: string
-          priority?: string
-          status?: string
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "contacts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_profiles: {
-        Row: {
-          address: string | null
-          avatar_url: string | null
-          bio: string | null
-          city: string | null
-          communication_preferences: Json | null
-          company: string | null
-          created_at: string | null
-          default_location: string | null
-          id: string
-          job_title: string | null
-          notification_preferences: Json | null
-          preferred_contact_method: string | null
-          state: string | null
-          updated_at: string | null
-          zip_code: string | null
-        }
-        Insert: {
-          address?: string | null
-          avatar_url?: string | null
-          bio?: string | null
-          city?: string | null
-          communication_preferences?: Json | null
-          company?: string | null
-          created_at?: string | null
-          default_location?: string | null
-          id: string
-          job_title?: string | null
-          notification_preferences?: Json | null
-          preferred_contact_method?: string | null
-          state?: string | null
-          updated_at?: string | null
-          zip_code?: string | null
-        }
-        Update: {
-          address?: string | null
-          avatar_url?: string | null
-          bio?: string | null
-          city?: string | null
-          communication_preferences?: Json | null
-          company?: string | null
-          created_at?: string | null
-          default_location?: string | null
-          id?: string
-          job_title?: string | null
-          notification_preferences?: Json | null
-          preferred_contact_method?: string | null
-          state?: string | null
-          updated_at?: string | null
-          zip_code?: string | null
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          created_at: string | null
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      user_saved_facilities: {
-        Row: {
-          created_at: string | null
-          facility_id: string
-          id: string
-          notes: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          facility_id: string
-          id?: string
-          notes?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          facility_id?: string
-          id?: string
-          notes?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_saved_facilities_facility_id_fkey"
+            foreignKeyName: "facility_availability_facility_id_fkey"
             columns: ["facility_id"]
             isOneToOne: false
             referencedRelation: "facilities"
@@ -2238,126 +544,679 @@ export type Database = {
           },
         ]
       }
-      users: {
+      facility_care_types: {
         Row: {
-          created_at: string
-          email: string | null
-          first_name: string | null
+          care_type: string
+          facility_id: string | null
           id: string
-          is_active: boolean | null
-          is_verified: boolean | null
-          last_login: string | null
-          last_name: string | null
-          mfa_enabled: boolean | null
-          password_hash: string | null
-          phone: string | null
-          profile_image_url: string | null
-          updated_at: string | null
-          veteran_status: boolean | null
         }
         Insert: {
-          created_at: string
-          email?: string | null
-          first_name?: string | null
+          care_type: string
+          facility_id?: string | null
           id?: string
-          is_active?: boolean | null
-          is_verified?: boolean | null
-          last_login?: string | null
-          last_name?: string | null
-          mfa_enabled?: boolean | null
-          password_hash?: string | null
-          phone?: string | null
-          profile_image_url?: string | null
-          updated_at?: string | null
-          veteran_status?: boolean | null
         }
         Update: {
-          created_at?: string
-          email?: string | null
-          first_name?: string | null
+          care_type?: string
+          facility_id?: string | null
           id?: string
-          is_active?: boolean | null
-          is_verified?: boolean | null
-          last_login?: string | null
-          last_name?: string | null
-          mfa_enabled?: boolean | null
-          password_hash?: string | null
-          phone?: string | null
-          profile_image_url?: string | null
-          updated_at?: string | null
-          veteran_status?: boolean | null
         }
         Relationships: [
           {
-            foreignKeyName: "users_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "user_profiles"
+            foreignKeyName: "facility_care_types_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
             referencedColumns: ["id"]
           },
         ]
+      }
+      facility_changes: {
+        Row: {
+          approved: boolean | null
+          created_at: string
+          facility_id: string
+          id: string
+          new_address: string | null
+          new_description: string | null
+          new_name: string | null
+          new_rating: number | null
+        }
+        Insert: {
+          approved?: boolean | null
+          created_at?: string
+          facility_id: string
+          id?: string
+          new_address?: string | null
+          new_description?: string | null
+          new_name?: string | null
+          new_rating?: number | null
+        }
+        Update: {
+          approved?: boolean | null
+          created_at?: string
+          facility_id?: string
+          id?: string
+          new_address?: string | null
+          new_description?: string | null
+          new_name?: string | null
+          new_rating?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_changes_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facility_photos: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          facility_id: string | null
+          id: string
+          is_primary: boolean | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          facility_id?: string | null
+          id?: string
+          is_primary?: boolean | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          facility_id?: string | null
+          id?: string
+          is_primary?: boolean | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_photos_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facility_reviews: {
+        Row: {
+          content: string
+          created_at: string | null
+          facility_id: string | null
+          id: string
+          rating: number
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          facility_id?: string | null
+          id?: string
+          rating: number
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          facility_id?: string | null
+          id?: string
+          rating?: number
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_reviews_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          agent_commission_amount: number | null
+          agent_commission_rate: number | null
+          agent_id: string | null
+          amount_due: number
+          billed_to_facility_id: string | null
+          created_at: string | null
+          currency: string
+          description: string | null
+          due_date: string | null
+          hpa_total_placement_fee: number | null
+          id: string
+          invoice_number: string
+          invoice_type: Database["public"]["Enums"]["invoice_type_enum"]
+          issue_date: string
+          notes: string | null
+          payment_date_facility: string | null
+          payment_date_hpa: string | null
+          placement_id: string | null
+          status: Database["public"]["Enums"]["invoice_status_enum"]
+          stripe_payment_intent_id: string | null
+          stripe_payout_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_commission_amount?: number | null
+          agent_commission_rate?: number | null
+          agent_id?: string | null
+          amount_due: number
+          billed_to_facility_id?: string | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          hpa_total_placement_fee?: number | null
+          id?: string
+          invoice_number: string
+          invoice_type: Database["public"]["Enums"]["invoice_type_enum"]
+          issue_date: string
+          notes?: string | null
+          payment_date_facility?: string | null
+          payment_date_hpa?: string | null
+          placement_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status_enum"]
+          stripe_payment_intent_id?: string | null
+          stripe_payout_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_commission_amount?: number | null
+          agent_commission_rate?: number | null
+          agent_id?: string | null
+          amount_due?: number
+          billed_to_facility_id?: string | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          hpa_total_placement_fee?: number | null
+          id?: string
+          invoice_number?: string
+          invoice_type?: Database["public"]["Enums"]["invoice_type_enum"]
+          issue_date?: string
+          notes?: string | null
+          payment_date_facility?: string | null
+          payment_date_hpa?: string | null
+          placement_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status_enum"]
+          stripe_payment_intent_id?: string | null
+          stripe_payout_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_billed_to_facility_id_fkey"
+            columns: ["billed_to_facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_placement_id_fkey"
+            columns: ["placement_id"]
+            isOneToOne: false
+            referencedRelation: "placements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: number
+          latitude: number | null
+          longitude: number | null
+          name: string | null
+          phone: number | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: number
+          latitude?: number | null
+          longitude?: number | null
+          name?: string | null
+          phone?: number | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: number
+          latitude?: number | null
+          longitude?: number | null
+          name?: string | null
+          phone?: number | null
+        }
+        Relationships: []
+      }
+      NATION_WIDE: {
+        Row: {
+          address: string | null
+          id: string
+          name: string | null
+          phone: string | null
+          tags: string | null
+        }
+        Insert: {
+          address?: string | null
+          id: string
+          name?: string | null
+          phone?: string | null
+          tags?: string | null
+        }
+        Update: {
+          address?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+          tags?: string | null
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          facility: string
+          id: string
+          payment_date: string | null
+          resident: string
+          status: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          facility: string
+          id?: string
+          payment_date?: string | null
+          resident: string
+          status: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          facility?: string
+          id?: string
+          payment_date?: string | null
+          resident?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      placement_forms: {
+        Row: {
+          additional_notes: string | null
+          age: number | null
+          care_needs: string
+          created_at: string | null
+          diagnosis: string | null
+          family_contact_email: string | null
+          family_contact_name: string | null
+          family_contact_phone: string | null
+          id: string
+          insurance_type: string | null
+          location_preference: string | null
+          mobility_level: string | null
+          patient_name: string
+        }
+        Insert: {
+          additional_notes?: string | null
+          age?: number | null
+          care_needs: string
+          created_at?: string | null
+          diagnosis?: string | null
+          family_contact_email?: string | null
+          family_contact_name?: string | null
+          family_contact_phone?: string | null
+          id?: string
+          insurance_type?: string | null
+          location_preference?: string | null
+          mobility_level?: string | null
+          patient_name: string
+        }
+        Update: {
+          additional_notes?: string | null
+          age?: number | null
+          care_needs?: string
+          created_at?: string | null
+          diagnosis?: string | null
+          family_contact_email?: string | null
+          family_contact_name?: string | null
+          family_contact_phone?: string | null
+          id?: string
+          insurance_type?: string | null
+          location_preference?: string | null
+          mobility_level?: string | null
+          patient_name?: string
+        }
+        Relationships: []
+      }
+      placements: {
+        Row: {
+          agent_commission_structure: string | null
+          agent_id: string | null
+          client_id: string | null
+          created_at: string | null
+          facility_id: string | null
+          hpa_fee_agreed: number | null
+          hpa_fee_received_date: string | null
+          id: string
+          notes: string | null
+          placement_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          agent_commission_structure?: string | null
+          agent_id?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          facility_id?: string | null
+          hpa_fee_agreed?: number | null
+          hpa_fee_received_date?: string | null
+          id?: string
+          notes?: string | null
+          placement_date: string
+          updated_at?: string | null
+        }
+        Update: {
+          agent_commission_structure?: string | null
+          agent_id?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          facility_id?: string | null
+          hpa_fee_agreed?: number | null
+          hpa_fee_received_date?: string | null
+          id?: string
+          notes?: string | null
+          placement_date?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "placements_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "placements_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "placements_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          id: string
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      tag_links: {
+        Row: {
+          created_at: string
+          id: number
+          location: string | null
+          tags: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          location?: string | null
+          tags?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          location?: string | null
+          tags?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tag_links_tags_fkey"
+            columns: ["tags"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tags: {
+        Row: {
+          created_at: string
+          id: number
+          tag: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          tag?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          tag?: string | null
+        }
+        Relationships: []
+      }
+      thread_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          openai_message_id: string | null
+          role: string
+          thread_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          openai_message_id?: string | null
+          role: string
+          thread_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          openai_message_id?: string | null
+          role?: string
+          thread_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thread_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "conversation_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tools: {
+        Row: {
+          created_at: string
+          id: number
+          initiated_from: string | null
+          tool_description: string | null
+          tool_function_name: string | null
+          tool_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          initiated_from?: string | null
+          tool_description?: string | null
+          tool_function_name?: string | null
+          tool_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          initiated_from?: string | null
+          tool_description?: string | null
+          tool_function_name?: string | null
+          tool_name?: string | null
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          address: string | null
+          contract_document_url: string | null
+          contract_status:
+            | Database["public"]["Enums"]["contract_status_enum"]
+            | null
+          created_at: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          password: string
+          phone: string | null
+          role: string
+          stripe_connected_account_id: string | null
+          updated_at: string | null
+          voice_passphrase: string | null
+        }
+        Insert: {
+          address?: string | null
+          contract_document_url?: string | null
+          contract_status?:
+            | Database["public"]["Enums"]["contract_status_enum"]
+            | null
+          created_at?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          password: string
+          phone?: string | null
+          role: string
+          stripe_connected_account_id?: string | null
+          updated_at?: string | null
+          voice_passphrase?: string | null
+        }
+        Update: {
+          address?: string | null
+          contract_document_url?: string | null
+          contract_status?:
+            | Database["public"]["Enums"]["contract_status_enum"]
+            | null
+          created_at?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          password?: string
+          phone?: string | null
+          role?: string
+          stripe_connected_account_id?: string | null
+          updated_at?: string | null
+          voice_passphrase?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      get_locations_by_tags: {
-        Args: { input_tags: string[] }
-        Returns: {
-          id: number
-          name: string
-          address: string
-          tags: string[]
-        }[]
-      }
-      gtrgm_compress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_decompress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_in: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_options: {
-        Args: { "": unknown }
-        Returns: undefined
-      }
-      gtrgm_out: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      is_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
-      is_feature_enabled: {
-        Args: {
-          feature_key: string
-          tier: Database["public"]["Enums"]["subscription_tier"]
-        }
-        Returns: boolean
-      }
-      set_limit: {
-        Args: { "": number }
-        Returns: number
-      }
-      show_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      show_trgm: {
-        Args: { "": string }
-        Returns: string[]
-      }
+      [_ in never]: never
     }
     Enums: {
-      app_role: "user" | "admin"
-      subscription_tier: "free" | "basic" | "premium"
+      contract_status_enum:
+        | "PENDING_SIGNATURE"
+        | "ACTIVE"
+        | "EXPIRED"
+        | "INACTIVE"
+      invoice_status_enum:
+        | "DRAFT"
+        | "SUBMITTED"
+        | "PROCESSING_HPA"
+        | "PAID_HPA"
+        | "SENT_TO_FACILITY"
+        | "PAID_BY_FACILITY"
+        | "OVERDUE"
+        | "CANCELLED"
+      invoice_type_enum: "HPA" | "FACILITY"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2473,8 +1332,23 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["user", "admin"],
-      subscription_tier: ["free", "basic", "premium"],
+      contract_status_enum: [
+        "PENDING_SIGNATURE",
+        "ACTIVE",
+        "EXPIRED",
+        "INACTIVE",
+      ],
+      invoice_status_enum: [
+        "DRAFT",
+        "SUBMITTED",
+        "PROCESSING_HPA",
+        "PAID_HPA",
+        "SENT_TO_FACILITY",
+        "PAID_BY_FACILITY",
+        "OVERDUE",
+        "CANCELLED",
+      ],
+      invoice_type_enum: ["HPA", "FACILITY"],
     },
   },
 } as const
