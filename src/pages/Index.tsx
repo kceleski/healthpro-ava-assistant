@@ -23,7 +23,7 @@ const Index = () => {
       toast({
         title: "Welcome to HealthProAssist",
         description: "Explore how Ava can transform your healthcare placement process.",
-        duration: 5000,
+        duration: 3000,
       });
     }, 2000);
 
@@ -37,7 +37,7 @@ const Index = () => {
         toast({
           title: "Ava is ready to assist you",
           description: "Click the chat icon in the bottom right to start a conversation.",
-          duration: 5000,
+          duration: 3000,
         });
       }
     }, 5000);
