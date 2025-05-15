@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -55,8 +54,9 @@ export async function getFacilities(): Promise<Facility[]> {
       rating: item.rating || 0,
       latitude: item.latitude || null,
       longitude: item.longitude || null,
-      price_min: item.price_min || null,
-      price_max: item.price_max || null,
+      // Use null for price_min and price_max as they're not in the database schema
+      price_min: null,
+      price_max: null,
       description: item.description || "",
       created_at: item.created_at,
       contact_email: item.contact_email,
@@ -104,8 +104,9 @@ export async function getFacilityById(id: string): Promise<Facility | null> {
       rating: data.rating || 0,
       latitude: data.latitude || null,
       longitude: data.longitude || null,
-      price_min: data.price_min || null,
-      price_max: data.price_max || null,
+      // Use null for price_min and price_max as they're not in the database schema
+      price_min: null,
+      price_max: null,
       description: data.description || "",
       contact_email: data.contact_email,
       phone_number: data.phone_number,
