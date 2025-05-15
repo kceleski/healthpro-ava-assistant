@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ import AdditionalInformationStep from '@/components/assessment/steps/AdditionalI
 import AssessmentSidebar from '@/components/assessment/AssessmentSidebar';
 import AssessmentHelpDialog from '@/components/assessment/AssessmentHelpDialog';
 import AssessmentSubmitDialog from '@/components/assessment/AssessmentSubmitDialog';
+import { toast } from "sonner";
 
 const AssessmentPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -150,7 +150,14 @@ const AssessmentPage = () => {
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
+      // Save draft of assessment data to localStorage as backup
+      try {
+        localStorage.setItem('assessmentDraft', JSON.stringify(formData));
+      } catch (error) {
+        console.error("Error saving draft to localStorage:", error);
+      }
       // Redirect to success page or show success message
+      toast.success("Assessment submitted successfully!");
       window.location.href = "/portal/dashboard";
     }, 2000);
   };
@@ -279,6 +286,7 @@ const AssessmentPage = () => {
         onOpenChange={setShowSubmitDialog}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
+        formData={formData}
       />
     </div>
   );
