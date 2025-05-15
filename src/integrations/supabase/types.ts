@@ -824,6 +824,39 @@ export type Database = {
         }
         Relationships: []
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          read: boolean | null
+          recipient_name: string
+          recipient_role: string
+          sender_name: string
+          sender_role: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          recipient_name: string
+          recipient_role: string
+          sender_name: string
+          sender_role: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          recipient_name?: string
+          recipient_role?: string
+          sender_name?: string
+          sender_role?: string
+        }
+        Relationships: []
+      }
       NATION_WIDE: {
         Row: {
           address: string | null
@@ -1028,6 +1061,86 @@ export type Database = {
         }
         Relationships: []
       }
+      seniors: {
+        Row: {
+          additional_preferences: Json | null
+          age: number | null
+          budget_max: number | null
+          budget_min: number | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string | null
+          id: string
+          medical_needs: string[] | null
+          name: string
+          preferred_location: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          additional_preferences?: Json | null
+          age?: number | null
+          budget_max?: number | null
+          budget_min?: number | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          medical_needs?: string[] | null
+          name: string
+          preferred_location?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          additional_preferences?: Json | null
+          age?: number | null
+          budget_max?: number | null
+          budget_min?: number | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          medical_needs?: string[] | null
+          name?: string
+          preferred_location?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      specialist_notes: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          senior_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          senior_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          senior_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "specialist_notes_senior_id_fkey"
+            columns: ["senior_id"]
+            isOneToOne: false
+            referencedRelation: "seniors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tag_links: {
         Row: {
           created_at: string
@@ -1136,6 +1249,60 @@ export type Database = {
           tool_name?: string | null
         }
         Relationships: []
+      }
+      tours: {
+        Row: {
+          created_at: string | null
+          facility_id: string | null
+          id: string
+          is_virtual: boolean | null
+          notes: string | null
+          scheduled_date: string
+          scheduled_time: string
+          senior_id: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          facility_id?: string | null
+          id?: string
+          is_virtual?: boolean | null
+          notes?: string | null
+          scheduled_date: string
+          scheduled_time: string
+          senior_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          facility_id?: string | null
+          id?: string
+          is_virtual?: boolean | null
+          notes?: string | null
+          scheduled_date?: string
+          scheduled_time?: string
+          senior_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tours_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tours_senior_id_fkey"
+            columns: ["senior_id"]
+            isOneToOne: false
+            referencedRelation: "seniors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
